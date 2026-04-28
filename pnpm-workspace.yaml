@@ -1,0 +1,8 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# 注意:
+# - apps/{web,desktop,mobile} 为终端应用
+# - packages/{core,ui-web,ui-native,config} 为共享包
+# - 桌面端 Tauri 的 src-tauri 目录由 Rust/Cargo 管理,不纳入 pnpm workspace

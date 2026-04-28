@@ -1,0 +1,16 @@
+{
+  "name": "@marstv/ui-web",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Web (React 19) component library for MarsTV, built on shadcn/ui + Tailwind.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
