@@ -19,7 +19,7 @@ pnpm workspaces,不使用 Turbo/Nx(保持简单):
 ```
 marstv/
 ├── apps/
-│   ├── web/         # Next.js 15 + App Router + React 19(主 Web + /api/*)
+│   ├── web/         # Next.js 16 + App Router + React 19(主 Web + /api/*)
 │   ├── desktop/     # Tauri 2 壳(M4)
 │   └── mobile/      # Expo SDK 52 + RN 0.76,含 tvOS profile(M5)
 ├── packages/
@@ -37,12 +37,14 @@ marstv/
 
 ## 技术栈
 
-- **Web**:Next.js 15 + React 19 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui + Zustand + TanStack Query + ArtPlayer + HLS.js
+- **Web**:**Next.js 16** + React 19 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui + Zustand + TanStack Query + ArtPlayer + HLS.js
 - **桌面**:Tauri 2(Rust 壳)
 - **移动/TV**:Expo 52 + React Native 0.76,TV 端用 `react-native-tvos` + EAS `production_tv` profile
 - **包管理**:pnpm 10,Node ≥20.11
 - **代码质量**:Biome 1.9(替代 ESLint+Prettier,速度快)
 - **存储**:`IStorage` 抽象 → LocalStorage / Upstash / Redis 三实现
+
+> ⚠️ **Next.js 16 注意**:`apps/web/AGENTS.md` 明确警告 Next 16 相对训练数据有破坏性变更(API、约定、文件结构)。在写任何 Next 相关代码前,**先查 `apps/web/node_modules/next/dist/docs/`** 的实际文档,不要凭记忆。遇到不一致时以 node_modules 里的文档为准。
 
 ## 开发命令
 
@@ -94,16 +96,21 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 ## 当前阶段
 
-仓库处于 **M1 启动前** 状态 —— 只有 workspace 骨架和空的 `packages/core` 类型定义。
+仓库处于 **M1 进行中** 状态 —— workspace 骨架 + `apps/web` Next.js 16 脚手架已经就绪,`packages/core` 定义了 CMS V10 协议核心类型。
 
-下一步(M1 的剩余任务,按顺序):
-1. `pnpm dlx create-next-app@latest apps/web --ts --app --tailwind --src-dir --import-alias "@/*" --use-pnpm`
-2. 在 `apps/web/package.json` 加入 `"@marstv/core": "workspace:*"` 等 workspace 依赖
-3. 实现 `packages/core/src/downstream/apple-cms.ts`(CMS V10 解析)+ `speedtest.ts`
-4. 实现 `apps/web/app/api/{search,detail,proxy/m3u8,douban}/route.ts`
-5. ArtPlayer + HLS.js 播放页
-6. shadcn/ui 初始化 + 首页/搜索页/详情页/播放页
-7. 豆瓣集成(直连模式即可)
+**已就绪**:
+- pnpm 10 workspace(5 个包链接完成,`pnpm --filter @marstv/web typecheck` 通过)
+- `apps/web` 含 Next.js 16 + React 19 + Tailwind 4 初始模板
+- `next.config.ts` 配置了 `transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config']`
+
+**M1 剩余任务**(按建议顺序):
+1. 实现 `packages/core/src/downstream/apple-cms.ts`(CMS V10 搜索/详情解析)
+2. 实现 `packages/core/src/downstream/speedtest.ts`(播放源测速打分)
+3. 实现 `apps/web/src/app/api/{search,detail,proxy/m3u8,douban}/route.ts`
+4. ArtPlayer + HLS.js 播放页 `apps/web/src/app/play/[source]/[id]/page.tsx`
+5. shadcn/ui 初始化(使用 CLI,遵循 Next 16 当前约定)+ 首页/搜索页/详情页
+6. 豆瓣集成(直连模式即可)
+7. 本地历史/收藏(`packages/core/src/storage/local.ts`)
 
 **新增功能前先检查 `packages/core` 是否已有可复用实现**,避免重复。
 

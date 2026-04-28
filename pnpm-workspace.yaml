@@ -2,6 +2,11 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# create-next-app 会把这些原生依赖写入子 workspace.yaml,这里统一管理
+ignoredBuiltDependencies:
+  - sharp
+  - unrs-resolver
+
 # 注意:
 # - apps/{web,desktop,mobile} 为终端应用
 # - packages/{core,ui-web,ui-native,config} 为共享包

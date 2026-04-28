@@ -15,7 +15,7 @@ MarsTV 是一个参考 [LibreTV](https://github.com/LibreSpark/LibreTV) / [LunaT
 
 | 终端 | 技术栈 | 状态 |
 |---|---|---|
-| Web + PWA | Next.js 15 + React 19 | 🏗️ M1 开发中 |
+| Web + PWA | Next.js 16 + React 19 | 🏗️ M1 开发中 |
 | Desktop (Win/Mac/Linux) | Tauri 2 | 📋 M4 计划 |
 | Mobile (iOS/Android) | Expo + React Native | 📋 M5 计划 |
 | TV (Android TV / tvOS) | React Native TVOS | 📋 M5 计划 |
