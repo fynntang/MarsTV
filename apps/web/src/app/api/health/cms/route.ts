@@ -6,7 +6,7 @@
 // x-probe-token header. If HEALTH_PROBE_TOKEN is unset, POST returns 503.
 // ============================================================================
 
-import { sourceHealthStore } from '@/lib/source-health-store';
+import { sourceHealthBackend, sourceHealthStore } from '@/lib/source-health-store';
 import { loadSources } from '@/lib/sources';
 import { type SourceHealthRecord, searchSource } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -30,7 +30,7 @@ export async function GET(_request: NextRequest) {
   });
 
   return Response.json(
-    { sources: results },
+    { backend: sourceHealthBackend, sources: results },
     {
       headers: { 'cache-control': 'no-store' },
     },

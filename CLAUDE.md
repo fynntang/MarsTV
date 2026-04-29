@@ -108,10 +108,19 @@ pnpm clean                # 清理 node_modules / .next / dist
 - 测试:`packages/core` 87 条 vitest / `apps/web` 105 条 vitest / 20 条 Playwright E2E,覆盖 CMS 解析、SSRF、HMAC、API 路由、免责声明、导航、三页集合页
 
 **M2 预备**:
-- Upstash 存储后端(`IStorage` 的 Redis 实现,同时给 source-health 提供跨重启持久层)
-- Web Push(依赖 M2 Upstash 做订阅存储)
+- ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度(见"环境变量"节)。`/api/health/cms` GET 响应里 `backend` 字段会回显 `'redis' | 'memory'`
+- Web Push(依赖 Upstash 做订阅存储)
 - Cloudflare Pages Functions 边缘部署脚本
 - SITE_PASSWORD 前端访问密码中间件
+
+## 环境变量
+
+- `PROXY_SECRET`(必填):`/api/proxy/*` HMAC 签名密钥。未设置则拒绝启动
+- `CMS_SOURCES_JSON`(必填):苹果 CMS 源列表 JSON 数组
+- `ALLOWED_PROXY_HOSTS`(可选):代理下游域名白名单,逗号分隔
+- `SITE_PASSWORD`(M2 预备):前端访问密码
+- `HEALTH_PROBE_TOKEN`(可选):启用 `POST /api/health/cms` 主动探测所需的 token
+- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`(可选,成对出现):启用 Redis 持久化 source-health。**都未设置时回退到进程内 Map**,重启状态丢失
 
 **新增功能前先检查 `packages/core` 是否已有可复用实现**,避免重复。
 
