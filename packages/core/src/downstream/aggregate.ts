@@ -4,6 +4,12 @@
 
 import type { CmsSource, VideoItem } from '../types/index';
 import { type SearchResult, searchSource } from './apple-cms';
+import {
+  type ISourceHealthStore,
+  dynamicTimeout,
+  scoreSource,
+  shouldSkipSource,
+} from './source-health';
 
 export interface AggregateSearchOptions {
   /** 单源超时毫秒,默认 8000 */
@@ -12,6 +18,8 @@ export interface AggregateSearchOptions {
   maxPage?: number;
   /** 外部 cancel signal */
   signal?: AbortSignal;
+  /** If provided, failing sources get downranked/skipped and stats get persisted */
+  healthStore?: ISourceHealthStore;
 }
 
 export interface AggregateSearchResult {
@@ -38,37 +46,80 @@ export async function aggregateSearch(
   keyword: string,
   options: AggregateSearchOptions = {},
 ): Promise<AggregateSearchResult> {
-  const { perSourceTimeoutMs = 8000, maxPage = 1, signal } = options;
+  const { perSourceTimeoutMs = 8000, maxPage = 1, signal, healthStore } = options;
 
   const enabled = sources.filter((s) => s.enabled !== false);
   if (enabled.length === 0) return { items: [], sourceStats: [] };
 
+  // Resolve health scores upfront so we can sort results later and decide skips.
+  const healthScores = new Map<string, number>();
+  if (healthStore) {
+    const all = await healthStore.list();
+    for (const rec of all) {
+      healthScores.set(rec.sourceKey, scoreSource(rec));
+    }
+  }
+
+  const now = Date.now();
+
   const tasks = enabled.map(async (source) => {
+    // Check health before dispatching.
+    if (healthStore) {
+      const rec = await healthStore.get(source.key);
+      if (shouldSkipSource(rec, now)) {
+        return {
+          source: source.key,
+          ok: false as const,
+          tookMs: 0,
+          itemCount: 0,
+          error: 'skipped: unhealthy',
+          items: [] as VideoItem[],
+        };
+      }
+    }
+
+    const score = healthScores.get(source.key) ?? 0.5;
+    const effectiveTimeout = healthStore
+      ? dynamicTimeout(score, perSourceTimeoutMs)
+      : perSourceTimeoutMs;
+
     const start = Date.now();
     try {
       const pages = Math.max(1, maxPage);
       const results: SearchResult[] = [];
       for (let p = 1; p <= pages; p++) {
         const r = await searchSource(source, keyword, p, {
-          timeoutMs: perSourceTimeoutMs,
+          timeoutMs: effectiveTimeout,
           signal,
         });
         results.push(r);
         if (r.page >= r.pageCount) break;
       }
       const items = results.flatMap((r) => r.items);
+      const tookMs = Date.now() - start;
+
+      if (healthStore) {
+        await healthStore.recordOk(source.key, tookMs);
+      }
+
       return {
         source: source.key,
         ok: true as const,
-        tookMs: Date.now() - start,
+        tookMs,
         itemCount: items.length,
         items,
       };
     } catch (err) {
+      const tookMs = Date.now() - start;
+
+      if (healthStore) {
+        await healthStore.recordFail(source.key, err instanceof Error ? err.message : String(err));
+      }
+
       return {
         source: source.key,
         ok: false as const,
-        tookMs: Date.now() - start,
+        tookMs,
         itemCount: 0,
         error: err instanceof Error ? err.message : String(err),
         items: [] as VideoItem[],
@@ -78,7 +129,16 @@ export async function aggregateSearch(
 
   const settled = await Promise.all(tasks);
 
-  // 保持源的相对顺序(sources 原顺序即展示优先级)
+  // If healthStore is active, sort settled results by score descending so
+  // healthier sources appear first in the merged output. Ties keep original order.
+  if (healthStore) {
+    settled.sort((a, b) => {
+      const scoreA = healthScores.get(a.source) ?? 0.5;
+      const scoreB = healthScores.get(b.source) ?? 0.5;
+      return scoreB - scoreA;
+    });
+  }
+
   const merged: VideoItem[] = [];
   const seen = new Set<string>();
   for (const r of settled) {

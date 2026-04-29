@@ -5,6 +5,7 @@
 // - Otherwise → aggregate across all enabled sources
 // ============================================================================
 
+import { sourceHealthStore } from '@/lib/source-health-store';
 import { loadSources } from '@/lib/sources';
 import { aggregateSearch } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -44,6 +45,7 @@ export async function GET(request: NextRequest) {
     const result = await aggregateSearch(targetSources, keyword, {
       perSourceTimeoutMs: 8000,
       maxPage,
+      healthStore: sourceHealthStore,
     });
     return Response.json(result, {
       headers: {

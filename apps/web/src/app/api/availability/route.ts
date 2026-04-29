@@ -8,6 +8,7 @@
 // the same title in parallel only fan out to CMS once.
 // ============================================================================
 
+import { sourceHealthStore } from '@/lib/source-health-store';
 import { loadSources } from '@/lib/sources';
 import { aggregateSearch } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -45,6 +46,7 @@ async function compute(keyword: string): Promise<CacheEntry> {
   const result = await aggregateSearch(sources, keyword, {
     perSourceTimeoutMs: 6000,
     maxPage: 1,
+    healthStore: sourceHealthStore,
   });
 
   // Aggregate dedupes by (title, year); for availability we really care about
