@@ -168,9 +168,7 @@ describe('LocalStorageBackend — subscriptions', () => {
   it('updateSubscriptionChecks merges latest counts and bumps lastCheckedAt', async () => {
     const old = Date.now() - 10 * 60 * 1000;
     await backend.putSubscription(makeSub('a', 10, 10, { lastCheckedAt: old }));
-    await backend.updateSubscriptionChecks([
-      { source: 'cms1', id: 'a', latestEpisodeCount: 12 },
-    ]);
+    await backend.updateSubscriptionChecks([{ source: 'cms1', id: 'a', latestEpisodeCount: 12 }]);
     const sub = await backend.getSubscription('cms1', 'a');
     expect(sub?.latestEpisodeCount).toBe(12);
     expect(sub?.knownEpisodeCount).toBe(10);
@@ -229,10 +227,7 @@ describe('LocalStorageBackend — resilience', () => {
   });
 
   it('survives garbage JSON in the namespace (returns empty list)', async () => {
-    (globalThis as { localStorage: Storage }).localStorage.setItem(
-      'marstv:history',
-      'not-json',
-    );
+    (globalThis as { localStorage: Storage }).localStorage.setItem('marstv:history', 'not-json');
     expect(await backend.listPlayRecords()).toEqual([]);
   });
 

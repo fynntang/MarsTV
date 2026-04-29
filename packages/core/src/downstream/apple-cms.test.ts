@@ -8,10 +8,7 @@ describe('parsePlayUrl', () => {
   });
 
   it('parses a single line with name/url episodes', () => {
-    const lines = parsePlayUrl(
-      '高清',
-      '第1集$https://cdn.a/1.m3u8#第2集$https://cdn.a/2.m3u8',
-    );
+    const lines = parsePlayUrl('高清', '第1集$https://cdn.a/1.m3u8#第2集$https://cdn.a/2.m3u8');
     expect(lines).toEqual([
       {
         name: '高清',
