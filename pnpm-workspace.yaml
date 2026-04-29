@@ -19,3 +19,4 @@ catalog:
   tailwind-merge: ^3.5.0
   tailwindcss: ^4.2.4
   typescript: ^5.9.3
+  vitest: ^2.1.9
