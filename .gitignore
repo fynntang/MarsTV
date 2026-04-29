@@ -155,3 +155,10 @@ vite.config.ts.timestamp-*
 apps/web/playwright-report/
 apps/web/test-results/
 apps/web/playwright/.cache/
+
+# Deployment artifacts
+apps/web/.open-next/
+apps/web/.wrangler/
+apps/web/.dev.vars
+.vercel/
+apps/web/.next/standalone/

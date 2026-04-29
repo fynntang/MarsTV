@@ -1,0 +1,30 @@
+node_modules
+.next
+.wrangler
+.open-next
+.git
+.gitignore
+
+# Test files
+**/__tests__
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+playwright-report
+test-results
+playwright
+
+# Dev config
+.env
+.env.*
+!.env.example
+.dev.vars
+
+# IDE
+.vscode
+.idea
+
+# Misc
+*.md
+!CLAUDE.md

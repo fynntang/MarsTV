@@ -110,6 +110,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 **M2 预备**:
 - ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度(见"环境变量"节)。`/api/health/cms` GET 响应里 `backend` 字段会回显 `'redis' | 'memory'`
 - ✅ SITE_PASSWORD 站点密码门:Next 16 Proxy(`apps/web/src/proxy.ts`)+ `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时 proxy 短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
+- ✅ 多平台部署脚手架:Dockerfile / OpenNext CF config / wrangler.jsonc / docker-compose 已就绪。四个部署目标(Vercel / CF Pages / Docker / 本地 dev)共享同一份 `next build` pipeline。详见根目录 `DEPLOY.md`。
 - Web Push(依赖 Upstash 做订阅存储)
 - Cloudflare Pages Functions 边缘部署脚本
 

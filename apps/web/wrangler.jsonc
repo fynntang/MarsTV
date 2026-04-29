@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "marstv-web",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2025-04-08",
+  "compatibility_flags": ["nodejs_compat"],
+
+  // Public stub values — secrets MUST be set via `wrangler secret put`,
+  // never committed to a file. The JSON array / empty string below keep
+  // wrangler deploy happy when no secret polyfill is available.
+  "vars": {
+    "CMS_SOURCES_JSON": "[]",
+    "ALLOWED_PROXY_HOSTS": ""
+  },
+
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  }
+}

@@ -1,0 +1,28 @@
+# ============================================================================
+# .dev.vars — wrangler dev 本地开发环境变量模板
+# 复制为 .dev.vars 后填入真实值，该文件已被 .gitignore 忽略。
+# ============================================================================
+
+# 【必填】苹果 CMS V10 源列表，JSON 数组字符串
+# 示例: [{"name":"示例源","api":"https://example.com/api"}]
+CMS_SOURCES_JSON=[]
+
+# 【必填】代理 HMAC 签名密钥，用于 /api/proxy/* 鉴权
+# 生成方法: openssl rand -hex 32
+PROXY_SECRET=change-me-to-a-random-hex-string
+
+# 【可选】代理下游域名白名单，逗号分隔（留空则仅阻拦私网 IP）
+# 示例: video.example.com,cdn.example.cc
+ALLOWED_PROXY_HOSTS=
+
+# 【可选】站点访问密码。设置后所有页面和 API 需登录。
+# 未设置时 proxy 短路放行，完全不拦截。
+SITE_PASSWORD=
+
+# 【可选】主动健康探测的 Bearer token，用于 POST /api/health/cms
+HEALTH_PROBE_TOKEN=
+
+# 【可选，成对出现】Upstash Redis REST URL + token，用于持久化源健康评分
+# 都未设置时回退到进程内内存 Map（重启丢失）
+UPSTASH_REDIS_REST_URL=
+UPSTASH_REDIS_REST_TOKEN=

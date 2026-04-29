@@ -10,7 +10,11 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "build:cf": "next build && opennextjs-cloudflare build",
+    "preview:cf": "next build && opennextjs-cloudflare preview",
+    "deploy:cf": "next build && opennextjs-cloudflare deploy",
+    "build:docker": "docker build -f apps/web/Dockerfile -t marstv/web:local ../.."
   },
   "dependencies": {
     "@marstv/config": "workspace:*",
@@ -30,12 +34,14 @@
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "catalog:",
+    "@opennextjs/cloudflare": "^0.6.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "wrangler": "^3.110.0"
   }
 }
