@@ -96,21 +96,25 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 ## 当前阶段
 
-仓库处于 **M1 进行中** 状态 —— workspace 骨架 + `apps/web` Next.js 16 脚手架已经就绪,`packages/core` 定义了 CMS V10 协议核心类型。
+仓库处于 **M1 接近完成** 状态 —— Web 端功能闭环已打通(搜索→详情→播放→订阅/收藏/历史),工程质量待打磨。
 
 **已就绪**:
-- pnpm 10 workspace(5 个包链接完成,`pnpm --filter @marstv/web typecheck` 通过)
-- `apps/web` 含 Next.js 16 + React 19 + Tailwind 4 初始模板
-- `next.config.ts` 配置了 `transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config']`
+- `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
+- `apps/web` API:`/api/{search,detail,availability,douban,speedtest,proxy/m3u8,image/*,subscriptions/check}`
+- 代理安全:HMAC 签名(5 分钟 bucket,URL 边缘可缓存) + SSRF 黑名单 + 分层 `CDN-Cache-Control`
+- 播放器:ArtPlayer + HLS.js,致命错误回退到"换线路"覆盖层,进度持久化 / 下一集预取 / N·P·? 键盘快捷键
+- 页面:首页(豆瓣 + 继续观看 + 追剧行) / 搜索 / 播放 / 收藏 / 历史 / 追剧 / 豆瓣 / 首访免责声明
+- shadcn/ui 已初始化(button / card / input + components.json,new-york 风格)
 
-**M1 剩余任务**(按建议顺序):
-1. 实现 `packages/core/src/downstream/apple-cms.ts`(CMS V10 搜索/详情解析)
-2. 实现 `packages/core/src/downstream/speedtest.ts`(播放源测速打分)
-3. 实现 `apps/web/src/app/api/{search,detail,proxy/m3u8,douban}/route.ts`
-4. ArtPlayer + HLS.js 播放页 `apps/web/src/app/play/[source]/[id]/page.tsx`
-5. shadcn/ui 初始化(使用 CLI,遵循 Next 16 当前约定)+ 首页/搜索页/详情页
-6. 豆瓣集成(直连模式即可)
-7. 本地历史/收藏(`packages/core/src/storage/local.ts`)
+**M1 剩余**:
+1. 页面 / 组件 E2E 验证(Playwright 脚本 + 覆盖关键路径)
+2. 统一 loading / error skeleton(目前 search / play 有,其他页缺)
+3. 苹果 CMS 源健康监控(每日探测 + 失败源降权)
+
+**M2 预备**:
+- Web Push(需要先接服务端订阅存储 → Upstash 适配器)
+- Cloudflare Pages Functions 边缘部署脚本
+- SITE_PASSWORD 前端访问密码中间件
 
 **新增功能前先检查 `packages/core` 是否已有可复用实现**,避免重复。
 
