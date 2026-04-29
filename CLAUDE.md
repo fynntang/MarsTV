@@ -109,16 +109,16 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 **M2 预备**:
 - ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度(见"环境变量"节)。`/api/health/cms` GET 响应里 `backend` 字段会回显 `'redis' | 'memory'`
+- ✅ SITE_PASSWORD 站点密码门:Next 16 Proxy(`apps/web/src/proxy.ts`)+ `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时 proxy 短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
 - Web Push(依赖 Upstash 做订阅存储)
 - Cloudflare Pages Functions 边缘部署脚本
-- SITE_PASSWORD 前端访问密码中间件
 
 ## 环境变量
 
 - `PROXY_SECRET`(必填):`/api/proxy/*` HMAC 签名密钥。未设置则拒绝启动
 - `CMS_SOURCES_JSON`(必填):苹果 CMS 源列表 JSON 数组
 - `ALLOWED_PROXY_HOSTS`(可选):代理下游域名白名单,逗号分隔
-- `SITE_PASSWORD`(M2 预备):前端访问密码
+- `SITE_PASSWORD`(可选):启用站点密码门。未设置时 `proxy.ts` 短路放行,完全不拦截;设置后 Cookie = `HMAC(SITE_PASSWORD, v1-context)`,**改值立即失效所有 session**
 - `HEALTH_PROBE_TOKEN`(可选):启用 `POST /api/health/cms` 主动探测所需的 token
 - `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`(可选,成对出现):启用 Redis 持久化 source-health。**都未设置时回退到进程内 Map**,重启状态丢失
 
