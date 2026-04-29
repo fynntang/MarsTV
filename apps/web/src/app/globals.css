@@ -1,26 +1,134 @@
 @import "tailwindcss";
 
+/* ============================================================================
+ * MarsTV design tokens
+ * Values must mirror packages/config/src/tokens.ts
+ * ========================================================================= */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0d17;
+  --surface: #141829;
+  --surface-elevated: #1d2236;
+  --primary: #ff6b35;
+  --primary-hover: #ff8659;
+  --primary-muted: #3a1f16;
+  --accent: #4ecdc4;
+  --danger: #e63946;
+  --warning: #f4a261;
+  --success: #2a9d8f;
+  --foreground: #f5f5f7;
+  --muted-foreground: #9ca3af;
+  --dim-foreground: #6b7280;
+  --border: #2a2f45;
+  --border-strong: #3d4263;
+  --radius: 0.75rem;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-muted: var(--primary-muted);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
   --color-foreground: var(--foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-dim-foreground: var(--dim-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle starfield gradient for hero area; kept as a utility class */
+.marstv-hero-bg {
+  background: radial-gradient(ellipse at 20% 10%, rgba(255, 107, 53, 0.12), transparent 55%),
+    radial-gradient(ellipse at 80% 80%, rgba(78, 205, 196, 0.08), transparent 60%),
+    var(--background);
+}
+
+/* Indeterminate progress bar used by SearchBox during pending navigation */
+@keyframes marstv-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+.marstv-progress-bar {
+  animation: marstv-progress-slide 1.1s ease-in-out infinite;
+}
+
+/* ============================================================================
+ * Themed scrollbars — matches the space/mars palette. Firefox uses the
+ * two-property spec (scrollbar-width / scrollbar-color); Chromium/WebKit use
+ * ::-webkit-scrollbar pseudo-elements. Both are defined here.
+ * ========================================================================= */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border: 2px solid var(--background);
+  border-radius: 9999px;
+  transition: background-color 160ms ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Slimmer variant for inline horizontal scrollers (e.g. Douban rows). */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border: none;
+  border-radius: 9999px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
