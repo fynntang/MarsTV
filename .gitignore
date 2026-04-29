@@ -150,3 +150,8 @@ vite.config.ts.timestamp-*
 # Dev-only scratch artifacts (screenshots, browser automation logs)
 .playwright-mcp/
 /*.png
+
+# Playwright
+apps/web/playwright-report/
+apps/web/test-results/
+apps/web/playwright/.cache/
