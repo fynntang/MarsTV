@@ -1,13 +1,21 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-
-# create-next-app 会把这些原生依赖写入子 workspace.yaml,这里统一管理
+  - apps/*
+  - packages/*
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
-
-# 注意:
-# - apps/{web,desktop,mobile} 为终端应用
-# - packages/{core,ui-web,ui-native,config} 为共享包
-# - 桌面端 Tauri 的 src-tauri 目录由 Rust/Cargo 管理,不纳入 pnpm workspace
+catalog:
+  "@biomejs/biome": ^1.9.4
+  "@radix-ui/react-slot": ^1.2.4
+  "@tailwindcss/postcss": ^4.2.4
+  "@types/node": ^20.19.39
+  "@types/react": ^19.2.14
+  "@types/react-dom": ^19.2.3
+  class-variance-authority: ^0.7.1
+  clsx: ^2.1.1
+  next: 16.2.4
+  react: 19.2.4
+  react-dom: 19.2.4
+  tailwind-merge: ^3.5.0
+  tailwindcss: ^4.2.4
+  typescript: ^5.9.3

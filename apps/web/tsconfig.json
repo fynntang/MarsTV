@@ -18,8 +18,15 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@marstv/core": ["../../packages/core/src/index.ts"],
+      "@marstv/core/*": ["../../packages/core/src/*"],
+      "@marstv/ui-web": ["../../packages/ui-web/src/index.ts"],
+      "@marstv/ui-web/*": ["../../packages/ui-web/src/*"],
+      "@marstv/config": ["../../packages/config/src/index.ts"],
+      "@marstv/config/tokens": ["../../packages/config/src/tokens.ts"]
     }
   },
   "include": [

@@ -144,3 +144,9 @@ vite.config.ts.timestamp-*
 
 
 .claude/settings.local.json
+
+.idea
+
+# Dev-only scratch artifacts (screenshots, browser automation logs)
+.playwright-mcp/
+/*.png

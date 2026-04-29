@@ -11,23 +11,21 @@
     "pnpm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "pnpm --filter web dev",
+    "dev": "pnpm --filter @marstv/web dev",
     "build": "pnpm -r build",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
     "typecheck": "pnpm -r typecheck",
     "test": "pnpm -r test",
-    "clean": "pnpm -r exec rm -rf node_modules .next dist .turbo"
+    "clean": "pnpm -r exec rm -rf node_modules .next dist .turbo",
+    "catalog": "pnpx codemod pnpm/catalog"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "typescript": "^5.7.2"
+    "@biomejs/biome": "catalog:",
+    "typescript": "catalog:"
   },
   "pnpm": {
-    "onlyBuiltDependencies": [
-      "@biomejs/biome",
-      "sharp"
-    ]
+    "onlyBuiltDependencies": ["@biomejs/biome", "sharp"]
   }
 }

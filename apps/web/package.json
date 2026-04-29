@@ -9,19 +9,26 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "next": "16.2.4",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
+    "@marstv/config": "workspace:*",
     "@marstv/core": "workspace:*",
+    "@marstv/ui-native": "workspace:*",
     "@marstv/ui-web": "workspace:*",
-    "@marstv/config": "workspace:*"
+    "@radix-ui/react-slot": "catalog:",
+    "artplayer": "^5.2.4",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "hls.js": "^1.6.15",
+    "next": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "tailwind-merge": "catalog:"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
   }
 }

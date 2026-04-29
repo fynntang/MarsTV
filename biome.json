@@ -15,6 +15,9 @@
       "**/ios",
       "**/android",
       "**/src-tauri/target",
+      "**/next-env.d.ts",
+      "**/tmp",
+      "scripts/**",
       "pnpm-lock.yaml"
     ]
   },
