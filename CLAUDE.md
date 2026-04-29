@@ -96,23 +96,20 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 ## 当前阶段
 
-仓库处于 **M1 接近完成** 状态 —— Web 端功能闭环已打通(搜索→详情→播放→订阅/收藏/历史),工程质量待打磨。
+**M1 已闭环** —— Web 端功能 + 工程质量全线打通,M2 开始接入服务端存储与边缘部署。
 
-**已就绪**:
-- `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
-- `apps/web` API:`/api/{search,detail,availability,douban,speedtest,proxy/m3u8,image/*,subscriptions/check}`
+**M1 已就绪**:
+- `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、源健康评分(`source-health`,给 `aggregateSearch` 提供动态超时 + 失败源跳过 + 按分排序)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
+- `apps/web` API:`/api/{search,detail,availability,douban,speedtest,proxy/m3u8,image/*,subscriptions/check,health/cms}`
 - 代理安全:HMAC 签名(5 分钟 bucket,URL 边缘可缓存) + SSRF 黑名单 + 分层 `CDN-Cache-Control`
 - 播放器:ArtPlayer + HLS.js,致命错误回退到"换线路"覆盖层,进度持久化 / 下一集预取 / N·P·? 键盘快捷键
-- 页面:首页(豆瓣 + 继续观看 + 追剧行) / 搜索 / 播放 / 收藏 / 历史 / 追剧 / 豆瓣 / 首访免责声明
+- 页面:首页(豆瓣 + 继续观看 + 追剧行) / 搜索 / 播放 / 收藏 / 历史 / 追剧 / 豆瓣 / 首访免责声明;收藏/历史/追剧共用 `<PosterGridSkeleton>` + `<CollectionEmptyState>` + `<CollectionErrorState>` 三态
 - shadcn/ui 已初始化(button / card / input + components.json,new-york 风格)
-
-**M1 剩余**:
-1. 页面 / 组件 E2E 验证(Playwright 脚本 + 覆盖关键路径)
-2. 统一 loading / error skeleton(目前 search / play 有,其他页缺)
-3. 苹果 CMS 源健康监控(每日探测 + 失败源降权)
+- 测试:`packages/core` 87 条 vitest / `apps/web` 105 条 vitest / 20 条 Playwright E2E,覆盖 CMS 解析、SSRF、HMAC、API 路由、免责声明、导航、三页集合页
 
 **M2 预备**:
-- Web Push(需要先接服务端订阅存储 → Upstash 适配器)
+- Upstash 存储后端(`IStorage` 的 Redis 实现,同时给 source-health 提供跨重启持久层)
+- Web Push(依赖 M2 Upstash 做订阅存储)
 - Cloudflare Pages Functions 边缘部署脚本
 - SITE_PASSWORD 前端访问密码中间件
 
