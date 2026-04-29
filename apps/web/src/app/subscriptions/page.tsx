@@ -1,6 +1,11 @@
 'use client';
 
 import { invalidateCardMarkers } from '@/components/card-markers';
+import {
+  CollectionEmptyState,
+  CollectionErrorState,
+  PosterGridSkeleton,
+} from '@/components/collection-skeleton';
 import { type SubscriptionRecord, localStorageBackend } from '@marstv/core';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,16 +19,23 @@ interface CheckResult {
 
 export default function SubscriptionsPage() {
   const [items, setItems] = useState<SubscriptionRecord[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
-  const refresh = useCallback(async () => {
-    const records = await localStorageBackend.listSubscriptions();
-    setItems(records);
+  const fetchSubscriptions = useCallback(async () => {
+    setError(null);
+    try {
+      const records = await localStorageBackend.listSubscriptions();
+      setItems(records);
+    } catch (e: unknown) {
+      setItems(null);
+      setError(e instanceof Error ? e.message : '加载失败');
+    }
   }, []);
 
   useEffect(() => {
-    refresh().catch(() => setItems([]));
-  }, [refresh]);
+    fetchSubscriptions();
+  }, [fetchSubscriptions]);
 
   async function checkNow() {
     if (!items || items.length === 0 || refreshing) return;
@@ -46,7 +58,7 @@ export default function SubscriptionsPage() {
           latestEpisodeCount: r.episodeCount,
         }));
       await localStorageBackend.updateSubscriptionChecks(updates);
-      await refresh();
+      await fetchSubscriptions();
       invalidateCardMarkers();
     } finally {
       setRefreshing(false);
@@ -66,28 +78,40 @@ export default function SubscriptionsPage() {
     invalidateCardMarkers();
   }
 
-  if (items === null) {
+  const wrapper = 'mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8';
+
+  if (items === null && !error) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className={wrapper}>
         <h1 className="mb-6 text-2xl font-semibold">我的追剧</h1>
-        <p className="text-sm text-muted-foreground">加载中…</p>
+        <PosterGridSkeleton />
       </div>
     );
   }
 
-  if (items.length === 0) {
+  if (error) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className={wrapper}>
         <h1 className="mb-6 text-2xl font-semibold">我的追剧</h1>
-        <div className="rounded-lg border border-border/60 bg-surface/40 p-8 text-center text-sm text-muted-foreground">
-          还没有追剧。在播放页点"追剧"就会出现在这里。新集上线时会自动提醒。
-        </div>
+        <CollectionErrorState description={error} onRetry={fetchSubscriptions} />
+      </div>
+    );
+  }
+
+  if (!items || items.length === 0) {
+    return (
+      <div className={wrapper}>
+        <h1 className="mb-6 text-2xl font-semibold">我的追剧</h1>
+        <CollectionEmptyState
+          title="我的追剧"
+          description={'还没有追剧。在播放页点“追剧”就会出现在这里。新集上线时会自动提醒。'}
+        />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+    <div className={wrapper}>
       <div className="mb-6 flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">我的追剧</h1>
         <div className="flex items-center gap-3 text-xs">

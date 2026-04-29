@@ -1,9 +1,14 @@
 'use client';
 
 import { invalidateCardMarkers } from '@/components/card-markers';
+import {
+  CollectionEmptyState,
+  CollectionErrorState,
+  PosterGridSkeleton,
+} from '@/components/collection-skeleton';
 import { type PlayRecord, localStorageBackend } from '@marstv/core';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 function formatPos(p: number, d: number): string {
   if (!Number.isFinite(p) || p <= 0) return '';
@@ -13,13 +18,20 @@ function formatPos(p: number, d: number): string {
 
 export default function HistoryPage() {
   const [items, setItems] = useState<PlayRecord[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchHistory = useCallback(() => {
+    setError(null);
+    setItems(null);
     localStorageBackend
       .listPlayRecords()
       .then(setItems)
-      .catch(() => setItems([]));
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : '加载失败'));
   }, []);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   async function remove(source: string, id: string) {
     await localStorageBackend.removePlayRecord(source, id);
@@ -34,28 +46,40 @@ export default function HistoryPage() {
     invalidateCardMarkers();
   }
 
-  if (items === null) {
+  const wrapper = 'mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8';
+
+  if (items === null && !error) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className={wrapper}>
         <h1 className="mb-6 text-2xl font-semibold">观看历史</h1>
-        <p className="text-sm text-muted-foreground">加载中…</p>
+        <PosterGridSkeleton />
       </div>
     );
   }
 
-  if (items.length === 0) {
+  if (error) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className={wrapper}>
         <h1 className="mb-6 text-2xl font-semibold">观看历史</h1>
-        <div className="rounded-lg border border-border/60 bg-surface/40 p-8 text-center text-sm text-muted-foreground">
-          还没有观看记录。播放任意视频后会自动出现在这里。
-        </div>
+        <CollectionErrorState description={error} onRetry={fetchHistory} />
+      </div>
+    );
+  }
+
+  if (!items || items.length === 0) {
+    return (
+      <div className={wrapper}>
+        <h1 className="mb-6 text-2xl font-semibold">观看历史</h1>
+        <CollectionEmptyState
+          title="观看历史"
+          description="还没有观看记录。播放任意视频后会自动出现在这里。"
+        />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+    <div className={wrapper}>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">观看历史</h1>
         <button

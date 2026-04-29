@@ -1,19 +1,31 @@
 'use client';
 
 import { invalidateCardMarkers } from '@/components/card-markers';
+import {
+  CollectionEmptyState,
+  CollectionErrorState,
+  PosterGridSkeleton,
+} from '@/components/collection-skeleton';
 import { type FavoriteRecord, localStorageBackend } from '@marstv/core';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export default function FavoritesPage() {
   const [items, setItems] = useState<FavoriteRecord[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchFavorites = useCallback(() => {
+    setError(null);
+    setItems(null);
     localStorageBackend
       .listFavorites()
       .then(setItems)
-      .catch(() => setItems([]));
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : '加载失败'));
   }, []);
+
+  useEffect(() => {
+    fetchFavorites();
+  }, [fetchFavorites]);
 
   async function remove(source: string, id: string) {
     await localStorageBackend.removeFavorite(source, id);
@@ -28,28 +40,40 @@ export default function FavoritesPage() {
     invalidateCardMarkers();
   }
 
-  if (items === null) {
+  const wrapper = 'mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8';
+
+  if (items === null && !error) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className={wrapper}>
         <h1 className="mb-6 text-2xl font-semibold">我的收藏</h1>
-        <p className="text-sm text-muted-foreground">加载中…</p>
+        <PosterGridSkeleton />
       </div>
     );
   }
 
-  if (items.length === 0) {
+  if (error) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className={wrapper}>
         <h1 className="mb-6 text-2xl font-semibold">我的收藏</h1>
-        <div className="rounded-lg border border-border/60 bg-surface/40 p-8 text-center text-sm text-muted-foreground">
-          还没有收藏。在播放页点"收藏"就会出现在这里。
-        </div>
+        <CollectionErrorState description={error} onRetry={fetchFavorites} />
+      </div>
+    );
+  }
+
+  if (!items || items.length === 0) {
+    return (
+      <div className={wrapper}>
+        <h1 className="mb-6 text-2xl font-semibold">我的收藏</h1>
+        <CollectionEmptyState
+          title="我的收藏"
+          description='还没有收藏。在播放页点"收藏"就会出现在这里。'
+        />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+    <div className={wrapper}>
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-semibold">我的收藏</h1>
         <button
