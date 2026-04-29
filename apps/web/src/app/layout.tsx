@@ -5,6 +5,7 @@ import { Suspense } from 'react';
 import './globals.css';
 import { DisclaimerDialog } from '@/components/disclaimer-dialog';
 import { NavProgress } from '@/components/nav-progress';
+import { isCloudStorageEnabled } from '@/lib/storage';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,9 +30,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cloudStorage = isCloudStorageEnabled();
   return (
     <html lang="zh-CN" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
+        {cloudStorage && (
+          // Flag read by `getClientStorage()` to route reads/writes through
+          // /api/storage/* instead of browser localStorage.
+          <script
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered constant
+            dangerouslySetInnerHTML={{ __html: 'window.__MARSTV_CLOUD_STORAGE__=true;' }}
+          />
+        )}
         <Suspense fallback={null}>
           <NavProgress />
         </Suspense>

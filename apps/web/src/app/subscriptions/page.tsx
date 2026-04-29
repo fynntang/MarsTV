@@ -6,7 +6,8 @@ import {
   CollectionErrorState,
   PosterGridSkeleton,
 } from '@/components/collection-skeleton';
-import { type SubscriptionRecord, localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
+import type { SubscriptionRecord } from '@marstv/core';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -25,7 +26,7 @@ export default function SubscriptionsPage() {
   const fetchSubscriptions = useCallback(async () => {
     setError(null);
     try {
-      const records = await localStorageBackend.listSubscriptions();
+      const records = await getClientStorage().listSubscriptions();
       setItems(records);
     } catch (e: unknown) {
       setItems(null);
@@ -57,7 +58,7 @@ export default function SubscriptionsPage() {
           id: r.id,
           latestEpisodeCount: r.episodeCount,
         }));
-      await localStorageBackend.updateSubscriptionChecks(updates);
+      await getClientStorage().updateSubscriptionChecks(updates);
       await fetchSubscriptions();
       invalidateCardMarkers();
     } finally {
@@ -66,14 +67,14 @@ export default function SubscriptionsPage() {
   }
 
   async function remove(source: string, id: string) {
-    await localStorageBackend.removeSubscription(source, id);
+    await getClientStorage().removeSubscription(source, id);
     setItems((prev) => (prev ?? []).filter((r) => !(r.source === source && r.id === id)));
     invalidateCardMarkers();
   }
 
   async function clearAll() {
     if (!confirm('取消所有追剧订阅?')) return;
-    await localStorageBackend.clearSubscriptions();
+    await getClientStorage().clearSubscriptions();
     setItems([]);
     invalidateCardMarkers();
   }

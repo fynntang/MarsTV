@@ -7,7 +7,8 @@
 // navigates to the play page, which acknowledges and clears the badge.
 
 import { invalidateCardMarkers } from '@/components/card-markers';
-import { type SubscriptionRecord, localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
+import type { SubscriptionRecord } from '@marstv/core';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -29,7 +30,7 @@ export function SubscriptionRow() {
     let cancelled = false;
 
     async function load() {
-      const records = await localStorageBackend.listSubscriptions();
+      const records = await getClientStorage().listSubscriptions();
       if (cancelled) return;
       setItems(records.slice(0, MAX_ITEMS));
 
@@ -58,9 +59,9 @@ export function SubscriptionRow() {
             latestEpisodeCount: r.episodeCount,
           }));
         if (updates.length === 0) return;
-        await localStorageBackend.updateSubscriptionChecks(updates);
+        await getClientStorage().updateSubscriptionChecks(updates);
         if (cancelled) return;
-        const refreshed = await localStorageBackend.listSubscriptions();
+        const refreshed = await getClientStorage().listSubscriptions();
         if (!cancelled) {
           setItems(refreshed.slice(0, MAX_ITEMS));
           invalidateCardMarkers();
@@ -77,7 +78,7 @@ export function SubscriptionRow() {
   }, []);
 
   async function remove(source: string, id: string) {
-    await localStorageBackend.removeSubscription(source, id);
+    await getClientStorage().removeSubscription(source, id);
     setItems((prev) => (prev ?? []).filter((r) => !(r.source === source && r.id === id)));
     invalidateCardMarkers();
   }

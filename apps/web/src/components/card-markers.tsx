@@ -5,7 +5,8 @@
 // when a favorite is toggled or an entry is removed. Cross-tab changes are
 // picked up via the 'storage' event.
 
-import { type PlayRecord, type SubscriptionRecord, localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
+import type { PlayRecord, SubscriptionRecord } from '@marstv/core';
 import { useEffect, useState } from 'react';
 
 interface Snapshot {
@@ -26,10 +27,11 @@ async function loadSnapshot(): Promise<Snapshot> {
   if (cachedSnapshot) return cachedSnapshot;
   if (inFlight) return inFlight;
   inFlight = (async () => {
+    const storage = getClientStorage();
     const [history, favorites, subscriptions] = await Promise.all([
-      localStorageBackend.listPlayRecords(),
-      localStorageBackend.listFavorites(),
-      localStorageBackend.listSubscriptions(),
+      storage.listPlayRecords(),
+      storage.listFavorites(),
+      storage.listSubscriptions(),
     ]);
     const snapshot: Snapshot = {
       history: new Map(history.map((r) => [makeKey(r.source, r.id), r])),

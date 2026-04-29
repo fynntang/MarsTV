@@ -1,7 +1,7 @@
 'use client';
 
 import { invalidateCardMarkers } from '@/components/card-markers';
-import { localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -19,7 +19,7 @@ export function FavoriteButton({ source, sourceName, id, title, poster }: Props)
 
   useEffect(() => {
     let cancelled = false;
-    localStorageBackend
+    getClientStorage()
       .hasFavorite(source, id)
       .then((v) => {
         if (!cancelled) setOn(v);
@@ -38,7 +38,7 @@ export function FavoriteButton({ source, sourceName, id, title, poster }: Props)
     setOn(next);
     try {
       if (next) {
-        await localStorageBackend.addFavorite({
+        await getClientStorage().addFavorite({
           source,
           sourceName,
           id,
@@ -47,7 +47,7 @@ export function FavoriteButton({ source, sourceName, id, title, poster }: Props)
           updatedAt: Date.now(),
         });
       } else {
-        await localStorageBackend.removeFavorite(source, id);
+        await getClientStorage().removeFavorite(source, id);
       }
       invalidateCardMarkers();
     } catch {

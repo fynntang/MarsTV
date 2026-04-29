@@ -1,7 +1,7 @@
 'use client';
 
 import { invalidateCardMarkers } from '@/components/card-markers';
-import { localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState } from 'react';
@@ -243,7 +243,7 @@ export function PlayerEmbed({
               // Don't leave a stale record pointing at the credits either.
               const rec = recordRef.current;
               if (rec) {
-                localStorageBackend
+                getClientStorage()
                   .removePlayRecord(rec.source, rec.id)
                   .then(() => invalidateCardMarkers())
                   .catch(() => {});
@@ -255,7 +255,7 @@ export function PlayerEmbed({
             // Also store a full PlayRecord if the caller wired one up.
             const rec = recordRef.current;
             if (rec) {
-              localStorageBackend
+              getClientStorage()
                 .putPlayRecord({
                   source: rec.source,
                   sourceName: rec.sourceName,

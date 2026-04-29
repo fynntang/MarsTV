@@ -6,7 +6,8 @@ import {
   CollectionErrorState,
   PosterGridSkeleton,
 } from '@/components/collection-skeleton';
-import { type FavoriteRecord, localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
+import type { FavoriteRecord } from '@marstv/core';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -17,7 +18,7 @@ export default function FavoritesPage() {
   const fetchFavorites = useCallback(() => {
     setError(null);
     setItems(null);
-    localStorageBackend
+    getClientStorage()
       .listFavorites()
       .then(setItems)
       .catch((e: unknown) => setError(e instanceof Error ? e.message : '加载失败'));
@@ -28,14 +29,14 @@ export default function FavoritesPage() {
   }, [fetchFavorites]);
 
   async function remove(source: string, id: string) {
-    await localStorageBackend.removeFavorite(source, id);
+    await getClientStorage().removeFavorite(source, id);
     setItems((prev) => (prev ?? []).filter((r) => !(r.source === source && r.id === id)));
     invalidateCardMarkers();
   }
 
   async function clearAll() {
     if (!confirm('清空全部收藏?')) return;
-    await localStorageBackend.clearFavorites();
+    await getClientStorage().clearFavorites();
     setItems([]);
     invalidateCardMarkers();
   }

@@ -5,7 +5,8 @@
 // on first-visit / empty state so the hero section stays clean.
 
 import { invalidateCardMarkers } from '@/components/card-markers';
-import { type PlayRecord, localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
+import type { PlayRecord } from '@marstv/core';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
@@ -24,14 +25,14 @@ export function ContinueWatchingRow() {
   const [items, setItems] = useState<PlayRecord[] | null>(null);
 
   useEffect(() => {
-    localStorageBackend
+    getClientStorage()
       .listPlayRecords()
       .then((records) => setItems(records.filter(usable).slice(0, MAX_ITEMS)))
       .catch(() => setItems([]));
   }, []);
 
   async function remove(source: string, id: string) {
-    await localStorageBackend.removePlayRecord(source, id);
+    await getClientStorage().removePlayRecord(source, id);
     setItems((prev) => (prev ?? []).filter((r) => !(r.source === source && r.id === id)));
     invalidateCardMarkers();
   }

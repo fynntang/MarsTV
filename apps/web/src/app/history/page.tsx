@@ -6,7 +6,8 @@ import {
   CollectionErrorState,
   PosterGridSkeleton,
 } from '@/components/collection-skeleton';
-import { type PlayRecord, localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
+import type { PlayRecord } from '@marstv/core';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -23,7 +24,7 @@ export default function HistoryPage() {
   const fetchHistory = useCallback(() => {
     setError(null);
     setItems(null);
-    localStorageBackend
+    getClientStorage()
       .listPlayRecords()
       .then(setItems)
       .catch((e: unknown) => setError(e instanceof Error ? e.message : '加载失败'));
@@ -34,14 +35,14 @@ export default function HistoryPage() {
   }, [fetchHistory]);
 
   async function remove(source: string, id: string) {
-    await localStorageBackend.removePlayRecord(source, id);
+    await getClientStorage().removePlayRecord(source, id);
     setItems((prev) => (prev ?? []).filter((r) => !(r.source === source && r.id === id)));
     invalidateCardMarkers();
   }
 
   async function clearAll() {
     if (!confirm('清空全部历史?')) return;
-    await localStorageBackend.clearPlayRecords();
+    await getClientStorage().clearPlayRecords();
     setItems([]);
     invalidateCardMarkers();
   }

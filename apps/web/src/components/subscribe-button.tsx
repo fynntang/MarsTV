@@ -1,7 +1,7 @@
 'use client';
 
 import { invalidateCardMarkers } from '@/components/card-markers';
-import { localStorageBackend } from '@marstv/core';
+import { getClientStorage } from '@/lib/client-storage';
 import { useEffect, useState } from 'react';
 
 interface Props {
@@ -35,7 +35,7 @@ export function SubscribeButton({
 
   useEffect(() => {
     let cancelled = false;
-    localStorageBackend
+    getClientStorage()
       .hasSubscription(source, id)
       .then((v) => {
         if (!cancelled) setOn(v);
@@ -52,7 +52,7 @@ export function SubscribeButton({
   // is here and already subscribed, bump knownEpisodeCount so the badge clears.
   useEffect(() => {
     if (on !== true) return;
-    localStorageBackend
+    getClientStorage()
       .acknowledgeSubscription(source, id)
       .then(() => invalidateCardMarkers())
       .catch(() => {});
@@ -65,7 +65,7 @@ export function SubscribeButton({
     try {
       if (next) {
         const now = Date.now();
-        await localStorageBackend.putSubscription({
+        await getClientStorage().putSubscription({
           source,
           sourceName,
           id,
@@ -79,7 +79,7 @@ export function SubscribeButton({
           lastCheckedAt: now,
         });
       } else {
-        await localStorageBackend.removeSubscription(source, id);
+        await getClientStorage().removeSubscription(source, id);
       }
       invalidateCardMarkers();
     } catch {
