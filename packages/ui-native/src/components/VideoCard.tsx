@@ -1,6 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { colors, fontSize, radius } from '@marstv/config';
 import type { VideoItem } from '@marstv/core';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface VideoCardProps {
   item: VideoItem;

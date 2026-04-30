@@ -1,5 +1,5 @@
-import { Text, type TextProps, Platform } from 'react-native';
 import { colors, fontSize } from '@marstv/config/tokens';
+import { Platform, Text, type TextProps } from 'react-native';
 
 interface TextViewProps extends TextProps {
   variant?: 'body' | 'caption' | 'heading';

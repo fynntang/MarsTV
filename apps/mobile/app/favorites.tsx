@@ -1,9 +1,9 @@
+import { colors } from '@marstv/config';
+import type { VideoItem } from '@marstv/core';
+import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { colors } from '@marstv/config';
-import { Container, TextView, Spacer, VideoCard } from '@marstv/ui-native';
-import type { VideoItem } from '@marstv/core';
 
 const MOCK_FAVORITES: Array<{ item: VideoItem; sourceName: string }> = [];
 
@@ -14,7 +14,9 @@ export default function FavoritesScreen() {
     return (
       <Container style={styles.container}>
         <Spacer size={80} />
-        <TextView variant="heading" style={styles.emptyTitle}>No Favorites</TextView>
+        <TextView variant="heading" style={styles.emptyTitle}>
+          No Favorites
+        </TextView>
         <Spacer size={8} />
         <TextView variant="caption" color={colors.textMuted} style={styles.emptyDesc}>
           Tap the heart icon on any video to save it here

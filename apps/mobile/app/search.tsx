@@ -1,17 +1,17 @@
+import { colors, fontSize, radius, spacing } from '@marstv/config';
+import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import {
-  StyleSheet,
-  TextInput,
-  FlatList,
   ActivityIndicator,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableOpacity,
   View,
-  Text,
 } from 'react-native';
-import { router } from 'expo-router';
-import { colors, fontSize, radius, spacing } from '@marstv/config';
-import { Container, TextView, Spacer, VideoCard } from '@marstv/ui-native';
-import { searchVideos, type SearchHit } from '../src/lib/api';
+import { type SearchHit, searchVideos } from '../src/lib/api';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');

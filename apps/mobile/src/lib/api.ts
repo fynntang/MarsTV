@@ -1,7 +1,7 @@
 // Lightweight CMS API client for mobile — uses fetch (available in RN)
 // No dependency on Next.js or Node.js APIs
 
-import type { CmsSource, VideoItem, PlayLine } from '@marstv/core';
+import type { CmsSource, PlayLine, VideoItem } from '@marstv/core';
 
 export interface SearchHit {
   source: CmsSource;

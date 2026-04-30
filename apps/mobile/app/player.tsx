@@ -1,9 +1,9 @@
-import { useLocalSearchParams, Stack } from 'expo-router';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useState, useEffect } from 'react';
 import { colors } from '@marstv/config';
-import { Container, TextView, Spacer } from '@marstv/ui-native';
 import type { PlayLine } from '@marstv/core';
+import { Container, Spacer, TextView } from '@marstv/ui-native';
+import { Stack, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 export default function PlayerScreen() {
   const { source, id, title } = useLocalSearchParams<{
@@ -47,7 +47,7 @@ export default function PlayerScreen() {
       <View style={styles.infoBar}>
         <TextView variant="body">{title ?? 'Unknown'}</TextView>
         <TextView variant="caption" color={colors.textMuted}>
-          {source ?? ''}{' '}·{' '}{id ?? ''}
+          {source ?? ''} · {id ?? ''}
         </TextView>
         {lines.length > 0 && (
           <TextView variant="caption" color={colors.primary}>

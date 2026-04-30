@@ -1,9 +1,9 @@
+import { colors } from '@marstv/config';
+import type { VideoItem } from '@marstv/core';
+import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { colors } from '@marstv/config';
-import { Container, TextView, Spacer, VideoCard } from '@marstv/ui-native';
-import type { VideoItem } from '@marstv/core';
 
 const MOCK_HISTORY: Array<{
   item: VideoItem;
@@ -19,7 +19,9 @@ export default function HistoryScreen() {
     return (
       <Container style={styles.container}>
         <Spacer size={80} />
-        <TextView variant="heading" style={styles.emptyTitle}>No History</TextView>
+        <TextView variant="heading" style={styles.emptyTitle}>
+          No History
+        </TextView>
         <Spacer size={8} />
         <TextView variant="caption" color={colors.textMuted} style={styles.emptyDesc}>
           Videos you watch will appear here so you can pick up where you left off

@@ -1,7 +1,7 @@
+import { colors } from '@marstv/config';
+import { Container, Spacer, TextView } from '@marstv/ui-native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet } from 'react-native';
-import { TextView, Container, Spacer } from '@marstv/ui-native';
-import { colors } from '@marstv/config';
 
 export default function App() {
   return (

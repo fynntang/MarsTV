@@ -1,6 +1,6 @@
+import { colors } from '@marstv/config';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { colors } from '@marstv/config';
 
 export default function RootLayout() {
   return (
@@ -14,6 +14,7 @@ export default function RootLayout() {
           contentStyle: { backgroundColor: colors.background },
         }}
       >
+        <Stack.Screen name="login" options={{ title: 'Sign In', headerBackVisible: false }} />
         <Stack.Screen name="index" options={{ title: 'MarsTV' }} />
         <Stack.Screen name="favorites" options={{ title: 'Favorites' }} />
         <Stack.Screen name="history" options={{ title: 'History' }} />

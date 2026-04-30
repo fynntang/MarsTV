@@ -2,8 +2,8 @@ import { ContinueWatchingRow } from '@/components/continue-watching-row';
 import { DoubanRow } from '@/components/douban-row';
 import { SearchBox } from '@/components/search-box';
 import { SubscriptionRow } from '@/components/subscription-row';
-import { Button } from '@marstv/ui-web';
 import { requirePagePassword } from '@/lib/site-password-guard';
+import { Button } from '@marstv/ui-web';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
