@@ -1,7 +1,7 @@
 #![windows_subsystem = "windows"]
 
 use tauri::{Emitter, Manager, WindowEvent};
-use tauri::menu::{MenuBuilder, MenuItemBuilder};
+use tauri::menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem, SubmenuBuilder};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 
@@ -20,6 +20,68 @@ pub fn run() {
                     }
                 }
             })?;
+
+            // --- Native menu bar ---
+            let file_menu = SubmenuBuilder::new(app, "File")
+                .item(&MenuItemBuilder::with_id("settings", "Settings...").accelerator("CmdOrCtrl+,").build(app)?)
+                .separator()
+                .item(&MenuItemBuilder::with_id("quit_menu", "Quit MarsTV").accelerator("CmdOrCtrl+Q").build(app)?)
+                .build()?;
+
+            let edit_menu = SubmenuBuilder::new(app, "Edit")
+                .item(&PredefinedMenuItem::undo(app, None)?)
+                .item(&PredefinedMenuItem::redo(app, None)?)
+                .separator()
+                .item(&PredefinedMenuItem::cut(app, None)?)
+                .item(&PredefinedMenuItem::copy(app, None)?)
+                .item(&PredefinedMenuItem::paste(app, None)?)
+                .item(&PredefinedMenuItem::select_all(app, None)?)
+                .build()?;
+
+            let view_menu = SubmenuBuilder::new(app, "View")
+                .item(&MenuItemBuilder::with_id("reload", "Reload").accelerator("CmdOrCtrl+R").build(app)?)
+                .item(&PredefinedMenuItem::fullscreen(app, None)?)
+                .build()?;
+
+            let window_menu = SubmenuBuilder::new(app, "Window")
+                .item(&PredefinedMenuItem::minimize(app, None)?)
+                .build()?;
+
+            let help_menu = SubmenuBuilder::new(app, "Help")
+                .item(&MenuItemBuilder::with_id("about", "About MarsTV").build(app)?)
+                .build()?;
+
+            let menu = MenuBuilder::new(app)
+                .item(&file_menu)
+                .item(&edit_menu)
+                .item(&view_menu)
+                .item(&window_menu)
+                .item(&help_menu)
+                .build()?;
+
+            app.set_menu(menu)?;
+
+            app.on_menu_event(|app, event| {
+                match event.id().as_ref() {
+                    "quit_menu" => app.exit(0),
+                    "reload" => {
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.eval("location.reload()");
+                        }
+                    }
+                    "about" => {
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.emit("menu-event", "about");
+                        }
+                    }
+                    "settings" => {
+                        if let Some(window) = app.get_webview_window("main") {
+                            let _ = window.emit("menu-event", "settings");
+                        }
+                    }
+                    _ => {}
+                }
+            });
 
             // Build tray menu: Show / Quit
             let show = MenuItemBuilder::with_id("show", "Show MarsTV").build(app)?;

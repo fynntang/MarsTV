@@ -3,9 +3,9 @@
 
 import type { CmsSource, VideoItem, PlayLine } from '@marstv/core';
 
-export interface MobileSearchResult {
+export interface SearchHit {
   source: CmsSource;
-  items: VideoItem[];
+  item: VideoItem;
 }
 
 export interface MobileVideoDetail {
@@ -24,10 +24,22 @@ export function getApiBase(): string {
   return _baseUrl;
 }
 
-export async function searchVideos(query: string): Promise<MobileSearchResult[]> {
-  const res = await fetch(`${_baseUrl}/api/search?q=${encodeURIComponent(query)}`);
-  if (!res.ok) throw new Error(`Search failed: ${res.status}`);
-  return res.json();
+export async function searchVideos(query: string): Promise<SearchHit[]> {
+  try {
+    const res = await fetch(`${_baseUrl}/api/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error(`Search failed: ${res.status}`);
+    const data = await res.json();
+    // Transform grouped results { source, items[] } into flat hits { source, item }[]
+    const hits: SearchHit[] = [];
+    for (const result of data) {
+      for (const item of result.items) {
+        hits.push({ source: result.source, item });
+      }
+    }
+    return hits;
+  } catch {
+    return [];
+  }
 }
 
 export async function loadMobileSources(): Promise<CmsSource[]> {

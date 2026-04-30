@@ -1,21 +1,186 @@
-import { StyleSheet } from 'react-native';
-import { TextView, Container } from '@marstv/ui-native';
-import { colors } from '@marstv/config';
+import { useState } from 'react';
+import {
+  StyleSheet,
+  TextInput,
+  FlatList,
+  ActivityIndicator,
+  TouchableOpacity,
+  View,
+  Text,
+} from 'react-native';
+import { router } from 'expo-router';
+import { colors, fontSize, radius, spacing } from '@marstv/config';
+import { Container, TextView, Spacer, VideoCard } from '@marstv/ui-native';
+import { searchVideos, type SearchHit } from '../src/lib/api';
 
 export default function SearchScreen() {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<SearchHit[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searched, setSearched] = useState(false);
+
+  const handleSearch = async () => {
+    const q = query.trim();
+    if (!q) return;
+    setLoading(true);
+    setError(null);
+    setSearched(true);
+    try {
+      const hits = await searchVideos(q);
+      setResults(hits);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Search failed');
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Container style={styles.container}>
-      <TextView variant="heading" color={colors.textMuted}>
-        Search — Coming Soon
-      </TextView>
+      <SearchBox query={query} onChange={setQuery} onSubmit={handleSearch} />
+      {loading && <LoadingIndicator />}
+      {error && <ErrorView message={error} />}
+      {!loading && !error && searched && results.length === 0 && <EmptyView />}
+      {!loading && !error && <ResultList results={results} />}
     </Container>
+  );
+}
+
+function SearchBox({
+  query,
+  onChange,
+  onSubmit,
+}: {
+  query: string;
+  onChange: (v: string) => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <View style={styles.searchBox}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search videos..."
+        placeholderTextColor={colors.textDim}
+        value={query}
+        onChangeText={onChange}
+        onSubmitEditing={onSubmit}
+        returnKeyType="search"
+        autoCorrect={false}
+      />
+      <TouchableOpacity style={styles.searchButton} onPress={onSubmit} activeOpacity={0.7}>
+        <Text style={styles.searchButtonText}>Search</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+function LoadingIndicator() {
+  return (
+    <View style={styles.center}>
+      <ActivityIndicator size="large" color={colors.primary} />
+    </View>
+  );
+}
+
+function ErrorView({ message }: { message: string }) {
+  return (
+    <View style={styles.center}>
+      <Spacer size={spacing[6]} />
+      <TextView variant="heading" color={colors.danger}>
+        Error
+      </TextView>
+      <Spacer size={spacing[2]} />
+      <TextView variant="body" color={colors.textMuted}>
+        {message}
+      </TextView>
+    </View>
+  );
+}
+
+function EmptyView() {
+  return (
+    <View style={styles.center}>
+      <Spacer size={spacing[6]} />
+      <TextView variant="heading" color={colors.textMuted}>
+        No results found
+      </TextView>
+      <Spacer size={spacing[2]} />
+      <TextView variant="caption" color={colors.textDim}>
+        Try a different search term
+      </TextView>
+    </View>
+  );
+}
+
+function ResultList({ results }: { results: SearchHit[] }) {
+  return (
+    <FlatList
+      data={results}
+      keyExtractor={(hit) => `${hit.source.key}-${hit.item.id}`}
+      contentContainerStyle={styles.listContent}
+      renderItem={({ item: hit }) => (
+        <VideoCard
+          item={hit.item}
+          sourceName={hit.source.name}
+          onPress={() =>
+            router.push({
+              pathname: '/player',
+              params: {
+                source: hit.item.source,
+                id: hit.item.id,
+                title: hit.item.title,
+              },
+            })
+          }
+        />
+      )}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
+  },
+  searchBox: {
+    flexDirection: 'row',
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[3],
+    gap: spacing[2],
+    backgroundColor: colors.surface,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  searchInput: {
+    flex: 1,
+    height: 44,
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing[3],
+    fontSize: fontSize.base,
+    color: colors.text,
+  },
+  searchButton: {
+    height: 44,
+    paddingHorizontal: spacing[4],
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  searchButtonText: {
+    fontSize: fontSize.base,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  listContent: {
+    padding: spacing[4],
   },
 });
