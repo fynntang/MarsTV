@@ -10,7 +10,7 @@
     "tvos": "expo start --tvos",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"No tests yet\""
+    "test": "vitest run"
   },
   "dependencies": {
     "@marstv/core": "workspace:*",
@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@types/react": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   }
 }

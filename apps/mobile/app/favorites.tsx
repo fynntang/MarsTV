@@ -3,12 +3,22 @@ import type { VideoItem } from '@marstv/core';
 import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, RefreshControl, StyleSheet } from 'react-native';
 
 const MOCK_FAVORITES: Array<{ item: VideoItem; sourceName: string }> = [];
 
 export default function FavoritesScreen() {
-  const [items] = useState(MOCK_FAVORITES);
+  const [items, setItems] = useState(MOCK_FAVORITES);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      // In production, re-fetch from storage API
+      setItems([...MOCK_FAVORITES]);
+      setRefreshing(false);
+    }, 800);
+  };
 
   if (items.length === 0) {
     return (
@@ -43,6 +53,14 @@ export default function FavoritesScreen() {
           />
         )}
         contentContainerStyle={styles.listContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
       />
     </Container>
   );

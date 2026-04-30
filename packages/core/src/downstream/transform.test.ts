@@ -14,6 +14,11 @@ function hit(source: CmsSource, item: VideoItem): SourceHit {
   return { source, item };
 }
 
+function first<T>(arr: T[]): T {
+  if (arr.length === 0) throw new Error('unreachable: empty array');
+  return arr[0];
+}
+
 describe('groupHitsByTitle', () => {
   it('groups same title+year across sources with first hit as primary', () => {
     const groups = groupHitsByTitle([
@@ -22,10 +27,10 @@ describe('groupHitsByTitle', () => {
     ]);
 
     expect(groups).toHaveLength(1);
-    const g1 = groups[0]!;
+    const g1 = first(groups);
     expect(g1.primary.source.key).toBe('a');
     expect(g1.others).toHaveLength(1);
-    expect(g1.others[0]!.source.key).toBe('b');
+    expect(first(g1.others).source.key).toBe('b');
   });
 
   it('treats different years as different groups even when title matches', () => {
@@ -45,7 +50,7 @@ describe('groupHitsByTitle', () => {
     ]);
 
     expect(groups).toHaveLength(1);
-    const g3 = groups[0]!;
+    const g3 = first(groups);
     expect(g3.others).toHaveLength(2);
   });
 
@@ -65,7 +70,7 @@ describe('groupHitsByTitle', () => {
     ]);
 
     expect(groups).toHaveLength(1);
-    const g5 = groups[0]!;
+    const g5 = first(groups);
     expect(g5.primary.item.id).toBe('1');
     expect(g5.others).toHaveLength(0);
   });
@@ -77,7 +82,7 @@ describe('groupHitsByTitle', () => {
       hit(srcC, mkItem('c', '3', '三体', '2023')),
     ]);
 
-    const g6 = groups[0]!;
+    const g6 = first(groups);
     expect(g6.primary.source.key).toBe('b');
     expect(g6.others.map((o) => o.source.key)).toEqual(['a', 'c']);
   });

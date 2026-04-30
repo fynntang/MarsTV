@@ -12,15 +12,15 @@ export default function PlayerScreen() {
     title: string;
   }>();
   const [loading, setLoading] = useState(true);
-  const [lines, setLines] = useState<PlayLine[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [lines, _setLines] = useState<PlayLine[]>([]);
+  const [error, _setError] = useState<string | null>(null);
 
   useEffect(() => {
     // In production, fetch play lines from CMS API then load into player.
     // For now, simulate a loading delay.
     const timer = setTimeout(() => setLoading(false), 1500);
     return () => clearTimeout(timer);
-  }, [source, id]);
+  }, []);
 
   return (
     <Container style={{ backgroundColor: colors.background }}>
