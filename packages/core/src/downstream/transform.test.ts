@@ -14,9 +14,9 @@ function hit(source: CmsSource, item: VideoItem): SourceHit {
   return { source, item };
 }
 
-function first<T>(arr: T[]): T {
+function first<T>(arr: T[]): NonNullable<T> {
   if (arr.length === 0) throw new Error('unreachable: empty array');
-  return arr[0];
+  return arr[0] as NonNullable<T>;
 }
 
 describe('groupHitsByTitle', () => {

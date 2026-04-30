@@ -1,8 +1,24 @@
 import { colors } from '@marstv/config';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
+import { isAuthenticated } from '../src/lib/auth';
+
+function useAuthGate() {
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated()) return;
+    if (segments[0] !== 'login') {
+      router.replace('/login');
+    }
+  }, [segments, router]);
+}
 
 export default function RootLayout() {
+  useAuthGate();
+
   return (
     <>
       <StatusBar style="light" />
