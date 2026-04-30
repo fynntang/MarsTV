@@ -65,6 +65,13 @@ export default function HomeScreen() {
           >
             <TextView variant="body" style={styles.navButtonText}>History</TextView>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => router.push('/subscriptions')}
+            activeOpacity={0.7}
+          >
+            <TextView variant="body" style={styles.navButtonText}>Subscriptions</TextView>
+          </TouchableOpacity>
         </View>
         <Spacer size={24} />
       </ScrollView>
