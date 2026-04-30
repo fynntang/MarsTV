@@ -11,30 +11,15 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { type SearchHit, searchVideos } from '../src/lib/api';
+import { useCmsSearch } from '../src/hooks/useCmsSearch';
+import type { SearchHit } from '../src/lib/api';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchHit[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [searched, setSearched] = useState(false);
+  const { results, loading, error, searched, search } = useCmsSearch();
 
-  const handleSearch = async () => {
-    const q = query.trim();
-    if (!q) return;
-    setLoading(true);
-    setError(null);
-    setSearched(true);
-    try {
-      const hits = await searchVideos(q);
-      setResults(hits);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Search failed');
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = () => {
+    search(query);
   };
 
   return (

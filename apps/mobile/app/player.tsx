@@ -1,9 +1,8 @@
 import { colors } from '@marstv/config';
-import type { PlayLine } from '@marstv/core';
 import { Container, Spacer, TextView } from '@marstv/ui-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { usePlayerData } from '../src/hooks/usePlayerData';
 
 export default function PlayerScreen() {
   const { source, id, title } = useLocalSearchParams<{
@@ -11,16 +10,7 @@ export default function PlayerScreen() {
     id: string;
     title: string;
   }>();
-  const [loading, setLoading] = useState(true);
-  const [lines, _setLines] = useState<PlayLine[]>([]);
-  const [error, _setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    // In production, fetch play lines from CMS API then load into player.
-    // For now, simulate a loading delay.
-    const timer = setTimeout(() => setLoading(false), 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  const { lines, loading, error } = usePlayerData(source ?? '', id ?? '');
 
   return (
     <Container style={{ backgroundColor: colors.background }}>
