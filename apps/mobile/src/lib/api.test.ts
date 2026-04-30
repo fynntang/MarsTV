@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-import { getApiBase, searchVideos, setApiBase } from './api';
+import { getApiBase, searchVideos, setApiBase } from '@marstv/ui-shared';
 
 describe('api client', () => {
   beforeEach(() => {
@@ -13,13 +13,13 @@ describe('api client', () => {
 
   describe('setApiBase / getApiBase', () => {
     it('returns the default placeholder', () => {
-      expect(getApiBase()).toBe('https://marstv.example.com');
+      expect(getApiBase()).toBe('http://localhost:3000');
     });
 
     it('allows overriding the base URL', () => {
       setApiBase('https://my-marstv.com');
       expect(getApiBase()).toBe('https://my-marstv.com');
-      setApiBase('https://marstv.example.com'); // reset
+      setApiBase('http://localhost:3000'); // reset
     });
   });
 

@@ -10,14 +10,34 @@ export interface RouterAdapter {
   back(): void;
 }
 
+interface BrowserGlobal {
+  location: {
+    href: string;
+    replace(url: string): void;
+  };
+  history: {
+    back(): void;
+  };
+}
+
+function getBrowserGlobal(): BrowserGlobal | undefined {
+  if (typeof globalThis !== 'undefined') {
+    return globalThis as unknown as BrowserGlobal;
+  }
+  return undefined;
+}
+
 export const noopRouter: RouterAdapter = {
   push(href: string) {
-    if (typeof window !== 'undefined') window.location.href = href;
+    const g = getBrowserGlobal();
+    if (g) g.location.href = href;
   },
   replace(href: string) {
-    if (typeof window !== 'undefined') window.location.replace(href);
+    const g = getBrowserGlobal();
+    if (g) g.location.replace(href);
   },
   back() {
-    if (typeof window !== 'undefined') window.history.back();
+    const g = getBrowserGlobal();
+    if (g) g.history.back();
   },
 };

@@ -15,6 +15,7 @@
   "dependencies": {
     "@marstv/core": "workspace:*",
     "@marstv/config": "workspace:*",
+    "@marstv/ui-shared": "workspace:*",
     "@marstv/ui-native": "workspace:*",
     "expo": "~52.0.0",
     "expo-constants": "~17.0.0",

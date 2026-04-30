@@ -1,5 +1,7 @@
 import { colors, fontSize, radius, spacing } from '@marstv/config';
 import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { useCmsSearch } from '@marstv/ui-shared';
+import type { SearchHit } from '@marstv/ui-shared';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -11,8 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useCmsSearch } from '../src/hooks/useCmsSearch';
-import type { SearchHit } from '../src/lib/api';
 
 export default function SearchScreen() {
   const [query, setQuery] = useState('');

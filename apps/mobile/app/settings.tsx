@@ -1,8 +1,8 @@
 import { colors, fontSize, radius } from '@marstv/config';
 import { Container, Spacer, TextView } from '@marstv/ui-native';
+import { getApiBase, setApiBase } from '@marstv/ui-shared';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
-import { getApiBase, setApiBase } from '../src/lib/api';
 
 export default function SettingsScreen() {
   const [apiUrl, setApiUrl] = useState(getApiBase());

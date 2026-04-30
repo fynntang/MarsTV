@@ -1,8 +1,8 @@
 import { colors } from '@marstv/config';
 import { Container, Spacer, TextView } from '@marstv/ui-native';
+import { usePlayerData } from '@marstv/ui-shared';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { usePlayerData } from '../src/hooks/usePlayerData';
 
 export default function PlayerScreen() {
   const { source, id, title } = useLocalSearchParams<{
