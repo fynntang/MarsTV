@@ -1,13 +1,13 @@
 'use client';
 
-import { invalidateCardMarkers } from '@/components/card-markers';
+import { getClientStorage } from '@/lib/client-storage';
+import type { FavoriteRecord } from '@marstv/core';
 import {
   CollectionEmptyState,
   CollectionErrorState,
   PosterGridSkeleton,
-} from '@/components/collection-skeleton';
-import { getClientStorage } from '@/lib/client-storage';
-import type { FavoriteRecord } from '@marstv/core';
+  invalidateCardMarkers,
+} from '@marstv/ui-web';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 

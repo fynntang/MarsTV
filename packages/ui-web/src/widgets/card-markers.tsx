@@ -1,12 +1,11 @@
 'use client';
 
-// Reads history + favorites from localStorage and renders small corner markers
-// on top of a video card. Snapshot is cached per page view and invalidated
-// when a favorite is toggled or an entry is removed. Cross-tab changes are
-// picked up via the 'storage' event.
-
-import { getClientStorage } from '@/lib/client-storage';
-import type { PlayRecord, SubscriptionRecord } from '@marstv/core';
+import {
+  type IStorage,
+  type PlayRecord,
+  type SubscriptionRecord,
+  localStorageBackend,
+} from '@marstv/core';
 import { useEffect, useState } from 'react';
 
 interface Snapshot {
@@ -23,11 +22,10 @@ let cachedSnapshot: Snapshot | null = null;
 let inFlight: Promise<Snapshot> | null = null;
 const subscribers = new Set<() => void>();
 
-async function loadSnapshot(): Promise<Snapshot> {
+async function loadSnapshot(storage: IStorage): Promise<Snapshot> {
   if (cachedSnapshot) return cachedSnapshot;
   if (inFlight) return inFlight;
   inFlight = (async () => {
-    const storage = getClientStorage();
     const [history, favorites, subscriptions] = await Promise.all([
       storage.listPlayRecords(),
       storage.listFavorites(),
@@ -67,17 +65,21 @@ export function invalidateCardMarkers(): void {
   notify();
 }
 
-export function CardMarkers({ source, id }: { source: string; id: string }) {
-  // Always start null on first render. The module-level cachedSnapshot is a
-  // client-only perf cache; reading it during SSR-paired hydration would
-  // diverge from the server render (which always sees null).
-  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
+interface CardMarkersProps {
+  source: string;
+  id: string;
+  storage?: IStorage;
+}
+
+export function CardMarkers({ source, id, storage }: CardMarkersProps) {
+  const store = storage ?? localStorageBackend;
+  const [snapshot, setSnap] = useState<Snapshot | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const sync = () => {
-      loadSnapshot().then((s) => {
-        if (!cancelled) setSnapshot(s);
+      loadSnapshot(store).then((s) => {
+        if (!cancelled) setSnap(s);
       });
     };
     sync();
@@ -86,7 +88,7 @@ export function CardMarkers({ source, id }: { source: string; id: string }) {
       cancelled = true;
       subscribers.delete(sync);
     };
-  }, []);
+  }, [store]);
 
   if (!snapshot) return null;
 

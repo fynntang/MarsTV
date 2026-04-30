@@ -1,8 +1,8 @@
 'use client';
 
-import { invalidateCardMarkers } from '@/components/card-markers';
-import { getClientStorage } from '@/lib/client-storage';
+import { type IStorage, localStorageBackend } from '@marstv/core';
 import { useEffect, useState } from 'react';
+import { invalidateCardMarkers } from './card-markers';
 
 interface Props {
   source: string;
@@ -10,16 +10,16 @@ interface Props {
   id: string;
   title: string;
   poster?: string;
+  storage?: IStorage;
 }
 
-// Heart toggle. Stores a FavoriteRecord via IStorage (LocalStorage backend).
-// Optimistic update: flip the UI immediately, rollback on failure.
-export function FavoriteButton({ source, sourceName, id, title, poster }: Props) {
+export function FavoriteButton({ source, sourceName, id, title, poster, storage }: Props) {
+  const store = storage ?? localStorageBackend;
   const [on, setOn] = useState<boolean | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    getClientStorage()
+    store
       .hasFavorite(source, id)
       .then((v) => {
         if (!cancelled) setOn(v);
@@ -30,7 +30,7 @@ export function FavoriteButton({ source, sourceName, id, title, poster }: Props)
     return () => {
       cancelled = true;
     };
-  }, [source, id]);
+  }, [source, id, store]);
 
   async function toggle() {
     if (on === null) return;
@@ -38,7 +38,7 @@ export function FavoriteButton({ source, sourceName, id, title, poster }: Props)
     setOn(next);
     try {
       if (next) {
-        await getClientStorage().addFavorite({
+        await store.addFavorite({
           source,
           sourceName,
           id,
@@ -47,7 +47,7 @@ export function FavoriteButton({ source, sourceName, id, title, poster }: Props)
           updatedAt: Date.now(),
         });
       } else {
-        await getClientStorage().removeFavorite(source, id);
+        await store.removeFavorite(source, id);
       }
       invalidateCardMarkers();
     } catch {

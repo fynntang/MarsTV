@@ -6,9 +6,9 @@
 // that way) and show a +N badge until the user clicks through — clicking
 // navigates to the play page, which acknowledges and clears the badge.
 
-import { invalidateCardMarkers } from '@/components/card-markers';
 import { getClientStorage } from '@/lib/client-storage';
 import type { SubscriptionRecord } from '@marstv/core';
+import { invalidateCardMarkers } from '@marstv/ui-web';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 

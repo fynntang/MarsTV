@@ -1,0 +1,63 @@
+import type { CmsSource, VideoItem } from '@marstv/core';
+
+export interface SearchHit {
+  source: CmsSource;
+  item: VideoItem;
+}
+
+let _apiBase = 'http://localhost:3000';
+
+export function setApiBase(url: string): void {
+  _apiBase = url.replace(/\/+$/, '');
+}
+
+export function getApiBase(): string {
+  return _apiBase;
+}
+
+export async function searchVideos(query: string): Promise<SearchHit[]> {
+  try {
+    const res = await fetch(`${_apiBase}/api/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) return [];
+    const data: unknown = await res.json();
+    if (!Array.isArray(data)) return [];
+    const hits: SearchHit[] = [];
+    for (const group of data) {
+      const source = (group as { source?: CmsSource; items?: VideoItem[] })?.source;
+      const items = (group as { source?: CmsSource; items?: VideoItem[] })?.items;
+      if (source && Array.isArray(items)) {
+        for (const item of items) {
+          hits.push({ source, item });
+        }
+      }
+    }
+    return hits;
+  } catch {
+    return [];
+  }
+}
+
+export async function fetchDoubanRankings(type: string, pageSize?: number) {
+  try {
+    const params = new URLSearchParams({ type, pageSize: String(pageSize ?? 20) });
+    const res = await fetch(`${_apiBase}/api/douban?${params}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function loginWithPassword(password: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${_apiBase}/api/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
+    });
+    return res.status === 200;
+  } catch {
+    return true;
+  }
+}

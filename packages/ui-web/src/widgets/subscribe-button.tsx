@@ -1,8 +1,8 @@
 'use client';
 
-import { invalidateCardMarkers } from '@/components/card-markers';
-import { getClientStorage } from '@/lib/client-storage';
+import { type IStorage, localStorageBackend } from '@marstv/core';
 import { useEffect, useState } from 'react';
+import { invalidateCardMarkers } from './card-markers';
 
 interface Props {
   source: string;
@@ -12,15 +12,10 @@ interface Props {
   poster?: string;
   lineIdx: number;
   lineName?: string;
-  /** Total episode count of the most populated line on the detail page. Used
-      as the initial knownEpisodeCount so subsequent checks can diff against
-      what the user has actually seen. */
   episodeCount: number;
+  storage?: IStorage;
 }
 
-// Subscribe toggle. When on, the show appears on the home "追剧中" row and
-// we periodically refetch detail to show a "+N 新集" badge when new episodes
-// land. Optimistic UI — flip immediately, rollback on storage failure.
 export function SubscribeButton({
   source,
   sourceName,
@@ -30,12 +25,14 @@ export function SubscribeButton({
   lineIdx,
   lineName,
   episodeCount,
+  storage,
 }: Props) {
+  const store = storage ?? localStorageBackend;
   const [on, setOn] = useState<boolean | null>(null);
 
   useEffect(() => {
     let cancelled = false;
-    getClientStorage()
+    store
       .hasSubscription(source, id)
       .then((v) => {
         if (!cancelled) setOn(v);
@@ -46,17 +43,15 @@ export function SubscribeButton({
     return () => {
       cancelled = true;
     };
-  }, [source, id]);
+  }, [source, id, store]);
 
-  // Landing on the play page is an implicit "caught up" signal — if the user
-  // is here and already subscribed, bump knownEpisodeCount so the badge clears.
   useEffect(() => {
     if (on !== true) return;
-    getClientStorage()
+    store
       .acknowledgeSubscription(source, id)
       .then(() => invalidateCardMarkers())
       .catch(() => {});
-  }, [on, source, id]);
+  }, [on, source, id, store]);
 
   async function toggle() {
     if (on === null) return;
@@ -65,7 +60,7 @@ export function SubscribeButton({
     try {
       if (next) {
         const now = Date.now();
-        await getClientStorage().putSubscription({
+        await store.putSubscription({
           source,
           sourceName,
           id,
@@ -79,7 +74,7 @@ export function SubscribeButton({
           lastCheckedAt: now,
         });
       } else {
-        await getClientStorage().removeSubscription(source, id);
+        await store.removeSubscription(source, id);
       }
       invalidateCardMarkers();
     } catch {

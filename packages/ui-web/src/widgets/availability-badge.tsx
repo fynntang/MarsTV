@@ -1,17 +1,14 @@
 'use client';
 
-// Lazy "N 源可看" badge for Douban cards. Uses IntersectionObserver so cards
-// below the fold don't fire any network request until the user scrolls to
-// them. The /api/availability endpoint dedupes + caches per-keyword so 24
-// simultaneously-visible cards cost at most 24 CMS fan-outs on cold cache.
-
 import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   title: string;
+  /** API endpoint for availability checks. Defaults to '/api/availability'. */
+  apiEndpoint?: string;
 }
 
-interface AvailabilityResponse {
+export interface AvailabilityResponse {
   count: number;
   sourceCount: number;
 }
@@ -21,7 +18,11 @@ interface AvailabilityResponse {
 const clientCache = new Map<string, AvailabilityResponse>();
 const clientInflight = new Map<string, Promise<AvailabilityResponse>>();
 
-function fetchAvailability(title: string, signal: AbortSignal): Promise<AvailabilityResponse> {
+function fetchAvailability(
+  title: string,
+  apiEndpoint: string,
+  signal: AbortSignal,
+): Promise<AvailabilityResponse> {
   const cached = clientCache.get(title);
   if (cached) return Promise.resolve(cached);
 
@@ -29,7 +30,7 @@ function fetchAvailability(title: string, signal: AbortSignal): Promise<Availabi
   if (existing) return existing;
 
   const p = (async () => {
-    const res = await fetch(`/api/availability?q=${encodeURIComponent(title)}`, { signal });
+    const res = await fetch(`${apiEndpoint}?q=${encodeURIComponent(title)}`, { signal });
     if (!res.ok) throw new Error(`availability: ${res.status}`);
     const data = (await res.json()) as AvailabilityResponse;
     clientCache.set(title, data);
@@ -43,11 +44,8 @@ function fetchAvailability(title: string, signal: AbortSignal): Promise<Availabi
   return p;
 }
 
-export function AvailabilityBadge({ title }: Props) {
+export function AvailabilityBadge({ title, apiEndpoint = '/api/availability' }: Props) {
   const ref = useRef<HTMLSpanElement | null>(null);
-  // Start null on first render to keep SSR HTML identical to the client's
-  // initial hydration pass — the module-level clientCache is a post-hydration
-  // perf cache, not a seed value.
   const [data, setData] = useState<AvailabilityResponse | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -56,7 +54,6 @@ export function AvailabilityBadge({ title }: Props) {
     const el = ref.current;
     if (!el) return;
 
-    // Guard for SSR / jsdom and older browsers.
     if (typeof IntersectionObserver === 'undefined') {
       setVisible(true);
       return;
@@ -81,17 +78,14 @@ export function AvailabilityBadge({ title }: Props) {
   useEffect(() => {
     if (!visible || data) return;
     const ac = new AbortController();
-    fetchAvailability(title, ac.signal)
+    fetchAvailability(title, apiEndpoint, ac.signal)
       .then((r) => setData(r))
       .catch(() => {
         // silently swallow — badge just won't render
       });
     return () => ac.abort();
-  }, [visible, data, title]);
+  }, [visible, data, title, apiEndpoint]);
 
-  // Always render a zero-size probe element so the observer has a target even
-  // before we have data. Once we have a non-zero sourceCount we render the
-  // actual badge in its place.
   if (!data || data.sourceCount === 0) {
     return <span ref={ref} aria-hidden="true" className="absolute" />;
   }

@@ -1,7 +1,7 @@
-import { AvailabilityBadge } from '@/components/availability-badge';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import { cn } from '@/lib/utils';
 import { type DoubanItem, type DoubanMediaType, searchDouban } from '@marstv/core';
+import { AvailabilityBadge } from '@marstv/ui-web';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';

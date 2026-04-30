@@ -260,8 +260,27 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
 
+  packages/ui-shared:
+    dependencies:
+      '@marstv/core':
+        specifier: workspace:*
+        version: link:../core
+      react:
+        specifier: '>=18.0.0'
+        version: 19.2.4
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
   packages/ui-web:
     dependencies:
+      '@marstv/core':
+        specifier: workspace:*
+        version: link:../core
       '@radix-ui/react-slot':
         specifier: 'catalog:'
         version: 1.2.4(@types/react@19.2.14)(react@19.2.4)

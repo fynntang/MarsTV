@@ -1,6 +1,6 @@
-import { CardMarkers } from '@/components/card-markers';
 import { cn } from '@/lib/utils';
 import type { VideoItem } from '@marstv/core';
+import { CardMarkers } from '@marstv/ui-web';
 import Image from 'next/image';
 import Link from 'next/link';
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@marstv/ui-web';
 import { useEffect, useState } from 'react';
+import { Button } from '../components/button';
 
 const STORAGE_KEY = 'marstv:disclaimer-accepted-v1';
 

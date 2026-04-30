@@ -1,5 +1,5 @@
-import { AvailabilityBadge } from '@/components/availability-badge';
 import { type DoubanItem, type DoubanMediaType, searchDouban } from '@marstv/core';
+import { AvailabilityBadge } from '@marstv/ui-web';
 import Link from 'next/link';
 import { Suspense } from 'react';
 

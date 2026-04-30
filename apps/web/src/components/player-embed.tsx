@@ -1,7 +1,7 @@
 'use client';
 
-import { invalidateCardMarkers } from '@/components/card-markers';
 import { getClientStorage } from '@/lib/client-storage';
+import { invalidateCardMarkers } from '@marstv/ui-web';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Fragment, useEffect, useRef, useState } from 'react';

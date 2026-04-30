@@ -4,9 +4,9 @@
 // renders half-watched items (progress < 95%) as resume cards. Hidden entirely
 // on first-visit / empty state so the hero section stays clean.
 
-import { invalidateCardMarkers } from '@/components/card-markers';
 import { getClientStorage } from '@/lib/client-storage';
 import type { PlayRecord } from '@marstv/core';
+import { invalidateCardMarkers } from '@marstv/ui-web';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 

@@ -1,13 +1,13 @@
 import { EpisodeGrid } from '@/components/episode-grid';
-import { FavoriteButton } from '@/components/favorite-button';
 import { PlayerEmbed } from '@/components/player-embed';
 import { SpeedtestButton } from '@/components/speedtest-button';
-import { SubscribeButton } from '@/components/subscribe-button';
 import { signProxyUrl } from '@/lib/proxy-auth';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import { findSource } from '@/lib/sources';
 import { cn } from '@/lib/utils';
 import { type VideoDetail, getDetail } from '@marstv/core';
+import { FavoriteButton } from '@marstv/ui-web';
+import { SubscribeButton } from '@marstv/ui-web';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import Link from 'next/link';

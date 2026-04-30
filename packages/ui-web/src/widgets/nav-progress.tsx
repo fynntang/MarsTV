@@ -1,21 +1,20 @@
 'use client';
 
-import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
 const MIN_VISIBLE_MS = 500;
 
-export function NavProgress() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+interface Props {
+  pathname: string;
+  searchParams?: URLSearchParams;
+}
+
+export function NavProgress({ pathname, searchParams }: Props) {
   const [active, setActive] = useState(false);
   const startedAt = useRef<number>(0);
   const pendingHide = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // When the committed URL changes, start the hide countdown honoring the
-  // minimum-visible window so users always see the bar, even if Router Cache
-  // commits the URL before real data arrives.
-  const urlKey = `${pathname}?${searchParams.toString()}`;
+  const urlKey = `${pathname}?${searchParams?.toString() ?? ''}`;
   useEffect(() => {
     if (!urlKey) return;
     const elapsed = Date.now() - startedAt.current;

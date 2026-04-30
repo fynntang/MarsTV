@@ -3,9 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import './globals.css';
-import { DisclaimerDialog } from '@/components/disclaimer-dialog';
-import { NavProgress } from '@/components/nav-progress';
 import { isCloudStorageEnabled } from '@/lib/storage';
+import { DisclaimerDialog } from '@marstv/ui-web';
+import { ClientNavProgress } from './client-nav-progress';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -43,7 +43,7 @@ export default function RootLayout({
           />
         )}
         <Suspense fallback={null}>
-          <NavProgress />
+          <ClientNavProgress />
         </Suspense>
         <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
           <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 md:px-8">
