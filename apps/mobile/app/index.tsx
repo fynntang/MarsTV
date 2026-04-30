@@ -106,6 +106,16 @@ export default function HomeScreen() {
             </TextView>
           </TouchableOpacity>
         </View>
+        <Spacer size={16} />
+        <TouchableOpacity
+          style={styles.settingsButton}
+          onPress={() => router.push('/settings')}
+          activeOpacity={0.7}
+        >
+          <TextView variant="caption" color={colors.textMuted}>
+            Settings
+          </TextView>
+        </TouchableOpacity>
         <Spacer size={24} />
       </ScrollView>
     </Container>
@@ -141,5 +151,10 @@ const styles = StyleSheet.create({
   navButtonText: {
     color: colors.primary,
     fontWeight: '600',
+  },
+  settingsButton: {
+    alignSelf: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
   },
 });

@@ -37,6 +37,7 @@ export default function RootLayout() {
         <Stack.Screen name="subscriptions" options={{ title: 'Subscriptions' }} />
         <Stack.Screen name="douban" options={{ title: 'Douban' }} />
         <Stack.Screen name="player" options={{ title: 'Player' }} />
+        <Stack.Screen name="settings" options={{ title: 'Settings' }} />
       </Stack>
     </>
   );
