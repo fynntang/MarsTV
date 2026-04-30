@@ -40,6 +40,7 @@ export default function SearchScreen() {
   return (
     <Container style={styles.container}>
       <SearchBox query={query} onChange={setQuery} onSubmit={handleSearch} />
+      {!searched && !loading && !error && <InitialView />}
       {loading && <LoadingIndicator />}
       {error && <ErrorView message={error} />}
       {!loading && !error && searched && results.length === 0 && <EmptyView />}
@@ -94,6 +95,16 @@ function ErrorView({ message }: { message: string }) {
       <Spacer size={spacing[2]} />
       <TextView variant="body" color={colors.textMuted}>
         {message}
+      </TextView>
+    </View>
+  );
+}
+
+function InitialView() {
+  return (
+    <View style={styles.center}>
+      <TextView variant="heading" color={colors.textMuted}>
+        {'🔍 Search videos across all sources'}
       </TextView>
     </View>
   );

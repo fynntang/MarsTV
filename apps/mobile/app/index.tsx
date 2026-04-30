@@ -2,7 +2,8 @@ import { colors, radius } from '@marstv/config';
 import type { VideoItem } from '@marstv/core';
 import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
 import { router } from 'expo-router';
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const mockItems: { item: VideoItem; sourceName: string }[] = [
   {
@@ -30,9 +31,29 @@ const mockItems: { item: VideoItem; sourceName: string }[] = [
 ];
 
 export default function HomeScreen() {
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 800);
+  };
+
   return (
     <Container style={styles.container}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
+          />
+        }
+      >
         {mockItems.map(({ item, sourceName }) => (
           <View key={item.id} style={styles.cardWrapper}>
             <VideoCard
