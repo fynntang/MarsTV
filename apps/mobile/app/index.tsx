@@ -1,8 +1,8 @@
 import { colors, radius } from '@marstv/config';
 import type { VideoItem } from '@marstv/core';
-import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { Container, PosterSkeleton, Spacer, TextView, VideoCard } from '@marstv/ui-native';
 import { router } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const mockItems: { item: VideoItem; sourceName: string }[] = [
@@ -31,7 +31,13 @@ const mockItems: { item: VideoItem; sourceName: string }[] = [
 ];
 
 export default function HomeScreen() {
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
@@ -39,6 +45,18 @@ export default function HomeScreen() {
       setRefreshing(false);
     }, 800);
   };
+
+  if (loading) {
+    return (
+      <Container style={styles.container}>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
+          <PosterSkeleton />
+          <PosterSkeleton />
+          <PosterSkeleton />
+        </ScrollView>
+      </Container>
+    );
+  }
 
   return (
     <Container style={styles.container}>
