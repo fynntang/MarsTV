@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "MarsTV",
+    "slug": "marstv",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0A0A0F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.marstv.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0A0F"
+      },
+      "package": "com.marstv.app"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "platforms": ["ios", "android", "tvos"]
+  }
+}

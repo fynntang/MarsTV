@@ -20,6 +20,9 @@
     "test": "pnpm -r test",
     "desktop:dev": "pnpm --filter @marstv/desktop dev",
     "desktop:build": "pnpm --filter @marstv/desktop build",
+    "mobile:start": "pnpm --filter @marstv/mobile start",
+    "mobile:ios": "pnpm --filter @marstv/mobile ios",
+    "mobile:android": "pnpm --filter @marstv/mobile android",
     "clean": "pnpm -r exec rm -rf node_modules .next dist .turbo",
     "catalog": "pnpx codemod pnpm/catalog"
   },

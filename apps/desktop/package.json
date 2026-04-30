@@ -9,6 +9,10 @@
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests yet\""
   },
+  "dependencies": {
+    "@tauri-apps/plugin-updater": "^2",
+    "@tauri-apps/plugin-shell": "^2"
+  },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
     "typescript": "catalog:"

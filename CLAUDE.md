@@ -56,6 +56,7 @@ pnpm dev                  # 等价 pnpm --filter web dev
 pnpm --filter web dev     # 只启 Web
 pnpm desktop:dev          # Tauri 2 桌面端(先启 web dev server,再启 Tauri 窗口)
 pnpm desktop:build        # Tauri 2 桌面端生产构建
+pnpm mobile:start         # Expo 移动端(iOS/Android/tvOS)
 pnpm build                # 递归构建全部 app
 pnpm lint                 # biome check .
 pnpm lint:fix             # biome check --write .
@@ -103,7 +104,8 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 **M1 已闭环** —— Web 端功能 + 工程质量全线打通。
 **M2 已闭环** —— 服务端存储与边缘部署就绪。
-**M4 进行中** —— 桌面端 Tauri 2 壳已搭建,条件导出(next.config.ts)已就绪。
+**M4 进行中** —— 桌面端 Tauri 2 壳 + updater/shell 插件已就绪。
+**M5 进行中** —— 移动端 Expo 52 + RN 0.76 壳已搭建,iOS/Android/tvOS 三平台。
 
 **M1 已就绪**:
 - `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、源健康评分(`source-health`)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
@@ -129,8 +131,14 @@ pnpm clean                # 清理 node_modules / .next / dist
 **M4 进度** (桌面端):
 - ✅ Tauri 2 壳搭建:`apps/desktop/src-tauri/` Rust crate + `tauri.conf.json`(1280x720, identifier `com.marstv.app`)
 - ✅ 条件构建:`next.config.ts` 通过 `TAURI_BUILD=1` 切换 `output: 'export'`,`pnpm desktop:dev` 启动 Tauri 开发窗口
-- ⬜ 桌面端原生集成(Tauri API:窗口控制/系统托盘/自动更新等)
-- ⬜ M5 移动/TV:Expo 52 + RN 0.76 壳未搭建
+- ✅ Tauri 插件:`tauri-plugin-updater`(自动更新) + `tauri-plugin-shell`(深度链接),capabilities 权限已配置
+- ⬜ 桌面端构建签名 + 分发通道配置
+- ⬜ 窗口控制/系统托盘/全局快捷键
+
+**M5 进度** (移动/TV):
+- ✅ Expo 52 + RN 0.76 壳:`apps/mobile/` 已搭建,iOS/Android/tvOS 三平台 profile,共享 `@marstv/core` / `@marstv/config`
+- ⬜ 移动端 UI 适配(React Native 组件 + 播放器)
+- ⬜ tvOS 遥控器交互适配
 
 ## next.config.ts 关键配置
 

@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@marstv/core": ["../../packages/core/src/index.ts"],
+      "@marstv/config": ["../../packages/config/src/index.ts"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

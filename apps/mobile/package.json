@@ -1,0 +1,30 @@
+{
+  "name": "@marstv/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "src/index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "tvos": "expo start --tvos",
+    "web": "expo start --web",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet\""
+  },
+  "dependencies": {
+    "@marstv/core": "workspace:*",
+    "@marstv/config": "workspace:*",
+    "@marstv/ui-native": "workspace:*",
+    "expo": "~52.0.0",
+    "expo-status-bar": "~2.0.0",
+    "react": "catalog:",
+    "react-native": "0.76.9",
+    "react-native-safe-area-context": "~5.0.0",
+    "react-native-screens": "~4.4.0"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:",
+    "typescript": "catalog:"
+  }
+}
