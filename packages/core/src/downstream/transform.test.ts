@@ -22,9 +22,10 @@ describe('groupHitsByTitle', () => {
     ]);
 
     expect(groups).toHaveLength(1);
-    expect(groups[0].primary.source.key).toBe('a');
-    expect(groups[0].others).toHaveLength(1);
-    expect(groups[0].others[0].source.key).toBe('b');
+    const g1 = groups[0]!;
+    expect(g1.primary.source.key).toBe('a');
+    expect(g1.others).toHaveLength(1);
+    expect(g1.others[0]!.source.key).toBe('b');
   });
 
   it('treats different years as different groups even when title matches', () => {
@@ -44,7 +45,8 @@ describe('groupHitsByTitle', () => {
     ]);
 
     expect(groups).toHaveLength(1);
-    expect(groups[0].others).toHaveLength(2);
+    const g3 = groups[0]!;
+    expect(g3.others).toHaveLength(2);
   });
 
   it('is case-insensitive for latin titles', () => {
@@ -63,8 +65,9 @@ describe('groupHitsByTitle', () => {
     ]);
 
     expect(groups).toHaveLength(1);
-    expect(groups[0].primary.item.id).toBe('1');
-    expect(groups[0].others).toHaveLength(0);
+    const g5 = groups[0]!;
+    expect(g5.primary.item.id).toBe('1');
+    expect(g5.others).toHaveLength(0);
   });
 
   it('preserves source-priority order (first hit is primary)', () => {
@@ -74,8 +77,9 @@ describe('groupHitsByTitle', () => {
       hit(srcC, mkItem('c', '3', '三体', '2023')),
     ]);
 
-    expect(groups[0].primary.source.key).toBe('b');
-    expect(groups[0].others.map((o) => o.source.key)).toEqual(['a', 'c']);
+    const g6 = groups[0]!;
+    expect(g6.primary.source.key).toBe('b');
+    expect(g6.others.map((o) => o.source.key)).toEqual(['a', 'c']);
   });
 
   it('handles missing year by treating undefined as empty string', () => {
