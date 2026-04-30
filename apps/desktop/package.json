@@ -1,0 +1,16 @@
+{
+  "name": "@marstv/desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet\""
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "typescript": "catalog:"
+  }
+}

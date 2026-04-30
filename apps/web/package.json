@@ -22,6 +22,7 @@
     "@marstv/core": "workspace:*",
     "@marstv/ui-web": "workspace:*",
     "@radix-ui/react-slot": "catalog:",
+    "@tauri-apps/api": "^2.10.1",
     "artplayer": "^5.2.4",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
@@ -32,9 +33,9 @@
     "tailwind-merge": "catalog:"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.19.4",
     "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "catalog:",
-    "@opennextjs/cloudflare": "^1.19.4",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

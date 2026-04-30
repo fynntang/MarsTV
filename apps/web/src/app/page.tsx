@@ -2,7 +2,7 @@ import { ContinueWatchingRow } from '@/components/continue-watching-row';
 import { DoubanRow } from '@/components/douban-row';
 import { SearchBox } from '@/components/search-box';
 import { SubscriptionRow } from '@/components/subscription-row';
-import { Button } from '@/components/ui/button';
+import { Button } from '@marstv/ui-web';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import Link from 'next/link';
 

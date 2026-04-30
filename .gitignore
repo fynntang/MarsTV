@@ -163,3 +163,7 @@ apps/web/.wrangler/
 apps/web/.dev.vars
 .vercel/
 apps/web/.next/standalone/
+
+# Tauri / Rust
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
