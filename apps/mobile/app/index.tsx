@@ -96,6 +96,15 @@ export default function HomeScreen() {
               Subscriptions
             </TextView>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => router.push('/douban')}
+            activeOpacity={0.7}
+          >
+            <TextView variant="body" style={styles.navButtonText}>
+              Douban
+            </TextView>
+          </TouchableOpacity>
         </View>
         <Spacer size={24} />
       </ScrollView>
