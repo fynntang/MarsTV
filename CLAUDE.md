@@ -99,7 +99,8 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 ## 当前阶段
 
-**M1 已闭环** —— Web 端功能 + 工程质量全线打通,M2 开始接入服务端存储与边缘部署。
+**M1 已闭环** —— Web 端功能 + 工程质量全线打通。
+**M2 已闭环** —— 服务端存储与边缘部署就绪。下一阶段:M4 桌面端 Tauri 2 壳搭建。
 
 **M1 已就绪**:
 - `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、源健康评分(`source-health`)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
@@ -114,11 +115,12 @@ pnpm clean                # 清理 node_modules / .next / dist
 - shadcn/ui 已初始化(button / card / input + components.json,new-york 风格)
 - 测试:vitest(`packages/core` + `apps/web`)+ Playwright E2E 覆盖 CMS 解析、SSRF、HMAC、API 路由、免责声明、导航、集合页三态
 
-**M2 进度**:
+**M2 已就绪**:
 - ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度。`/api/health/cms` GET 响应里 `backend` 字段回显 `'redis' | 'memory'`
 - ✅ SITE_PASSWORD 站点密码门:页面级 `requirePagePassword()` + API 级 `requireApiPassword()` + `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时守卫短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
 - ✅ 多平台部署脚手架:`apps/web/Dockerfile` / `apps/web/open-next.config.ts` / `apps/web/wrangler.jsonc` / `docker/docker-compose.yml` 已就绪。四个部署目标(Vercel / CF Pages / Docker / 本地 dev)共享同一份 `next build` pipeline。详见根目录 `DEPLOY.md`
-- Cloudflare Pages Functions 边缘部署脚本
+- ✅ OpenNext Cloudflare 兼容:移除 proxy.ts 中间件,改为页面级 `requirePagePassword()` + API 级 `requireApiPassword()` 守卫,避免代理层与 Worker 构建不兼容
+- ✅ 边缘缓存:`_headers` 静态资产长缓存 + `/api/image/*` / `/api/douban` / `/api/availability` 等路由 `CDN-Cache-Control` 头。`build:cf` pipeline 验证通过
 
 ## next.config.ts 关键配置
 
