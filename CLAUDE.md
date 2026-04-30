@@ -118,7 +118,6 @@ pnpm clean                # 清理 node_modules / .next / dist
 - ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度。`/api/health/cms` GET 响应里 `backend` 字段回显 `'redis' | 'memory'`
 - ✅ SITE_PASSWORD 站点密码门:页面级 `requirePagePassword()` + API 级 `requireApiPassword()` + `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时守卫短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
 - ✅ 多平台部署脚手架:`apps/web/Dockerfile` / `apps/web/open-next.config.ts` / `apps/web/wrangler.jsonc` / `docker/docker-compose.yml` 已就绪。四个部署目标(Vercel / CF Pages / Docker / 本地 dev)共享同一份 `next build` pipeline。详见根目录 `DEPLOY.md`
-- Web Push(依赖 Upstash 做订阅存储;`VAPID_*` env 已声明,逻辑未实现)
 - Cloudflare Pages Functions 边缘部署脚本
 
 ## next.config.ts 关键配置
@@ -138,7 +137,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 **可选安全 / 访问控制**:
 - `ALLOWED_PROXY_HOSTS` —— 代理下游域名白名单,逗号分隔
-- `SITE_PASSWORD` —— 启用站点密码门。未设置时 `proxy.ts` 短路放行;设置后 Cookie = `HMAC(SITE_PASSWORD, v1-context)`,**改值立即失效所有 session**
+- `SITE_PASSWORD` —— 启用站点密码门。未设置时 `requirePagePassword()` / `requireApiPassword()` 短路放行;设置后 Cookie = `HMAC(SITE_PASSWORD, v1-context)`,**改值立即失效所有 session**
 - `HEALTH_PROBE_TOKEN` —— 启用 `POST /api/health/cms` 主动探测所需的 token
 
 **存储后端**(至多选一组,都未设置则回退到进程内 Map,重启丢失):
@@ -148,9 +147,6 @@ pnpm clean                # 清理 node_modules / .next / dist
 **豆瓣代理**:
 - `DOUBAN_PROXY_MODE` —— `direct` | `tencent` | `aliyun` | `custom`
 - `DOUBAN_CUSTOM_PROXY` —— 自定义反代 URL(`DOUBAN_PROXY_MODE=custom` 时必填)
-
-**Web Push(待实现)**:
-- `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` / `VAPID_SUBJECT`
 
 **部署**:
 - `OPEN_NEXT_DEV` —— `next.config.ts` 据此启用 Cloudflare dev proxy

@@ -74,8 +74,10 @@ describe('verifyProxyToken', () => {
   it('rejects when the token itself is tampered with', () => {
     const url = 'https://cdn.example.com/a.m3u8';
     const { token, expiresAt } = signProxyUrl(url);
-    // flip last char (base64url chars)
-    const bad = `${token.slice(0, -1)}${token.endsWith('A') ? 'B' : 'A'}`;
+    // Flip char at position 1 — guaranteed to change the decoded HMAC regardless
+    // of base64url padding layout (last-char flip can be a no-op on padding bits).
+    const flipped = token[1] === 'A' ? 'B' : 'A';
+    const bad = token[0] + flipped + token.slice(2);
     expect(verifyProxyToken(url, expiresAt, bad)).toBe(false);
   });
 
