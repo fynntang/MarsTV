@@ -8,7 +8,7 @@
 // env value immediately invalidates every issued cookie.
 //
 // `SITE_PASSWORD` unset or empty → gate is disabled; `isEnabled()` short-
-// circuits middleware and login routes.
+// circuits page/API guards and login routes.
 // ============================================================================
 
 import { createHmac, timingSafeEqual } from 'node:crypto';

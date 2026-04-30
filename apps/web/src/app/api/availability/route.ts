@@ -8,6 +8,7 @@
 // the same title in parallel only fan out to CMS once.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { sourceHealthStore } from '@/lib/source-health-store';
 import { loadSources } from '@/lib/sources';
 import { aggregateSearch } from '@marstv/core';
@@ -82,6 +83,9 @@ async function getEntry(keyword: string): Promise<CacheEntry> {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const keyword = request.nextUrl.searchParams.get('q')?.trim();
   if (!keyword) {
     return Response.json({ error: "query 'q' is required" }, { status: 400 });

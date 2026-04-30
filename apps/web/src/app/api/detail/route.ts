@@ -3,6 +3,7 @@
 // Returns VideoDetail with play lines/episodes.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { findSource } from '@/lib/sources';
 import { getDetail } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -11,6 +12,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const { searchParams } = request.nextUrl;
   const sourceKey = searchParams.get('source')?.trim();
   const id = searchParams.get('id')?.trim();

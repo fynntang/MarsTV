@@ -9,6 +9,7 @@
 // caller already knows the upstream URLs (we handed them out via /api/detail).
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { assertSafeUrl } from '@/lib/ssrf';
 import { rankLines } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -22,6 +23,9 @@ interface Body {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   let body: Body;
   try {
     body = (await request.json()) as Body;

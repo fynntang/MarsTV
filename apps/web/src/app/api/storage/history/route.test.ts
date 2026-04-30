@@ -18,7 +18,7 @@ function makeStubStorage(): {
 }
 
 async function loadRoute(storage: Partial<IStorage> | null): Promise<{
-  GET: () => Promise<Response>;
+  GET: (req: NextRequest) => Promise<Response>;
   POST: (req: NextRequest) => Promise<Response>;
 }> {
   vi.doMock('@/lib/storage', () => ({
@@ -26,9 +26,13 @@ async function loadRoute(storage: Partial<IStorage> | null): Promise<{
     isCloudStorageEnabled: () => storage != null,
   }));
   return (await import('./route')) as {
-    GET: () => Promise<Response>;
+    GET: (req: NextRequest) => Promise<Response>;
     POST: (req: NextRequest) => Promise<Response>;
   };
+}
+
+function getReq(): NextRequest {
+  return new NextRequest('http://app.local/api/storage/history');
 }
 
 function req(body: unknown, { raw = false }: { raw?: boolean } = {}): NextRequest {
@@ -62,7 +66,7 @@ afterEach(() => {
 describe('/api/storage/history — cloud disabled', () => {
   it('GET returns 501', async () => {
     const { GET } = await loadRoute(null);
-    const res = await GET();
+    const res = await GET(getReq());
     expect(res.status).toBe(501);
   });
 
@@ -78,7 +82,7 @@ describe('/api/storage/history — cloud enabled', () => {
     const stub = makeStubStorage();
     stub.listPlayRecords.mockResolvedValueOnce([validRecord]);
     const { GET } = await loadRoute(stub as unknown as IStorage);
-    const res = await GET();
+    const res = await GET(getReq());
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ records: [validRecord] });
   });

@@ -5,6 +5,7 @@
 // - Otherwise → aggregate across all enabled sources
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { sourceHealthStore } from '@/lib/source-health-store';
 import { loadSources } from '@/lib/sources';
 import { aggregateSearch } from '@marstv/core';
@@ -14,6 +15,9 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const { searchParams } = request.nextUrl;
   const keyword = searchParams.get('q')?.trim();
   const sourceKey = searchParams.get('source')?.trim() || undefined;

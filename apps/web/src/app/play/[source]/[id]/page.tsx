@@ -4,6 +4,7 @@ import { PlayerEmbed } from '@/components/player-embed';
 import { SpeedtestButton } from '@/components/speedtest-button';
 import { SubscribeButton } from '@/components/subscribe-button';
 import { signProxyUrl } from '@/lib/proxy-auth';
+import { requirePagePassword } from '@/lib/site-password-guard';
 import { findSource } from '@/lib/sources';
 import { cn } from '@/lib/utils';
 import { type VideoDetail, getDetail } from '@marstv/core';
@@ -27,8 +28,13 @@ async function loadDetail(sourceKey: string, id: string): Promise<VideoDetail | 
   }
 }
 
-export async function generateMetadata(props: { params: Params }): Promise<Metadata> {
+export async function generateMetadata(props: {
+  params: Params;
+  searchParams: SearchParams;
+}): Promise<Metadata> {
   const { source, id } = await props.params;
+  const sp = await props.searchParams;
+  await requirePagePassword(`/play/${encodeURIComponent(source)}/${encodeURIComponent(id)}`, sp);
   const detail = await loadDetail(source, id);
   if (!detail) return { title: '视频未找到' };
   return { title: detail.title };
@@ -65,6 +71,7 @@ function stripHtml(input: string): string {
 export default async function PlayPage(props: { params: Params; searchParams: SearchParams }) {
   const { source, id } = await props.params;
   const sp = await props.searchParams;
+  await requirePagePassword(`/play/${encodeURIComponent(source)}/${encodeURIComponent(id)}`, sp);
 
   const detail = await loadDetail(source, id);
   if (!detail) notFound();

@@ -1,28 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
 
-// Dedicated port so we don't collide with a long-running `next dev` on 3000.
-const PORT = 3100;
-// Use `localhost`: Next dev blocks cross-origin client-bundle requests from
-// non-configured hosts, which can stop React hydration in tests.
+const PORT = 3101;
 const BASE_URL = `http://localhost:${PORT}`;
-
-const commonEnv = {
-  // Empty CMS list makes page tests deterministic without real upstream CMS.
-  CMS_SOURCES_JSON: '[]',
-  // Required by /api/proxy/m3u8 auth. These specs do not exercise signing.
-  PROXY_SECRET: 'e2e-secret',
-};
 
 export default defineConfig({
   testDir: './e2e',
-  testMatch: '*.spec.ts',
+  testMatch: 'site-password.spec.ts',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  // Single worker: specs mutate localStorage and route interception state.
   workers: 1,
   reporter: [['list'], ['html', { open: 'never' }]],
-  // Next dev compiles routes lazily; first-hit expectations need headroom.
   expect: { timeout: 15_000 },
   use: {
     baseURL: BASE_URL,
@@ -33,8 +21,7 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'chromium',
-      testIgnore: 'site-password.spec.ts',
+      name: 'site-password',
       use: { ...devices['Desktop Chrome'] },
     },
   ],
@@ -45,6 +32,10 @@ export default defineConfig({
     timeout: 120_000,
     stdout: 'pipe',
     stderr: 'pipe',
-    env: commonEnv,
+    env: {
+      CMS_SOURCES_JSON: '[]',
+      PROXY_SECRET: 'e2e-secret',
+      SITE_PASSWORD: 'e2e-password',
+    },
   },
 });
