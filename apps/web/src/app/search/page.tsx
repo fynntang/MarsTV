@@ -1,11 +1,11 @@
-import { GroupedVideoCard, groupHitsByTitle } from '@/components/grouped-video-card';
+import { GroupedVideoCard } from '@/components/grouped-video-card';
 import { SearchBox } from '@/components/search-box';
 import { VideoCard } from '@/components/video-card';
 import { cachedSearchSource } from '@/lib/search';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import { loadSources } from '@/lib/sources';
 import { cn } from '@/lib/utils';
-import type { CmsSource } from '@marstv/core';
+import { type CmsSource, groupHitsByTitle } from '@marstv/core';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';

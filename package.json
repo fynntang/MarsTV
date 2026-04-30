@@ -26,6 +26,11 @@
     "typescript": "catalog:"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@biomejs/biome", "sharp"]
+    "onlyBuiltDependencies": ["@biomejs/biome", "sharp"],
+    "overrides": {
+      "esbuild": ">=0.25.0",
+      "postcss": ">=8.5.10",
+      "undici": ">=6.24.0"
+    }
   }
 }

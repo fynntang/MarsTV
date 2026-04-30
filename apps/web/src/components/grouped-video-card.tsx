@@ -1,6 +1,6 @@
 import { CardMarkers } from '@/components/card-markers';
 import { cn } from '@/lib/utils';
-import type { CmsSource, VideoItem } from '@marstv/core';
+import type { SourceHit, VideoGroup } from '@marstv/core';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -8,16 +8,6 @@ import Link from 'next/link';
 // The primary card links to the first source's play page; additional sources
 // surface as a secondary row of chips under the card so users can jump to a
 // specific provider without scrolling through per-source sections.
-export interface SourceHit {
-  source: CmsSource;
-  item: VideoItem;
-}
-
-export interface VideoGroup {
-  key: string; // normalized title|year
-  primary: SourceHit;
-  others: SourceHit[]; // additional source hits for the same title
-}
 
 function hrefFor(hit: SourceHit): string {
   return `/play/${encodeURIComponent(hit.item.source)}/${encodeURIComponent(hit.item.id)}`;
@@ -106,33 +96,4 @@ function SourceChip({ hit, primary = false }: { hit: SourceHit; primary?: boolea
       <span className="truncate">{hit.source.name}</span>
     </Link>
   );
-}
-
-// Group items coming from multiple sources by a normalized title+year key.
-// Returns groups in source-priority order (first source wins primary slot).
-export function groupHitsByTitle(hits: SourceHit[]): VideoGroup[] {
-  const map = new Map<string, VideoGroup>();
-  for (const hit of hits) {
-    const key = normalizeKey(hit.item.title, hit.item.year);
-    const existing = map.get(key);
-    if (!existing) {
-      map.set(key, { key, primary: hit, others: [] });
-      continue;
-    }
-    // Prevent duplicate source within the same group (same title appearing
-    // multiple times in one CMS's results — uncommon but possible).
-    if (
-      existing.primary.source.key === hit.source.key ||
-      existing.others.some((o) => o.source.key === hit.source.key)
-    ) {
-      continue;
-    }
-    existing.others.push(hit);
-  }
-  return [...map.values()];
-}
-
-function normalizeKey(title: string, year?: string): string {
-  const normalized = title.replace(/\s+/g, '').replace(/[　]/g, '').toLowerCase();
-  return `${normalized}|${year ?? ''}`;
 }
