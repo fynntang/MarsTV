@@ -19,9 +19,13 @@ async function loadRoute(storage: Partial<IStorage> | null) {
     isCloudStorageEnabled: () => storage != null,
   }));
   return (await import('./route')) as {
-    GET: () => Promise<Response>;
+    GET: (req: NextRequest) => Promise<Response>;
     POST: (req: NextRequest) => Promise<Response>;
   };
+}
+
+function getReq(): NextRequest {
+  return new NextRequest('http://app.local/api/storage/subscriptions');
 }
 
 function req(body: unknown, { raw = false }: { raw?: boolean } = {}): NextRequest {
@@ -55,7 +59,7 @@ afterEach(() => {
 describe('/api/storage/subscriptions — cloud disabled', () => {
   it('GET returns 501', async () => {
     const { GET } = await loadRoute(null);
-    expect((await GET()).status).toBe(501);
+    expect((await GET(getReq())).status).toBe(501);
   });
   it('POST returns 501', async () => {
     const { POST } = await loadRoute(null);
@@ -68,7 +72,7 @@ describe('/api/storage/subscriptions — cloud enabled', () => {
     const stub = makeStubStorage();
     stub.listSubscriptions.mockResolvedValueOnce([validRecord]);
     const { GET } = await loadRoute(stub as unknown as IStorage);
-    expect(await (await GET()).json()).toEqual({ records: [validRecord] });
+    expect(await (await GET(getReq())).json()).toEqual({ records: [validRecord] });
   });
 
   it('put delegates + validates', async () => {

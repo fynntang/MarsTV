@@ -1,9 +1,6 @@
 import { defineCloudflareConfig } from '@opennextjs/cloudflare';
+import staticAssetsIncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/static-assets-incremental-cache';
 
-// Minimal CF setup — we don't use ISR / revalidateTag yet,
-// so all three overrides point to dummy (in‑memory, no persistence).
 export default defineCloudflareConfig({
-  incrementalCache: 'dummy',
-  tagCache: 'dummy',
-  queue: 'dummy',
+  incrementalCache: staticAssetsIncrementalCache,
 });

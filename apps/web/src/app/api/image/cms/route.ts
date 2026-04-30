@@ -12,6 +12,7 @@
 // 3. 5 MB hard size cap — no-one's legitimate poster is that big.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { assertSafeUrl } from '@/lib/ssrf';
 import type { NextRequest } from 'next/server';
 
@@ -27,6 +28,9 @@ function logFail(target: URL, reason: string) {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const raw = request.nextUrl.searchParams.get('u');
   if (!raw) return new Response('missing u', { status: 400 });
 

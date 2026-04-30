@@ -3,7 +3,7 @@
   "name": "marstv-web",
   "main": ".open-next/worker.js",
   "compatibility_date": "2025-04-08",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
 
   // Public stub values — secrets MUST be set via `wrangler secret put`,
   // never committed to a file. The JSON array / empty string below keep

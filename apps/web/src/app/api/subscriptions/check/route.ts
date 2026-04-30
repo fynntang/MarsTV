@@ -9,6 +9,7 @@
 // are valid) and apply per-source timeouts.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { findSource } from '@/lib/sources';
 import { getDetail } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -34,6 +35,9 @@ interface CheckResult {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   let body: unknown;
   try {
     body = await request.json();

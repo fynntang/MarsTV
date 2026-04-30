@@ -5,6 +5,7 @@
 // Gated on cloud storage (SITE_PASSWORD + UPSTASH_*); 501 when disabled.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { getServerStorage } from '@/lib/storage';
 import type { FavoriteRecord } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -17,7 +18,10 @@ type Action =
   | { action: 'remove'; source: string; id: string }
   | { action: 'clear' };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const storage = getServerStorage();
   if (!storage) return notAvailable();
   const records = await storage.listFavorites();
@@ -25,6 +29,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const storage = getServerStorage();
   if (!storage) return notAvailable();
 

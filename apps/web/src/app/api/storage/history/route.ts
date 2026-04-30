@@ -6,10 +6,11 @@
 // UPSTASH_*). When disabled, returns 501 so the client can fall back to
 // local LocalStorageBackend.
 //
-// This route is further protected by the site-password proxy (see
-// `apps/web/src/proxy.ts`) — unauthenticated requests never reach here.
+// This route is further protected by the page/API site-password guards.
+// Unauthenticated requests never reach the storage backend.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { getServerStorage } from '@/lib/storage';
 import type { PlayRecord } from '@marstv/core';
 import type { NextRequest } from 'next/server';
@@ -22,7 +23,10 @@ type Action =
   | { action: 'remove'; source: string; id: string }
   | { action: 'clear' };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const storage = getServerStorage();
   if (!storage) return notAvailable();
   const records = await storage.listPlayRecords();
@@ -30,6 +34,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const storage = getServerStorage();
   if (!storage) return notAvailable();
 

@@ -3,9 +3,14 @@ import { DoubanRow } from '@/components/douban-row';
 import { SearchBox } from '@/components/search-box';
 import { SubscriptionRow } from '@/components/subscription-row';
 import { Button } from '@/components/ui/button';
+import { requirePagePassword } from '@/lib/site-password-guard';
 import Link from 'next/link';
 
-export default function Home() {
+export const dynamic = 'force-dynamic';
+
+export default async function Home() {
+  await requirePagePassword('/');
+
   return (
     <div className="marstv-hero-bg flex flex-1 flex-col">
       <section className="mx-auto flex w-full max-w-6xl flex-col items-center px-4 pt-16 pb-6 text-center md:px-8">

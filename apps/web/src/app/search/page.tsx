@@ -2,6 +2,7 @@ import { GroupedVideoCard, groupHitsByTitle } from '@/components/grouped-video-c
 import { SearchBox } from '@/components/search-box';
 import { VideoCard } from '@/components/video-card';
 import { cachedSearchSource } from '@/lib/search';
+import { requirePagePassword } from '@/lib/site-password-guard';
 import { loadSources } from '@/lib/sources';
 import { cn } from '@/lib/utils';
 import type { CmsSource } from '@marstv/core';
@@ -17,6 +18,7 @@ export async function generateMetadata(props: {
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const sp = await props.searchParams;
+  await requirePagePassword('/search', sp);
   const q = typeof sp.q === 'string' ? sp.q : '';
   return { title: q ? `搜索 "${q}"` : '搜索' };
 }
@@ -27,6 +29,7 @@ function asString(v: string | string[] | undefined): string {
 
 export default async function SearchPage(props: { searchParams: SearchParams }) {
   const sp = await props.searchParams;
+  await requirePagePassword('/search', sp);
   const keyword = asString(sp.q).trim();
   const sourceFilter = asString(sp.source).trim() || undefined;
 

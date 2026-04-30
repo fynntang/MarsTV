@@ -1,4 +1,5 @@
 import { AvailabilityBadge } from '@/components/availability-badge';
+import { requirePagePassword } from '@/lib/site-password-guard';
 import { cn } from '@/lib/utils';
 import { type DoubanItem, type DoubanMediaType, searchDouban } from '@marstv/core';
 import type { Metadata } from 'next';
@@ -60,6 +61,7 @@ export async function generateMetadata(props: {
   searchParams: SearchParams;
 }): Promise<Metadata> {
   const sp = await props.searchParams;
+  await requirePagePassword('/douban', sp);
   const type = parseType(asString(sp.type));
   const tag = asString(sp.tag) || (type === 'movie' ? '热门' : '热门');
   const label = type === 'movie' ? '电影' : '剧集';
@@ -68,6 +70,7 @@ export async function generateMetadata(props: {
 
 export default async function DoubanPage(props: { searchParams: SearchParams }) {
   const sp = await props.searchParams;
+  await requirePagePassword('/douban', sp);
   const type = parseType(asString(sp.type));
   const tagList = type === 'movie' ? MOVIE_TAGS : TV_TAGS;
   const tagRaw = asString(sp.tag).trim();

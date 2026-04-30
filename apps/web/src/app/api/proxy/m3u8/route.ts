@@ -13,6 +13,7 @@
 // ============================================================================
 
 import { signProxyUrl, verifyProxyToken } from '@/lib/proxy-auth';
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { assertSafeUrl } from '@/lib/ssrf';
 import type { NextRequest } from 'next/server';
 
@@ -25,6 +26,9 @@ const SEGMENT_CACHE = 'public, max-age=3600, s-maxage=31536000, immutable';
 const SEGMENT_CDN_CACHE = 'public, s-maxage=31536000, immutable';
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const { searchParams, origin } = request.nextUrl;
   const target = searchParams.get('u');
   const expiresAt = Number(searchParams.get('e'));

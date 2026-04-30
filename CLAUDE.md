@@ -46,7 +46,7 @@ marstv/
 
 > ⚠️ **Next.js 16 注意**:
 > - `apps/web/AGENTS.md` 明确警告 Next 16 相对训练数据有破坏性变更。写任何 Next 相关代码前,**先查 `apps/web/node_modules/next/dist/docs/`** 的实际文档,不要凭记忆
-> - Next 16 用 **Proxy(不是 Middleware)**:`apps/web/src/proxy.ts` 导出 `export function proxy()` + `export const config = { matcher }`,别写成老的 `middleware.ts`
+> - OpenNext Cloudflare 当前不依赖 Next Proxy。站点密码门改为页面级 `requirePagePassword()` + API 级 `requireApiPassword()`，避免代理层和 Worker 构建不兼容。
 
 ## 开发命令
 
@@ -116,7 +116,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 **M2 进度**:
 - ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度。`/api/health/cms` GET 响应里 `backend` 字段回显 `'redis' | 'memory'`
-- ✅ SITE_PASSWORD 站点密码门:Next 16 Proxy(`apps/web/src/proxy.ts`)+ `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时 proxy 短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
+- ✅ SITE_PASSWORD 站点密码门:页面级 `requirePagePassword()` + API 级 `requireApiPassword()` + `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时守卫短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
 - ✅ 多平台部署脚手架:`apps/web/Dockerfile` / `apps/web/open-next.config.ts` / `apps/web/wrangler.jsonc` / `docker/docker-compose.yml` 已就绪。四个部署目标(Vercel / CF Pages / Docker / 本地 dev)共享同一份 `next build` pipeline。详见根目录 `DEPLOY.md`
 - Web Push(依赖 Upstash 做订阅存储;`VAPID_*` env 已声明,逻辑未实现)
 - Cloudflare Pages Functions 边缘部署脚本

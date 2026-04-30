@@ -4,6 +4,7 @@
 // to surface curated rankings. No auth; upstream is public.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import { type DoubanMediaType, searchDouban } from '@marstv/core';
 import type { NextRequest } from 'next/server';
 
@@ -27,6 +28,9 @@ function parseInt0(v: string | null, fallback: number): number {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const { searchParams } = request.nextUrl;
 
   const type = parseType(searchParams.get('type'));

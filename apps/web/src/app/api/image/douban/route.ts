@@ -6,6 +6,7 @@
 // this from being used as an open image proxy.
 // ============================================================================
 
+import { requireApiPassword } from '@/lib/site-password-guard';
 import type { NextRequest } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -24,6 +25,9 @@ function isAllowed(raw: string): URL | null {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = requireApiPassword(request);
+  if (auth) return auth;
+
   const raw = request.nextUrl.searchParams.get('u');
   if (!raw) return new Response('missing u', { status: 400 });
 
