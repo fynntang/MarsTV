@@ -5,3 +5,4 @@ export * from './source-health-redis';
 export * from './aggregate';
 export * from './douban';
 export * from './speedtest';
+export * from './transform';
