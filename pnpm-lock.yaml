@@ -212,7 +212,23 @@ importers:
         version: 2.1.9(@types/node@20.19.39)(lightningcss@1.32.0)(terser@5.16.9)
 
   packages/ui-native:
+    dependencies:
+      '@marstv/config':
+        specifier: workspace:*
+        version: link:../config
+      react:
+        specifier: '*'
+        version: 19.2.4
+      react-native:
+        specifier: '*'
+        version: 0.76.9(@babel/core@7.29.0)(@babel/preset-env@7.29.2(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.4)
+      react-native-safe-area-context:
+        specifier: '*'
+        version: 5.0.0(react-native@0.76.9(@babel/core@7.29.0)(@babel/preset-env@7.29.2(@babel/core@7.29.0))(@types/react@19.2.14)(react@19.2.4))(react@19.2.4)
     devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

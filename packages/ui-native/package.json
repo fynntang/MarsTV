@@ -10,7 +10,16 @@
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@marstv/config": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-safe-area-context": "*"
+  },
   "devDependencies": {
+    "@types/react": "catalog:",
     "typescript": "catalog:"
   }
 }

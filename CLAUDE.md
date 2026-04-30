@@ -127,6 +127,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 - ✅ OpenNext Cloudflare 兼容:移除 proxy.ts 中间件,改为页面级 `requirePagePassword()` + API 级 `requireApiPassword()` 守卫,避免代理层与 Worker 构建不兼容
 - ✅ 边缘缓存:`_headers` 静态资产长缓存 + `/api/image/*` / `/api/douban` / `/api/availability` 等路由 `CDN-Cache-Control` 头。`build:cf` pipeline 验证通过
 - ✅ 共享 UI 包:`packages/ui-web` 已抽离 button / card / input + `cn()` 工具,4 个消费者已切换导入路径
+- ✅ CI/CD:`.github/workflows/ci.yml`(typecheck + test + lint + build-web),push/PR 到 main 自动触发
 
 **M4 进度** (桌面端):
 - ✅ Tauri 2 壳搭建:`apps/desktop/src-tauri/` Rust crate + `tauri.conf.json`(1280x720, identifier `com.marstv.app`)
@@ -137,8 +138,8 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 **M5 进度** (移动/TV):
 - ✅ Expo 52 + RN 0.76 壳:`apps/mobile/` 已搭建,iOS/Android/tvOS 三平台 profile,共享 `@marstv/core` / `@marstv/config`
-- ⬜ 移动端 UI 适配(React Native 组件 + 播放器)
-- ⬜ tvOS 遥控器交互适配
+- ✅ 基础组件:`packages/ui-native` 提供 TextView(三端字体适配) / Spacer / Container(safe-area),使用 `@marstv/config` 设计 token
+- ⬜ 移动端播放器 + tvOS 遥控器交互适配
 
 ## next.config.ts 关键配置
 
