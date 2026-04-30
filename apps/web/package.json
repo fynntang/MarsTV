@@ -19,7 +19,6 @@
   "dependencies": {
     "@marstv/config": "workspace:*",
     "@marstv/core": "workspace:*",
-    "@marstv/ui-native": "workspace:*",
     "@marstv/ui-web": "workspace:*",
     "@radix-ui/react-slot": "catalog:",
     "artplayer": "^5.2.4",
