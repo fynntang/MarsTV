@@ -100,6 +100,7 @@ export async function GET(request: NextRequest) {
           // Safe to share across users — only depends on server's CMS config,
           // not on the viewer. Let the CDN / browser cache briefly.
           'cache-control': 'public, max-age=60, stale-while-revalidate=600',
+          'cdn-cache-control': 'max-age=60, stale-while-revalidate=600',
         },
       },
     );

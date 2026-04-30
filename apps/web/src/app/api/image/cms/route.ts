@@ -125,6 +125,7 @@ export async function GET(request: NextRequest) {
       'content-type': contentType,
       // CMS poster URLs are effectively immutable once published.
       'cache-control': 'public, max-age=604800, immutable',
+      'cdn-cache-control': 'max-age=31536000, immutable',
     },
   });
 }

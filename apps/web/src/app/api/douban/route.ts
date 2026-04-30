@@ -53,6 +53,7 @@ export async function GET(request: NextRequest) {
     return Response.json(result, {
       headers: {
         'cache-control': 'public, max-age=600, stale-while-revalidate=3600',
+        'cdn-cache-control': 'max-age=600, stale-while-revalidate=3600',
       },
     });
   } catch (err) {

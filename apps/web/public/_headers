@@ -1,0 +1,23 @@
+# Cloudflare Pages edge caching rules
+# https://developers.cloudflare.com/pages/configuration/headers/
+
+# Static assets — immutable, longest cache at edge
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: max-age=31536000
+
+# Images served via next/image or public
+/*.svg
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: max-age=31536000
+/*.png
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: max-age=31536000
+/*.ico
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: max-age=31536000
+
+# JS/CSS bundles (hashed by Next.js) — immutable
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+  CDN-Cache-Control: max-age=31536000

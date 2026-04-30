@@ -55,6 +55,7 @@ export async function GET(request: NextRequest) {
       'content-type': contentType,
       // Posters are effectively immutable per Douban ID — cache aggressively.
       'cache-control': 'public, max-age=604800, immutable',
+      'cdn-cache-control': 'max-age=31536000, immutable',
     },
   });
 }
