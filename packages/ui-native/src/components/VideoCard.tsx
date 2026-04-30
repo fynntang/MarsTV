@@ -1,28 +1,54 @@
 import { colors, fontSize, radius } from '@marstv/config';
 import type { VideoItem } from '@marstv/core';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { isTV } from '../shared/platform.js';
 
 interface VideoCardProps {
   item: VideoItem;
   sourceName: string;
   onPress?: () => void;
+  /** When true, the TV focus engine prefers this element on mount. tvOS only. */
+  hasTVPreferredFocus?: boolean;
 }
 
-export function VideoCard({ item, sourceName, onPress }: VideoCardProps) {
+export function VideoCard({
+  item,
+  sourceName,
+  onPress,
+  hasTVPreferredFocus = false,
+}: VideoCardProps) {
+  const [focused, setFocused] = useState(false);
+  const tv = isTV();
+
+  const handleFocus = useCallback(() => setFocused(true), []);
+  const handleBlur = useCallback(() => setFocused(false), []);
+
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.poster}>
-        <Text style={styles.posterPlaceholder}>🎬</Text>
+    <Pressable
+      style={({ pressed }) => [
+        styles.card,
+        tv && styles.cardTV,
+        focused && styles.cardFocused,
+        pressed && !tv && { opacity: 0.7 },
+      ]}
+      onPress={onPress}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+      hasTVPreferredFocus={hasTVPreferredFocus}
+    >
+      <View style={[styles.poster, tv && styles.posterTV]}>
+        <Text style={[styles.posterPlaceholder, tv && styles.posterPlaceholderTV]}>🎬</Text>
       </View>
-      <View style={styles.info}>
-        <Text style={styles.title} numberOfLines={2}>
+      <View style={[styles.info, tv && styles.infoTV]}>
+        <Text style={[styles.title, tv && styles.titleTV]} numberOfLines={2}>
           {item.title}
         </Text>
-        <Text style={styles.meta}>
+        <Text style={[styles.meta, tv && styles.metaTV]}>
           {item.year ?? ''} · {sourceName}
         </Text>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -34,6 +60,17 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     marginBottom: 8,
   },
+  cardTV: {
+    flexDirection: 'column',
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: radius.lg,
+  },
+  cardFocused: {
+    transform: [{ scale: 1.05 }],
+    borderColor: colors.primary,
+    borderWidth: 2,
+  },
   poster: {
     width: 80,
     height: 110,
@@ -42,11 +79,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  posterTV: {
+    width: '100%' as const,
+    height: 200,
+    borderRadius: radius.md,
+  },
   posterPlaceholder: { fontSize: 32 },
+  posterPlaceholderTV: { fontSize: 48 },
   info: {
     flex: 1,
     marginLeft: 12,
     justifyContent: 'center',
+  },
+  infoTV: {
+    marginLeft: 0,
+    marginTop: 12,
   },
   title: {
     fontSize: fontSize.base,
@@ -54,8 +101,14 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: 4,
   },
+  titleTV: {
+    fontSize: fontSize.lg,
+  },
   meta: {
     fontSize: fontSize.sm,
     color: colors.textMuted,
+  },
+  metaTV: {
+    fontSize: fontSize.base,
   },
 });

@@ -3,7 +3,15 @@ import type { VideoItem } from '@marstv/core';
 import { Container, PosterSkeleton, Spacer, TextView, VideoCard } from '@marstv/ui-native';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Platform,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 
 const mockItems: { item: VideoItem; sourceName: string }[] = [
   {
@@ -33,6 +41,9 @@ const mockItems: { item: VideoItem; sourceName: string }[] = [
 export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { width } = useWindowDimensions();
+  const tv = (Platform.OS as string) === 'tvos';
+  const numColumns = tv ? Math.floor(width / 300) : 1;
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -72,20 +83,40 @@ export default function HomeScreen() {
           />
         }
       >
-        {mockItems.map(({ item, sourceName }) => (
-          <View key={item.id} style={styles.cardWrapper}>
-            <VideoCard
-              item={item}
-              sourceName={sourceName}
-              onPress={() =>
-                router.push({
-                  pathname: '/player',
-                  params: { source: item.source, id: item.id, title: item.title },
-                })
-              }
-            />
+        {tv ? (
+          <View style={styles.tvGrid}>
+            {mockItems.map(({ item, sourceName }, index) => (
+              <View key={item.id} style={{ width: `${100 / numColumns}%` }}>
+                <VideoCard
+                  item={item}
+                  sourceName={sourceName}
+                  hasTVPreferredFocus={index === 0}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/player',
+                      params: { source: item.source, id: item.id, title: item.title },
+                    })
+                  }
+                />
+              </View>
+            ))}
           </View>
-        ))}
+        ) : (
+          mockItems.map(({ item, sourceName }) => (
+            <View key={item.id} style={styles.cardWrapper}>
+              <VideoCard
+                item={item}
+                sourceName={sourceName}
+                onPress={() =>
+                  router.push({
+                    pathname: '/player',
+                    params: { source: item.source, id: item.id, title: item.title },
+                  })
+                }
+              />
+            </View>
+          ))
+        )}
         <View style={styles.navRow}>
           <TouchableOpacity
             style={styles.navButton}
@@ -149,6 +180,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 16,
+  },
+  tvGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   cardWrapper: {
     marginBottom: 8,

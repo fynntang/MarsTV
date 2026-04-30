@@ -1,12 +1,13 @@
 {
-  "$schema": "../../../node_modules/@tauri-apps/cli/config.schema.json",
+  "$schema": "https://schema.tauri.app/config/2",
   "productName": "MarsTV",
   "version": "0.1.0",
   "identifier": "com.marstv.app",
   "build": {
     "devUrl": "http://localhost:3000",
     "beforeDevCommand": "pnpm --filter @marstv/web dev",
-    "beforeBuildCommand": "pnpm --filter @marstv/web build"
+    "beforeBuildCommand": "pnpm --filter @marstv/web build",
+    "frontendDist": "../../web/dist"
   },
   "app": {
     "windows": [
@@ -24,7 +25,9 @@
   },
   "plugins": {
     "updater": {
-      "endpoints": ["https://github.com/FarVoyageLab/MarsTV/releases/latest/download/latest.json"],
+      "endpoints": [
+        "https://github.com/FarVoyageLab/MarsTV/releases/latest/download/latest.json"
+      ],
       "pubkey": "PLACEHOLDER_REPLACE_WITH_YOUR_SIGNING_KEY",
       "windows": {
         "installMode": "passive"
