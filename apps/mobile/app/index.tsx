@@ -1,4 +1,5 @@
 import { StyleSheet, ScrollView, View } from 'react-native';
+import { router } from 'expo-router';
 import { Container, Spacer, VideoCard } from '@marstv/ui-native';
 import { colors } from '@marstv/config';
 import type { VideoItem } from '@marstv/core';
@@ -37,7 +38,16 @@ export default function HomeScreen() {
       >
         {mockItems.map(({ item, sourceName }) => (
           <View key={item.id} style={styles.cardWrapper}>
-            <VideoCard item={item} sourceName={sourceName} />
+            <VideoCard
+              item={item}
+              sourceName={sourceName}
+              onPress={() =>
+                router.push({
+                  pathname: '/player',
+                  params: { source: item.source, id: item.id, title: item.title },
+                })
+              }
+            />
           </View>
         ))}
         <Spacer size={24} />
