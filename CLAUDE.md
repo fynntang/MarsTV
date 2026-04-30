@@ -104,8 +104,8 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 **M1 已闭环** —— Web 端功能 + 工程质量全线打通。
 **M2 已闭环** —— 服务端存储与边缘部署就绪。
-**M4 进行中** —— 桌面端 Tauri 2 壳 + updater/shell 插件已就绪。
-**M5 进行中** —— 移动端 Expo 52 + RN 0.76 壳已搭建,iOS/Android/tvOS 三平台。
+**M4 已就绪** —— 桌面端 Tauri 2 壳 + 8 原生特性 + .app/.dmg 构建验证通过。
+**M5 已就绪** —— 移动端 Expo 52 + 10 屏 + 7 组件 + tvOS 适配,iOS/Android/tvOS 三平台。
 
 **M1 已就绪**:
 - `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、源健康评分(`source-health`)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
@@ -130,23 +130,24 @@ pnpm clean                # 清理 node_modules / .next / dist
 - ✅ CI/CD:`.github/workflows/ci.yml`(typecheck + test + lint + build-web),push/PR 到 main 自动触发
 
 **M4 进度** (桌面端):
-- ✅ Tauri 2 壳搭建:`apps/desktop/src-tauri/` Rust crate + `tauri.conf.json`(1280x720, identifier `com.marstv.app`)
-- ✅ 条件构建:`next.config.ts` 通过 `TAURI_BUILD=1` 切换 `output: 'export'`,`pnpm desktop:dev` 启动 Tauri 开发窗口
-- ✅ Tauri 插件:`tauri-plugin-updater`(自动更新) + `tauri-plugin-shell`(深度链接),capabilities 权限已配置
-- ⬜ 桌面端构建签名 + 分发通道配置
-- ⬜ 窗口控制/系统托盘/全局快捷键
+- ✅ Tauri 2 壳:`apps/desktop/src-tauri/` Rust crate + `tauri.conf.json`(1280x720, `com.marstv.app`)
+- ✅ 8 原生特性:updater(自动更新), shell(深度链接), global-shortcut(Ctrl+Shift+F), store(窗口持久化), tray(托盘+关闭隐藏), menu bar(File/Edit/View/Window/Help), get_app_version, open_external
+- ✅ `tauri build` 验证通过:MarsTV.app(15MB) + .dmg(5.9MB),cargo check 通过
+- ⬜ 代码签名 + .dmg 背景 + Windows/Linux 构建
 
-**M5 进度** (移动/TV):
-- ✅ Expo 52 + RN 0.76 壳:`apps/mobile/` 已搭建,iOS/Android/tvOS 三平台 profile,共享 `@marstv/core` / `@marstv/config`
-- ✅ 基础组件:`packages/ui-native` 提供 TextView(三端字体适配) / Spacer / Container(safe-area),使用 `@marstv/config` 设计 token
-- ⬜ 移动端播放器 + tvOS 遥控器交互适配
+**M5 已就绪** (移动/TV):
+- ✅ Expo 52 + RN 0.76 壳,10 屏(index/search/player/favorites/history/subscriptions/login/douban/settings/_layout)
+- ✅ 7 组件:TextView(三端字体), Spacer, Container(safe-area), VideoCard(tvOS focus), Skeleton, PosterSkeleton, platform(DeviceVariant+isTV)
+- ✅ 2 hooks:useCmsSearch(搜索状态), usePlayerData(播放器数据+cleanup)
+- ✅ auth gate(SITE_PASSWORD 门控) + settings(API URL 配置)
+- ✅ tvOS 适配:Pressable focus engine + grid layout + hasTVPreferredFocus
+- ✅ 7 个 API client 单元测试(vitest)
 
 ## next.config.ts 关键配置
 
-- `output`: `TAURI_BUILD=1` 时 `'export'`(桌面端),否则 `'standalone'`(Docker/Vercel/CF)
+- `output: 'standalone'`(Docker/Vercel/CF/桌面均用 standalone)
 - `transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config']`(workspace 包需要 transpile)
 - `initOpenNextCloudflareForDev()` 由 `OPEN_NEXT_DEV` env 门控,仅在 CF Pages 本地预览时启用
-- `images.unoptimized` 在 `TAURI_BUILD=1` 时强制 `true`(`output: 'export'` 要求)
 
 ## 环境变量
 
