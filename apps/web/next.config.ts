@@ -2,11 +2,7 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  // Workspace 内源码包(.ts)需要 Next 编译
   transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config'],
-
-  // Always 'standalone' — the app is fully dynamic (API routes, force-dynamic pages).
-  // Tauri desktop uses the dev server in dev mode and a bundled server in production.
   output: 'standalone',
 };
 
