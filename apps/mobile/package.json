@@ -2,7 +2,7 @@
   "name": "@marstv/mobile",
   "version": "0.0.0",
   "private": true,
-  "main": "src/index.ts",
+  "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
@@ -17,9 +17,14 @@
     "@marstv/config": "workspace:*",
     "@marstv/ui-native": "workspace:*",
     "expo": "~52.0.0",
+    "expo-constants": "~17.0.0",
+    "expo-linking": "~7.0.0",
+    "expo-router": "~4.0.0",
     "expo-status-bar": "~2.0.0",
     "react": "catalog:",
     "react-native": "0.76.9",
+    "react-native-gesture-handler": "~2.20.0",
+    "react-native-reanimated": "~3.16.0",
     "react-native-safe-area-context": "~5.0.0",
     "react-native-screens": "~4.4.0"
   },

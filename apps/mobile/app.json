@@ -19,9 +19,13 @@
       },
       "package": "com.marstv.app"
     },
+    "scheme": "marstv",
     "plugins": [
       "expo-router"
     ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "platforms": ["ios", "android", "tvos"]
   }
 }
