@@ -1,4 +1,4 @@
-import { LoginForm } from '@/components/login-form';
+import { NextLoginForm } from '@/components/next-login-form';
 import { isEnabled } from '@/lib/site-password';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
@@ -21,7 +21,7 @@ export default function LoginPage() {
         {gateOn && (
           <div className="mt-6">
             <Suspense fallback={null}>
-              <LoginForm />
+              <NextLoginForm />
             </Suspense>
           </div>
         )}

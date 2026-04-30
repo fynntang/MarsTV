@@ -1,22 +1,35 @@
 {
   "name": "@marstv/desktop",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "tauri dev",
-    "build": "tauri build",
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
     "typecheck": "tsc --noEmit",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
+    "@marstv/core": "workspace:*",
+    "@marstv/ui-web": "workspace:*",
+    "@marstv/ui-shared": "workspace:*",
+    "@marstv/config": "workspace:*",
+    "@tauri-apps/api": "^2.10.1",
+    "@tauri-apps/plugin-store": "^2",
     "@tauri-apps/plugin-updater": "^2",
     "@tauri-apps/plugin-shell": "^2",
     "@tauri-apps/plugin-global-shortcut": "^2",
-    "@tauri-apps/plugin-store": "^2"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@tauri-apps/cli": "^2",
-    "typescript": "catalog:"
+    "@vitejs/plugin-react": "^4",
+    "typescript": "catalog:",
+    "vite": "^6"
   }
 }

@@ -4,9 +4,10 @@
 // `marstv:progress:<source>:<id>:<line>:<ep>` (written by PlayerEmbed) for
 // every episode; anything with a non-zero value is considered watched.
 
-import { cn } from '@/lib/utils';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
+import { cn } from '../lib/utils';
 
 interface Episode {
   title: string;
@@ -19,6 +20,10 @@ interface Props {
   lineIdx: number;
   currentEpIdx: number;
   episodes: Episode[];
+  /** Link component for episode navigation. Defaults to plain <a>. */
+  LinkComponent?: LinkComponent;
+  /** Callback to build the episode URL. */
+  getEpisodeUrl?: (source: string, id: string, lineIdx: number, epIdx: number) => string;
 }
 
 const PROGRESS_PREFIX = 'marstv:progress:';
@@ -39,7 +44,19 @@ function readAllProgress(source: string, id: string, lineIdx: number, count: num
   return watched;
 }
 
-export function EpisodeGrid({ source, id, lineIdx, currentEpIdx, episodes }: Props) {
+function defaultGetEpisodeUrl(source: string, id: string, lineIdx: number, epIdx: number): string {
+  return `/play/${encodeURIComponent(source)}/${encodeURIComponent(id)}?line=${lineIdx}&ep=${epIdx}`;
+}
+
+export function EpisodeGrid({
+  source,
+  id,
+  lineIdx,
+  currentEpIdx,
+  episodes,
+  LinkComponent = DefaultLink,
+  getEpisodeUrl = defaultGetEpisodeUrl,
+}: Props) {
   const [watched, setWatched] = useState<Set<number>>(() => new Set());
 
   useEffect(() => {
@@ -63,9 +80,9 @@ export function EpisodeGrid({ source, id, lineIdx, currentEpIdx, episodes }: Pro
         const isActive = i === currentEpIdx;
         const isWatched = !isActive && watched.has(i);
         return (
-          <Link
+          <LinkComponent
             key={`${ep.title}:${i}`}
-            href={`/play/${encodeURIComponent(source)}/${encodeURIComponent(id)}?line=${lineIdx}&ep=${i}`}
+            href={getEpisodeUrl(source, id, lineIdx, i)}
             scroll={false}
             className={cn(
               'relative truncate rounded-md border px-2 py-1.5 text-center text-xs transition-colors',
@@ -84,7 +101,7 @@ export function EpisodeGrid({ source, id, lineIdx, currentEpIdx, episodes }: Pro
                 className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary/70"
               />
             ) : null}
-          </Link>
+          </LinkComponent>
         );
       })}
     </div>

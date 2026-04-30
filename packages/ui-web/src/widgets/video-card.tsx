@@ -1,8 +1,10 @@
-import { cn } from '@/lib/utils';
+'use client';
+
 import type { VideoItem } from '@marstv/core';
-import { CardMarkers } from '@marstv/ui-web';
-import Image from 'next/image';
-import Link from 'next/link';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
+import { cn } from '../lib/utils';
+import { CardMarkers } from './card-markers';
 
 interface Props {
   item: VideoItem;
@@ -10,16 +12,29 @@ interface Props {
   sourceName?: string;
   /** Hide the source badge — useful when the card lives inside a per-source section. */
   hideSourceBadge?: boolean;
+  /** Link component for navigation. Defaults to plain <a>. */
+  LinkComponent?: LinkComponent;
+  /** Image proxy URL prefix. Defaults to '/api/image/cms'. */
+  imageProxy?: string;
+  /** Callback to build the play page URL. Defaults to `/play/${source}/${id}`. */
+  getPlayUrl?: (source: string, id: string) => string;
 }
 
-export function VideoCard({ item, sourceName, hideSourceBadge }: Props) {
-  const href = `/play/${encodeURIComponent(item.source)}/${encodeURIComponent(item.id)}`;
+export function VideoCard({
+  item,
+  sourceName,
+  hideSourceBadge,
+  LinkComponent = DefaultLink,
+  imageProxy = '/api/image/cms',
+  getPlayUrl = (s, i) => `/play/${encodeURIComponent(s)}/${encodeURIComponent(i)}`,
+}: Props) {
+  const href = getPlayUrl(item.source, item.id);
   // CMS poster hosts often block cross-origin hotlinks or serve broken SSL.
   // Route them through our own proxy (SSRF-hardened, 7-day CDN cache).
-  const proxiedPoster = item.poster ? `/api/image/cms?u=${encodeURIComponent(item.poster)}` : null;
+  const proxiedPoster = item.poster ? `${imageProxy}?u=${encodeURIComponent(item.poster)}` : null;
 
   return (
-    <Link
+    <LinkComponent
       href={href}
       className={cn(
         'group relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-all',
@@ -28,13 +43,11 @@ export function VideoCard({ item, sourceName, hideSourceBadge }: Props) {
     >
       <div className="relative aspect-[2/3] w-full bg-background">
         {proxiedPoster ? (
-          <Image
+          <img
             src={proxiedPoster}
             alt={item.title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
             sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 45vw"
-            unoptimized
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-dim-foreground">
@@ -63,6 +76,6 @@ export function VideoCard({ item, sourceName, hideSourceBadge }: Props) {
           )}
         </div>
       </div>
-    </Link>
+    </LinkComponent>
   );
 }

@@ -1,10 +1,10 @@
 'use client';
 
-import { getClientStorage } from '@/lib/client-storage';
-import { invalidateCardMarkers } from '@marstv/ui-web';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { type IStorage, localStorageBackend } from '@marstv/core';
 import { Fragment, useEffect, useRef, useState } from 'react';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
+import { invalidateCardMarkers } from './card-markers';
 
 interface PlayRecordMeta {
   source: string;
@@ -38,6 +38,12 @@ interface Props {
   // When provided, write a full PlayRecord to storage on each tick so the
   // "history" page can display rich entries (title, poster, last episode).
   record?: PlayRecordMeta;
+  // Navigation callback, replaces next/router.
+  onNavigate: (href: string) => void;
+  // Storage for persisting play records. Defaults to localStorageBackend.
+  storage?: IStorage;
+  // Link component for navigation. Defaults to plain <a>.
+  LinkComponent?: LinkComponent;
 }
 
 const PROGRESS_PREFIX = 'marstv:progress:';
@@ -84,6 +90,9 @@ export function PlayerEmbed({
   nextLineHref,
   nextLineName,
   record,
+  onNavigate,
+  storage = localStorageBackend,
+  LinkComponent = DefaultLink,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -92,7 +101,6 @@ export function PlayerEmbed({
   // ArtPlayer + hls instance from scratch. Needed because on a fatal HLS
   // error we destroy hls, leaving the video element dead until we re-init.
   const [retryNonce, setRetryNonce] = useState(0);
-  const router = useRouter();
   // Keep the latest nextHref in a ref so the ArtPlayer 'ended' handler,
   // which is wired up once, always navigates to the current next episode.
   const nextHrefRef = useRef(nextHref);
@@ -243,7 +251,7 @@ export function PlayerEmbed({
               // Don't leave a stale record pointing at the credits either.
               const rec = recordRef.current;
               if (rec) {
-                getClientStorage()
+                storage
                   .removePlayRecord(rec.source, rec.id)
                   .then(() => invalidateCardMarkers())
                   .catch(() => {});
@@ -255,7 +263,7 @@ export function PlayerEmbed({
             // Also store a full PlayRecord if the caller wired one up.
             const rec = recordRef.current;
             if (rec) {
-              getClientStorage()
+              storage
                 .putPlayRecord({
                   source: rec.source,
                   sourceName: rec.sourceName,
@@ -288,7 +296,7 @@ export function PlayerEmbed({
         a.on('video:ended', () => {
           if (progressKey) clearProgress(progressKey);
           const href = nextHrefRef.current;
-          if (href) router.push(href);
+          if (href) onNavigate(href);
         });
       } catch (err) {
         if (!cancelled) {
@@ -308,7 +316,7 @@ export function PlayerEmbed({
         }
       }
     };
-  }, [src, poster, progressKey, router, retryNonce]);
+  }, [src, poster, progressKey, retryNonce, onNavigate, storage]);
 
   // Keyboard shortcuts: N/P for episode nav, ? for help overlay. We skip when
   // the event's target is editable (user typing in some future comment box /
@@ -340,21 +348,21 @@ export function PlayerEmbed({
       if (ev.key === 'n' || ev.key === 'N') {
         if (nextHref) {
           ev.preventDefault();
-          router.push(nextHref);
+          onNavigate(nextHref);
         }
         return;
       }
       if (ev.key === 'p' || ev.key === 'P') {
         if (prevHref) {
           ev.preventDefault();
-          router.push(prevHref);
+          onNavigate(prevHref);
         }
         return;
       }
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [nextHref, prevHref, router]);
+  }, [nextHref, prevHref, onNavigate]);
 
   return (
     <div>
@@ -367,12 +375,12 @@ export function PlayerEmbed({
             </div>
             <p className="max-w-md text-sm text-danger">播放失败:{error}</p>
             {nextLineHref ? (
-              <Link
+              <LinkComponent
                 href={nextLineHref}
                 className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-1.5 text-xs font-medium text-background transition-colors hover:bg-primary-hover"
               >
                 试下一条线路{nextLineName ? ` · ${nextLineName}` : ''} →
-              </Link>
+              </LinkComponent>
             ) : (
               <span className="text-xs text-muted-foreground">本视频暂无其他线路可用</span>
             )}

@@ -1,11 +1,12 @@
-import { EpisodeGrid } from '@/components/episode-grid';
-import { PlayerEmbed } from '@/components/player-embed';
-import { SpeedtestButton } from '@/components/speedtest-button';
+import { NextPlayerEmbed } from '@/components/next-player-embed';
+import { NextSpeedtestButton } from '@/components/next-speedtest-button';
+import { NextLinkComponent } from '@/lib/next-adapter';
 import { signProxyUrl } from '@/lib/proxy-auth';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import { findSource } from '@/lib/sources';
 import { cn } from '@/lib/utils';
 import { type VideoDetail, getDetail } from '@marstv/core';
+import { EpisodeGrid } from '@marstv/ui-web';
 import { FavoriteButton } from '@marstv/ui-web';
 import { SubscribeButton } from '@marstv/ui-web';
 import type { Metadata } from 'next';
@@ -178,7 +179,7 @@ export default async function PlayPage(props: { params: Params; searchParams: Se
         </div>
       </div>
 
-      <PlayerEmbed
+      <NextPlayerEmbed
         key={`${lineIdx}:${epIdx}`}
         src={playbackUrl}
         poster={detail.poster}
@@ -211,7 +212,7 @@ export default async function PlayPage(props: { params: Params; searchParams: Se
         <section className="mt-6">
           <div className="mb-2 flex items-center justify-between gap-3">
             <h2 className="text-sm font-medium text-foreground">线路</h2>
-            <SpeedtestButton
+            <NextSpeedtestButton
               sourceKey={source}
               videoId={id}
               currentLine={lineIdx}
@@ -255,6 +256,7 @@ export default async function PlayPage(props: { params: Params; searchParams: Se
           lineIdx={lineIdx}
           currentEpIdx={epIdx}
           episodes={line.episodes}
+          LinkComponent={NextLinkComponent}
         />
       </section>
     </div>

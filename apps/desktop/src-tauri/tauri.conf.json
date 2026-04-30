@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "identifier": "com.marstv.desktop",
   "build": {
-    "devUrl": "http://localhost:3000",
-    "beforeDevCommand": "pnpm --filter @marstv/web dev",
-    "beforeBuildCommand": "pnpm --filter @marstv/web build",
-    "frontendDist": "../frontend"
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "pnpm --filter @marstv/desktop dev",
+    "beforeBuildCommand": "pnpm --filter @marstv/desktop build",
+    "frontendDist": "../dist"
   },
   "app": {
     "windows": [

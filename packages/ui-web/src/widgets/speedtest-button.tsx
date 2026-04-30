@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 interface LineProbe {
@@ -13,12 +12,12 @@ interface LineProbe {
 
 interface Props {
   sourceKey: string;
-  videoId: string;
   lines: LineProbe[];
   /** Currently-selected line index, so we don't jump the user around if their
    * current line wins or ties — we only navigate when the winner differs. */
   currentLine: number;
-  episode: number;
+  /** Called when a line should be selected (e.g. fastest line wins). */
+  onLineSelect: (line: { source: string; line: string; url: string }) => void;
 }
 
 interface RankedResult {
@@ -31,8 +30,7 @@ interface RankedResult {
 
 type ResultRow = { index: number; name: string; result: RankedResult };
 
-export function SpeedtestButton({ sourceKey, videoId, lines, currentLine, episode }: Props) {
-  const router = useRouter();
+export function SpeedtestButton({ sourceKey, lines, currentLine, onLineSelect }: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [rows, setRows] = useState<ResultRow[] | null>(null);
@@ -74,8 +72,11 @@ export function SpeedtestButton({ sourceKey, videoId, lines, currentLine, episod
       // where the user already is. Preserve current episode index.
       const winner = mapped.find((m) => m.result.score > 0);
       if (winner && winner.index !== currentLine) {
-        const href = `/play/${encodeURIComponent(sourceKey)}/${encodeURIComponent(videoId)}?line=${winner.index}&ep=${episode}`;
-        router.push(href);
+        onLineSelect({
+          source: sourceKey,
+          line: winner.name,
+          url: lines[winner.index]?.url ?? '',
+        });
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'speedtest failed');

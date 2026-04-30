@@ -1,0 +1,95 @@
+'use client';
+
+// Home-page "追剧中" strip. New-episode cards surface first and show a +N
+// badge until the user clicks through.
+
+import type { SubscriptionRecord } from '@marstv/core';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
+
+interface Props {
+  /** Subscription records to display. null = still loading (component returns null). */
+  items: SubscriptionRecord[] | null;
+  /** Called when the user dismisses a subscription. */
+  onRemove: (source: string, id: string) => void;
+  /** Link component for navigation. Defaults to plain <a>. */
+  LinkComponent?: LinkComponent;
+  /** Image proxy URL prefix. Defaults to '/api/image/cms'. */
+  imageProxy?: string;
+}
+
+export function SubscriptionRow({
+  items,
+  onRemove,
+  LinkComponent = DefaultLink,
+  imageProxy = '/api/image/cms',
+}: Props) {
+  if (!items || items.length === 0) return null;
+
+  return (
+    <section className="mt-12">
+      <div className="mb-3 flex items-baseline justify-between">
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">追剧中</h2>
+        <LinkComponent
+          href="/subscriptions"
+          className="text-xs text-dim-foreground transition-colors hover:text-primary"
+        >
+          全部订阅 →
+        </LinkComponent>
+      </div>
+      <div className="scrollbar-thin -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
+        {items.map((it) => {
+          const href = `/play/${encodeURIComponent(it.source)}/${encodeURIComponent(it.id)}?line=${it.lineIdx}&ep=0`;
+          const newCount = Math.max(0, it.latestEpisodeCount - it.knownEpisodeCount);
+          const proxiedPoster = it.poster
+            ? `${imageProxy}?u=${encodeURIComponent(it.poster)}`
+            : null;
+          return (
+            <div
+              key={`${it.source}:${it.id}`}
+              className="group relative flex w-[140px] shrink-0 flex-col overflow-hidden rounded-md border border-border/60 bg-surface/60 transition-colors hover:border-primary/60"
+            >
+              <LinkComponent href={href} className="contents">
+                <div className="relative aspect-[2/3] w-full overflow-hidden bg-black">
+                  {proxiedPoster ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={proxiedPoster}
+                      alt={it.title}
+                      loading="lazy"
+                      referrerPolicy="no-referrer"
+                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-xs text-dim-foreground">
+                      无封面
+                    </div>
+                  )}
+                  {newCount > 0 ? (
+                    <span className="absolute left-1.5 top-1.5 rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-background shadow-md">
+                      +{newCount} 新集
+                    </span>
+                  ) : null}
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent px-1.5 pt-4 pb-1 text-[10px] text-foreground/90">
+                    共 {it.latestEpisodeCount} 集
+                  </span>
+                </div>
+                <div className="truncate px-2 py-1.5 text-xs text-foreground group-hover:text-primary">
+                  {it.title}
+                </div>
+              </LinkComponent>
+              <button
+                type="button"
+                onClick={() => onRemove(it.source, it.id)}
+                aria-label="取消追剧"
+                className="absolute right-1.5 top-1.5 rounded-full bg-background/70 px-1.5 py-0.5 text-[10px] text-muted-foreground opacity-0 transition-opacity hover:text-danger group-hover:opacity-100"
+              >
+                ×
+              </button>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}

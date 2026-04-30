@@ -1,24 +1,40 @@
-import { cn } from '@/lib/utils';
+'use client';
+
 import type { SourceHit, VideoGroup } from '@marstv/core';
-import { CardMarkers } from '@marstv/ui-web';
-import Image from 'next/image';
-import Link from 'next/link';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
+import { cn } from '../lib/utils';
+import { CardMarkers } from './card-markers';
 
 // A "group" is the same (normalized) title seen across multiple CMS sources.
 // The primary card links to the first source's play page; additional sources
 // surface as a secondary row of chips under the card so users can jump to a
 // specific provider without scrolling through per-source sections.
 
-function hrefFor(hit: SourceHit): string {
-  return `/play/${encodeURIComponent(hit.item.source)}/${encodeURIComponent(hit.item.id)}`;
+interface Props {
+  group: VideoGroup;
+  LinkComponent?: LinkComponent;
+  /** Image proxy URL prefix. Defaults to '/api/image/cms'. */
+  imageProxy?: string;
+  /** Callback to build the play page URL. */
+  getPlayUrl?: (source: string, id: string) => string;
 }
 
-export function GroupedVideoCard({ group }: { group: VideoGroup }) {
+function defaultGetPlayUrl(source: string, id: string): string {
+  return `/play/${encodeURIComponent(source)}/${encodeURIComponent(id)}`;
+}
+
+export function GroupedVideoCard({
+  group,
+  LinkComponent = DefaultLink,
+  imageProxy = '/api/image/cms',
+  getPlayUrl = defaultGetPlayUrl,
+}: Props) {
   const { primary } = group;
   const { item } = primary;
   const totalSources = 1 + group.others.length;
-  const proxiedPoster = item.poster ? `/api/image/cms?u=${encodeURIComponent(item.poster)}` : null;
-  const href = hrefFor(primary);
+  const proxiedPoster = item.poster ? `${imageProxy}?u=${encodeURIComponent(item.poster)}` : null;
+  const href = getPlayUrl(primary.item.source, primary.item.id);
 
   return (
     <article
@@ -27,19 +43,17 @@ export function GroupedVideoCard({ group }: { group: VideoGroup }) {
         'hover:border-primary hover:shadow-lg hover:shadow-primary/10',
       )}
     >
-      <Link
+      <LinkComponent
         href={href}
         className="flex flex-col focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         <div className="relative aspect-[2/3] w-full bg-background">
           {proxiedPoster ? (
-            <Image
+            <img
               src={proxiedPoster}
               alt={item.title}
-              fill
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               sizes="(min-width: 1024px) 20vw, (min-width: 768px) 25vw, 45vw"
-              unoptimized
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-dim-foreground">
@@ -68,12 +82,17 @@ export function GroupedVideoCard({ group }: { group: VideoGroup }) {
             </span>
           </div>
         </div>
-      </Link>
+      </LinkComponent>
       {group.others.length > 0 ? (
         <div className="flex flex-wrap gap-1 border-t border-border/40 bg-background/30 px-2 py-1.5">
-          <SourceChip hit={primary} primary />
+          <SourceChip hit={primary} primary LinkComponent={LinkComponent} getPlayUrl={getPlayUrl} />
           {group.others.map((hit) => (
-            <SourceChip key={hit.source.key} hit={hit} />
+            <SourceChip
+              key={hit.source.key}
+              hit={hit}
+              LinkComponent={LinkComponent}
+              getPlayUrl={getPlayUrl}
+            />
           ))}
         </div>
       ) : null}
@@ -81,10 +100,20 @@ export function GroupedVideoCard({ group }: { group: VideoGroup }) {
   );
 }
 
-function SourceChip({ hit, primary = false }: { hit: SourceHit; primary?: boolean }) {
+function SourceChip({
+  hit,
+  primary = false,
+  LinkComponent = DefaultLink,
+  getPlayUrl = defaultGetPlayUrl,
+}: {
+  hit: SourceHit;
+  primary?: boolean;
+  LinkComponent?: LinkComponent;
+  getPlayUrl?: (source: string, id: string) => string;
+}) {
   return (
-    <Link
-      href={hrefFor(hit)}
+    <LinkComponent
+      href={getPlayUrl(hit.item.source, hit.item.id)}
       className={cn(
         'inline-flex max-w-[7rem] items-center gap-1 truncate rounded-full px-2 py-0.5 text-[10px] tracking-wide transition-colors',
         primary
@@ -94,6 +123,6 @@ function SourceChip({ hit, primary = false }: { hit: SourceHit; primary?: boolea
       title={hit.source.name}
     >
       <span className="truncate">{hit.source.name}</span>
-    </Link>
+    </LinkComponent>
   );
 }

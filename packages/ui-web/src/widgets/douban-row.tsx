@@ -1,55 +1,64 @@
-import { type DoubanItem, type DoubanMediaType, searchDouban } from '@marstv/core';
-import { AvailabilityBadge } from '@marstv/ui-web';
-import Link from 'next/link';
-import { Suspense } from 'react';
+'use client';
+
+import type { DoubanItem, DoubanMediaType } from '@marstv/core';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
+import { AvailabilityBadge } from './availability-badge';
 
 interface Props {
   type: DoubanMediaType;
   tag: string;
   title: string;
   limit?: number;
+  /** Fetched douban items. null = loading, [] = error/empty. */
+  items: DoubanItem[] | null;
+  /** Link component for navigation. Defaults to plain <a>. */
+  LinkComponent?: LinkComponent;
 }
 
-// Server component row. Wrap in <Suspense> at the call site to stream.
-export function DoubanRow(props: Props) {
-  const moreHref = `/douban?type=${props.type}&tag=${encodeURIComponent(props.tag)}`;
+export function DoubanRow({
+  type,
+  tag,
+  title,
+  limit = 12,
+  items,
+  LinkComponent = DefaultLink,
+}: Props) {
+  const moreHref = `/douban?type=${type}&tag=${encodeURIComponent(tag)}`;
+
   return (
     <section className="mt-12">
       <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-lg font-semibold tracking-tight text-foreground">{props.title}</h2>
-        <Link
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">{title}</h2>
+        <LinkComponent
           href={moreHref}
           className="text-xs text-dim-foreground transition-colors hover:text-primary"
         >
-          豆瓣 · {props.tag} →
-        </Link>
+          豆瓣 · {tag} →
+        </LinkComponent>
       </div>
-      <Suspense fallback={<RowSkeleton count={props.limit ?? 12} />}>
-        <RowBody {...props} />
-      </Suspense>
+      {items === null ? (
+        <RowSkeleton count={limit} />
+      ) : items.length === 0 ? (
+        <RowError />
+      ) : (
+        <div className="scrollbar-thin -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
+          {items.map((item) => (
+            <DoubanCard key={item.id} item={item} LinkComponent={LinkComponent} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
 
-async function RowBody({ type, tag, limit = 12 }: Props) {
-  let items: DoubanItem[] = [];
-  try {
-    const r = await searchDouban({ type, tag, pageSize: limit, timeoutMs: 6000 });
-    items = r.items;
-  } catch {
-    return <RowError />;
-  }
-  if (items.length === 0) return <RowError />;
-  return (
-    <div className="scrollbar-thin -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
-      {items.map((item) => (
-        <DoubanCard key={item.id} item={item} />
-      ))}
-    </div>
-  );
-}
-
-function DoubanCard({ item }: { item: DoubanItem }) {
+function DoubanCard({
+  item,
+  LinkComponent = DefaultLink,
+}: {
+  item: DoubanItem;
+  LinkComponent?: LinkComponent;
+}) {
   // Douban entries aren't CMS items — clicking searches the title across all
   // configured sources so the user can pick a source to actually play from.
   const proxiedCover = `/api/image/douban?u=${encodeURIComponent(item.cover)}`;
@@ -58,7 +67,7 @@ function DoubanCard({ item }: { item: DoubanItem }) {
   if (item.rate) searchParams.set('dbRate', item.rate);
   if (item.url) searchParams.set('db', item.url);
   return (
-    <Link
+    <LinkComponent
       href={`/search?${searchParams.toString()}`}
       className="group relative flex w-[140px] shrink-0 flex-col overflow-hidden rounded-md border border-border/60 bg-surface/60 transition-colors hover:border-primary/60"
     >
@@ -85,7 +94,7 @@ function DoubanCard({ item }: { item: DoubanItem }) {
       <div className="truncate px-2 py-1.5 text-xs text-foreground group-hover:text-primary">
         {item.title}
       </div>
-    </Link>
+    </LinkComponent>
   );
 }
 

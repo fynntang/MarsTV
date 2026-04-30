@@ -1,19 +1,20 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
     "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "incremental": true,
-    "baseUrl": "."
+    "declaration": false,
+    "declarationMap": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@marstv/core": ["../../packages/core/src/index.ts"],
+      "@marstv/ui-web": ["../../packages/ui-web/src/index.ts"],
+      "@marstv/ui-shared": ["../../packages/ui-shared/src/index.ts"],
+      "@marstv/config": ["../../packages/config/src/index.ts"]
+    }
   },
-  "include": ["**/*.ts", "**/*.mts"],
-  "exclude": ["node_modules", "src-tauri"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"],
+  "exclude": ["node_modules", "dist", "src-tauri"]
 }

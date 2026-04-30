@@ -1,14 +1,15 @@
 'use client';
 
-import { Button, Input } from '@marstv/ui-web';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
+import { Button } from '../components/button';
+import { Input } from '../components/input';
 
-export function LoginForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const next = searchParams.get('next') ?? '/';
+interface Props {
+  /** Called after successful login. */
+  onLoginSuccess: () => void;
+}
 
+export function LoginForm({ onLoginSuccess }: Props) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -24,11 +25,7 @@ export function LoginForm() {
         body: JSON.stringify({ password }),
       });
       if (res.ok) {
-        // Only allow same-origin redirects so a malicious `next` can't
-        // bounce into an external URL after login.
-        const safeNext = next.startsWith('/') && !next.startsWith('//') ? next : '/';
-        router.replace(safeNext);
-        router.refresh();
+        onLoginSuccess();
         return;
       }
       if (res.status === 401) {

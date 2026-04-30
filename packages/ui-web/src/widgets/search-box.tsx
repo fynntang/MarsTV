@@ -1,10 +1,12 @@
 'use client';
 
-import { Button, Input } from '@marstv/ui-web';
-import { useRouter } from 'next/navigation';
 import { useState, useTransition } from 'react';
+import { Button } from '../components/button';
+import { Input } from '../components/input';
 
 interface Props {
+  /** Called when the user submits a search query. */
+  onSearch: (query: string) => void;
   defaultValue?: string;
   autoFocus?: boolean;
   className?: string;
@@ -12,12 +14,12 @@ interface Props {
 }
 
 export function SearchBox({
+  onSearch,
   defaultValue = '',
   autoFocus = false,
   className,
   size = 'default',
 }: Props) {
-  const router = useRouter();
   const [value, setValue] = useState(defaultValue);
   const [isPending, startTransition] = useTransition();
 
@@ -26,7 +28,7 @@ export function SearchBox({
     const q = value.trim();
     if (!q) return;
     startTransition(() => {
-      router.push(`/search?q=${encodeURIComponent(q)}`);
+      onSearch(q);
     });
   };
 

@@ -1,7 +1,7 @@
-import { ContinueWatchingRow } from '@/components/continue-watching-row';
-import { DoubanRow } from '@/components/douban-row';
-import { SearchBox } from '@/components/search-box';
-import { SubscriptionRow } from '@/components/subscription-row';
+import { NextContinueWatching } from '@/components/next-continue-watching';
+import { NextDoubanRow } from '@/components/next-douban-row';
+import { NextSearchBox } from '@/components/next-search-box';
+import { NextSubscriptionRow } from '@/components/next-subscription-row';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import { Button } from '@marstv/ui-web';
 import Link from 'next/link';
@@ -29,7 +29,7 @@ export default async function Home() {
         </p>
 
         <div className="mt-10 w-full max-w-2xl">
-          <SearchBox autoFocus size="lg" />
+          <NextSearchBox autoFocus size="lg" />
         </div>
 
         <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-sm text-muted-foreground">
@@ -58,12 +58,12 @@ export default async function Home() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 pb-16 md:px-8">
-        <ContinueWatchingRow />
-        <SubscriptionRow />
-        <DoubanRow type="tv" tag="热门" title="热门剧集" />
-        <DoubanRow type="movie" tag="热门" title="热门电影" />
-        <DoubanRow type="tv" tag="国产剧" title="国产剧" />
-        <DoubanRow type="movie" tag="豆瓣高分" title="豆瓣高分电影" />
+        <NextContinueWatching />
+        <NextSubscriptionRow />
+        <NextDoubanRow type="tv" tag="热门" title="热门剧集" />
+        <NextDoubanRow type="movie" tag="热门" title="热门电影" />
+        <NextDoubanRow type="tv" tag="国产剧" title="国产剧" />
+        <NextDoubanRow type="movie" tag="豆瓣高分" title="豆瓣高分电影" />
       </section>
     </div>
   );

@@ -1,54 +1,41 @@
 'use client';
 
-// Home-page "continue watching" strip. Reads the local PlayRecord store and
-// renders half-watched items (progress < 95%) as resume cards. Hidden entirely
-// on first-visit / empty state so the hero section stays clean.
+// Home-page "continue watching" strip. Renders half-watched items as resume
+// cards. Hidden entirely when items is null or empty.
 
-import { getClientStorage } from '@/lib/client-storage';
 import type { PlayRecord } from '@marstv/core';
-import { invalidateCardMarkers } from '@marstv/ui-web';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import type { LinkComponent } from '../lib/link-component';
+import { DefaultLink } from '../lib/link-component';
 
-const FINISHED_THRESHOLD = 0.95;
-const MAX_ITEMS = 12;
-
-function usable(r: PlayRecord): boolean {
-  if (!(r.durationSec > 0)) return true; // no duration → keep, user can resume from saved sec
-  return r.positionSec / r.durationSec < FINISHED_THRESHOLD;
+interface Props {
+  /** Play records to display. null = still loading (component returns null). */
+  items: PlayRecord[] | null;
+  /** Called when the user dismisses a record. */
+  onRemove: (source: string, id: string) => void;
+  /** Link component for navigation. Defaults to plain <a>. */
+  LinkComponent?: LinkComponent;
+  /** Image proxy URL prefix. Defaults to '/api/image/cms'. */
+  imageProxy?: string;
 }
 
-export function ContinueWatchingRow() {
-  // Start undefined to distinguish "loading" (skip render) from "empty" (also
-  // skip render). Only mount the section once we confirm there's at least one
-  // usable record.
-  const [items, setItems] = useState<PlayRecord[] | null>(null);
-
-  useEffect(() => {
-    getClientStorage()
-      .listPlayRecords()
-      .then((records) => setItems(records.filter(usable).slice(0, MAX_ITEMS)))
-      .catch(() => setItems([]));
-  }, []);
-
-  async function remove(source: string, id: string) {
-    await getClientStorage().removePlayRecord(source, id);
-    setItems((prev) => (prev ?? []).filter((r) => !(r.source === source && r.id === id)));
-    invalidateCardMarkers();
-  }
-
+export function ContinueWatchingRow({
+  items,
+  onRemove,
+  LinkComponent = DefaultLink,
+  imageProxy = '/api/image/cms',
+}: Props) {
   if (!items || items.length === 0) return null;
 
   return (
     <section className="mt-12">
       <div className="mb-3 flex items-baseline justify-between">
         <h2 className="text-lg font-semibold tracking-tight text-foreground">继续观看</h2>
-        <Link
+        <LinkComponent
           href="/history"
           className="text-xs text-dim-foreground transition-colors hover:text-primary"
         >
           全部历史 →
-        </Link>
+        </LinkComponent>
       </div>
       <div className="scrollbar-thin -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
         {items.map((it) => {
@@ -58,14 +45,14 @@ export function ContinueWatchingRow() {
               ? Math.min(100, Math.floor((it.positionSec / it.durationSec) * 100))
               : 0;
           const proxiedPoster = it.poster
-            ? `/api/image/cms?u=${encodeURIComponent(it.poster)}`
+            ? `${imageProxy}?u=${encodeURIComponent(it.poster)}`
             : null;
           return (
             <div
               key={`${it.source}:${it.id}`}
               className="group relative flex w-[140px] shrink-0 flex-col overflow-hidden rounded-md border border-border/60 bg-surface/60 transition-colors hover:border-primary/60"
             >
-              <Link href={href} className="contents">
+              <LinkComponent href={href} className="contents">
                 <div className="relative aspect-[2/3] w-full overflow-hidden bg-black">
                   {proxiedPoster ? (
                     // eslint-disable-next-line @next/next/no-img-element
@@ -93,10 +80,10 @@ export function ContinueWatchingRow() {
                 <div className="truncate px-2 py-1.5 text-xs text-foreground group-hover:text-primary">
                   {it.title}
                 </div>
-              </Link>
+              </LinkComponent>
               <button
                 type="button"
-                onClick={() => remove(it.source, it.id)}
+                onClick={() => onRemove(it.source, it.id)}
                 aria-label="从继续观看移除"
                 className="absolute right-1.5 top-1.5 rounded-full bg-background/70 px-1.5 py-0.5 text-[10px] text-muted-foreground opacity-0 transition-opacity hover:text-danger group-hover:opacity-100"
               >

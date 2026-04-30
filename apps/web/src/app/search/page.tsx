@@ -1,11 +1,11 @@
-import { GroupedVideoCard } from '@/components/grouped-video-card';
-import { SearchBox } from '@/components/search-box';
-import { VideoCard } from '@/components/video-card';
+import { NextSearchBox } from '@/components/next-search-box';
+import { NextLinkComponent } from '@/lib/next-adapter';
 import { cachedSearchSource } from '@/lib/search';
 import { requirePagePassword } from '@/lib/site-password-guard';
 import { loadSources } from '@/lib/sources';
 import { cn } from '@/lib/utils';
 import { type CmsSource, groupHitsByTitle } from '@marstv/core';
+import { GroupedVideoCard, VideoCard } from '@marstv/ui-web';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -57,7 +57,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
   return (
     <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
       <div className="mb-6">
-        <SearchBox defaultValue={keyword} autoFocus={!keyword} />
+        <NextSearchBox defaultValue={keyword} autoFocus={!keyword} />
       </div>
 
       {keyword && doubanCtx ? <DoubanContextCard keyword={keyword} ctx={doubanCtx} /> : null}
@@ -211,7 +211,7 @@ async function AggregatedResults({
       </div>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
         {groups.map((g) => (
-          <GroupedVideoCard key={g.key} group={g} />
+          <GroupedVideoCard key={g.key} group={g} LinkComponent={NextLinkComponent} />
         ))}
       </div>
     </section>
@@ -297,6 +297,7 @@ async function SourceSection({ source, keyword }: { source: CmsSource; keyword: 
             item={item}
             sourceName={source.name}
             hideSourceBadge
+            LinkComponent={NextLinkComponent}
           />
         ))}
       </div>
