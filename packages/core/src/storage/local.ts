@@ -28,9 +28,14 @@ const MAX_HISTORY = 500;
 const MAX_FAVORITES = 1000;
 const MAX_SUBSCRIPTIONS = 500;
 
-function getStore(): Storage | null {
+interface MinimalStorage {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+}
+
+function getStore(): MinimalStorage | null {
   if (typeof globalThis === 'undefined') return null;
-  const g = globalThis as { localStorage?: Storage };
+  const g = globalThis as { localStorage?: MinimalStorage };
   return g.localStorage ?? null;
 }
 

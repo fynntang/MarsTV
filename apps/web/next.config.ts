@@ -5,11 +5,9 @@ const nextConfig: NextConfig = {
   // Workspace 内源码包(.ts)需要 Next 编译
   transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config'],
 
-  // 'export' for Tauri desktop (static files), 'standalone' for Docker / Vercel / self-hosted
-  output: process.env.TAURI_BUILD === '1' ? 'export' : 'standalone',
-
-  // Next.js output: 'export' requires unoptimized images
-  images: process.env.TAURI_BUILD === '1' ? { unoptimized: true } : undefined,
+  // Always 'standalone' — the app is fully dynamic (API routes, force-dynamic pages).
+  // Tauri desktop uses the dev server in dev mode and a bundled server in production.
+  output: 'standalone',
 };
 
 // Only activate OpenNext CF dev proxy when explicitly requested.
