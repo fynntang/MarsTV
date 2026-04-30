@@ -1,7 +1,7 @@
-import { StyleSheet, ScrollView, View } from 'react-native';
+import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { Container, Spacer, VideoCard } from '@marstv/ui-native';
-import { colors } from '@marstv/config';
+import { Container, Spacer, VideoCard, TextView } from '@marstv/ui-native';
+import { colors, radius } from '@marstv/config';
 import type { VideoItem } from '@marstv/core';
 
 const mockItems: { item: VideoItem; sourceName: string }[] = [
@@ -50,6 +50,22 @@ export default function HomeScreen() {
             />
           </View>
         ))}
+        <View style={styles.navRow}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => router.push('/favorites')}
+            activeOpacity={0.7}
+          >
+            <TextView variant="body" style={styles.navButtonText}>Favorites</TextView>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => router.push('/history')}
+            activeOpacity={0.7}
+          >
+            <TextView variant="body" style={styles.navButtonText}>History</TextView>
+          </TouchableOpacity>
+        </View>
         <Spacer size={24} />
       </ScrollView>
     </Container>
@@ -68,5 +84,22 @@ const styles = StyleSheet.create({
   },
   cardWrapper: {
     marginBottom: 8,
+  },
+  navRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  navButton: {
+    flex: 1,
+    paddingVertical: 14,
+    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+  },
+  navButtonText: {
+    color: colors.primary,
+    fontWeight: '600',
   },
 });

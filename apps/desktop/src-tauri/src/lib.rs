@@ -4,12 +4,14 @@ use tauri::{Emitter, Manager, WindowEvent};
 use tauri::menu::{MenuBuilder, MenuItemBuilder, PredefinedMenuItem, SubmenuBuilder};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
+use tauri_plugin_store::StoreExt;
 
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
+        .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             // Ctrl+Shift+F global search shortcut
             let shortcut = Shortcut::new(Some(Modifiers::CONTROL | Modifiers::SHIFT), Code::KeyF);
@@ -119,11 +121,43 @@ pub fn run() {
                 })
                 .build(app)?;
 
-            // Close-to-tray: intercept window close, hide instead
+            // Window state: restore saved position/size from previous session
             if let Some(window) = app.get_webview_window("main") {
+                if let Ok(store) = app.store("window-state.json") {
+                    if let (Some(x), Some(y)) = (
+                        store.get("x").and_then(|v| v.as_f64()),
+                        store.get("y").and_then(|v| v.as_f64()),
+                    ) {
+                        let _ = window.set_position(tauri::Position::Physical(
+                            tauri::PhysicalPosition::new(x as i32, y as i32),
+                        ));
+                    }
+                    if let (Some(w), Some(h)) = (
+                        store.get("width").and_then(|v| v.as_f64()),
+                        store.get("height").and_then(|v| v.as_f64()),
+                    ) {
+                        let _ = window.set_size(tauri::Size::Physical(
+                            tauri::PhysicalSize::new(w as u32, h as u32),
+                        ));
+                    }
+                }
+
+                // Close-to-tray + save window state
                 let window_clone = window.clone();
                 window.on_window_event(move |event| {
                     if let WindowEvent::CloseRequested { api, .. } = event {
+                        // Save window state before hiding
+                        if let Ok(store) = window_clone.app_handle().store("window-state.json") {
+                            if let Ok(pos) = window_clone.outer_position() {
+                                let _ = store.set("x", pos.x as f64);
+                                let _ = store.set("y", pos.y as f64);
+                            }
+                            if let Ok(size) = window_clone.outer_size() {
+                                let _ = store.set("width", size.width as f64);
+                                let _ = store.set("height", size.height as f64);
+                            }
+                            let _ = store.save();
+                        }
                         api.prevent_close();
                         let _ = window_clone.hide();
                     }

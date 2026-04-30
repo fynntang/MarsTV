@@ -13,7 +13,12 @@ export default function RootLayout() {
           headerTitleStyle: { color: colors.text },
           contentStyle: { backgroundColor: colors.background },
         }}
-      />
+      >
+        <Stack.Screen name="index" options={{ title: 'MarsTV' }} />
+        <Stack.Screen name="favorites" options={{ title: 'Favorites' }} />
+        <Stack.Screen name="history" options={{ title: 'History' }} />
+        <Stack.Screen name="player" options={{ title: 'Player' }} />
+      </Stack>
     </>
   );
 }
