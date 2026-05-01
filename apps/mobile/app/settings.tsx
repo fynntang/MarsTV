@@ -1,12 +1,18 @@
 import { colors, fontSize, radius } from '@marstv/config';
 import { Container, Spacer, TextView } from '@marstv/ui-native';
-import { getApiBase, setApiBase } from '@marstv/ui-shared';
-import { useState } from 'react';
+import { getApiBase, setApiBase, getSources, addSource, removeSource } from '@marstv/ui-shared';
+import type { CmsSource } from '@marstv/core';
+import { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function SettingsScreen() {
   const [apiUrl, setApiUrl] = useState(getApiBase());
   const [saved, setSaved] = useState(false);
+  const [sources, setSourcesState] = useState<CmsSource[]>([]);
+  const [newKey, setNewKey] = useState('');
+  const [newName, setNewName] = useState('');
+  const [newApi, setNewApi] = useState('');
+  const [showSources, setShowSources] = useState(false);
 
   const handleSave = () => {
     const trimmed = apiUrl.trim();
@@ -17,6 +23,30 @@ export default function SettingsScreen() {
     setApiBase(trimmed);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  useEffect(() => {
+    getSources().then(setSourcesState);
+  }, []);
+
+  const handleAddSource = async () => {
+    const key = newKey.trim();
+    const name = newName.trim();
+    const api = newApi.trim();
+    if (!key || !name || !api) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+    await addSource({ key, name, api });
+    setSourcesState(await getSources());
+    setNewKey('');
+    setNewName('');
+    setNewApi('');
+  };
+
+  const handleRemoveSource = async (key: string) => {
+    await removeSource(key);
+    setSourcesState(await getSources());
   };
 
   return (
@@ -54,6 +84,86 @@ export default function SettingsScreen() {
             {saved ? '✓ Saved' : 'Save'}
           </TextView>
         </TouchableOpacity>
+
+        {/* CMS Sources */}
+        <Spacer size={24} />
+        <TextView variant="body" style={styles.sectionTitle}>CMS Sources</TextView>
+        <Spacer size={8} />
+        <TextView variant="caption" color={colors.textMuted}>
+          Add CMS sources by key, name, and API URL. Sources are stored locally.
+        </TextView>
+        <Spacer size={12} />
+
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={() => setShowSources(!showSources)}
+          activeOpacity={0.7}
+        >
+          <TextView variant="body" color={colors.primary}>
+            {showSources ? 'Hide Sources' : `Manage Sources (${sources.length} configured)`}
+          </TextView>
+        </TouchableOpacity>
+
+        {showSources && (
+          <>
+            <Spacer size={12} />
+            <TextInput
+              style={styles.input}
+              value={newKey}
+              onChangeText={setNewKey}
+              placeholder="Key (e.g. heimuer)"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+            />
+            <Spacer size={8} />
+            <TextInput
+              style={styles.input}
+              value={newName}
+              onChangeText={setNewName}
+              placeholder="Name"
+              placeholderTextColor={colors.textMuted}
+            />
+            <Spacer size={8} />
+            <TextInput
+              style={styles.input}
+              value={newApi}
+              onChangeText={setNewApi}
+              placeholder="API URL"
+              placeholderTextColor={colors.textMuted}
+              autoCapitalize="none"
+              keyboardType="url"
+            />
+            <Spacer size={12} />
+            <TouchableOpacity style={styles.button} onPress={handleAddSource} activeOpacity={0.7}>
+              <TextView variant="body" color="#FFFFFF">Add Source</TextView>
+            </TouchableOpacity>
+
+            <Spacer size={16} />
+            {sources.length > 0 ? (
+              sources.map((s) => (
+                <View key={s.key} style={styles.sourceCard}>
+                  <View style={{ flex: 1 }}>
+                    <TextView variant="body">{s.name}</TextView>
+                    <TextView variant="caption" color={colors.textMuted} numberOfLines={1}>
+                      {s.api}
+                    </TextView>
+                  </View>
+                  <TouchableOpacity
+                    onPress={() => handleRemoveSource(s.key)}
+                    style={styles.removeButton}
+                    activeOpacity={0.7}
+                  >
+                    <TextView variant="caption" color="#FFFFFF">Remove</TextView>
+                  </TouchableOpacity>
+                </View>
+              ))
+            ) : (
+              <TextView variant="caption" color={colors.textMuted} style={{ textAlign: 'center' }}>
+                No sources configured. Add one above.
+              </TextView>
+            )}
+          </>
+        )}
 
         <Spacer size={32} />
 
@@ -115,6 +225,29 @@ const styles = StyleSheet.create({
   },
   buttonSaved: {
     backgroundColor: '#22C55E',
+  },
+  toggleButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: radius.md,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    alignItems: 'center',
+  },
+  sourceCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: radius.sm,
+    padding: 12,
+    marginBottom: 8,
+  },
+  removeButton: {
+    backgroundColor: '#DC2626',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: radius.sm,
+    marginLeft: 8,
   },
   aboutRow: {
     flexDirection: 'row',
