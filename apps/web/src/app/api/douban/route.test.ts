@@ -13,7 +13,6 @@ function req(search: string) {
   return new NextRequest(`http://app.local/api/douban?${search}`);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: test stub bridges untyped vi.doMock factory
 type DoubanImpl = (query: any) => any;
 
 async function loadRoute(
@@ -34,7 +33,7 @@ describe('/api/douban — param validation', () => {
     const GET = await loadRoute();
     const res = await GET(req('tag=%E7%83%AD%E9%97%A8'));
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/type/);
   });
 
@@ -48,7 +47,7 @@ describe('/api/douban — param validation', () => {
     const GET = await loadRoute();
     const res = await GET(req('type=movie'));
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/tag/);
   });
 
@@ -80,7 +79,7 @@ describe('/api/douban — happy path', () => {
     });
     const res = await GET(req('type=movie&tag=%E7%83%AD%E9%97%A8'));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.items).toHaveLength(1);
     expect(body.items[0].title).toBe('A');
     expect(args[0]).toMatchObject({ type: 'movie', tag: '热门', sort: 'recommend' });
@@ -137,7 +136,7 @@ describe('/api/douban — upstream failure', () => {
     );
     const res = await GET(req('type=movie&tag=x'));
     expect(res.status).toBe(502);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/rate-limited/);
   });
 
@@ -145,7 +144,7 @@ describe('/api/douban — upstream failure', () => {
     const GET = await loadRoute(() => Promise.reject('string failure'));
     const res = await GET(req('type=movie&tag=x'));
     expect(res.status).toBe(502);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toBe('string failure');
   });
 });

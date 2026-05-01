@@ -13,7 +13,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (ORIGINAL_ENV === undefined) {
-    delete process.env.CMS_SOURCES_JSON;
+    delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
   } else {
     process.env.CMS_SOURCES_JSON = ORIGINAL_ENV;
   }
@@ -28,7 +28,6 @@ function req(body: unknown, { raw = false }: { raw?: boolean } = {}) {
   });
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: test stub bridges untyped vi.doMock factory
 type GetDetailImpl = (...args: any[]) => any;
 
 async function loadRoute(
@@ -51,7 +50,7 @@ describe('/api/subscriptions/check — body validation', () => {
     const POST = await loadRoute();
     const res = await POST(req('not-json-at-all', { raw: true }));
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/json/i);
   });
 
@@ -59,7 +58,7 @@ describe('/api/subscriptions/check — body validation', () => {
     const POST = await loadRoute();
     const res = await POST(req({}));
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/array/);
   });
 
@@ -90,7 +89,7 @@ describe('/api/subscriptions/check — item normalization', () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results).toHaveLength(2);
     expect(calls).toEqual(['1', '4']);
   });
@@ -103,7 +102,7 @@ describe('/api/subscriptions/check — item normalization', () => {
     });
     const items = Array.from({ length: 80 }, (_, i) => ({ source: 'cms1', id: String(i) }));
     const res = await POST(req({ items }));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results).toHaveLength(50);
     expect(callCount).toBe(50);
   });
@@ -112,7 +111,7 @@ describe('/api/subscriptions/check — item normalization', () => {
     const POST = await loadRoute();
     const res = await POST(req({ items: [] }));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results).toEqual([]);
   });
 });
@@ -121,7 +120,7 @@ describe('/api/subscriptions/check — per-item outcomes', () => {
   it('returns ok:false when source key is not configured', async () => {
     const POST = await loadRoute(async () => null);
     const res = await POST(req({ items: [{ source: 'ghost', id: '42' }] }));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results[0]).toEqual({
       source: 'ghost',
       id: '42',
@@ -133,7 +132,7 @@ describe('/api/subscriptions/check — per-item outcomes', () => {
   it('returns ok:false with "not found" when getDetail resolves null', async () => {
     const POST = await loadRoute(async () => null);
     const res = await POST(req({ items: [{ source: 'cms1', id: 'missing' }] }));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results[0]).toEqual({
       source: 'cms1',
       id: 'missing',
@@ -164,7 +163,7 @@ describe('/api/subscriptions/check — per-item outcomes', () => {
       ],
     }));
     const res = await POST(req({ items: [{ source: 'cms1', id: '42' }] }));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results[0]).toEqual({
       source: 'cms1',
       id: '42',
@@ -182,7 +181,7 @@ describe('/api/subscriptions/check — per-item outcomes', () => {
       ],
     }));
     const res = await POST(req({ items: [{ source: 'cms1', id: '42' }] }));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results[0].ok).toBe(true);
     expect(body.results[0].episodeCount).toBe(0);
     expect(body.results[0].lineName).toBeUndefined();
@@ -203,7 +202,7 @@ describe('/api/subscriptions/check — per-item outcomes', () => {
       }),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results).toHaveLength(3);
     expect(body.results[0].ok).toBe(true);
     expect(body.results[1]).toEqual({
@@ -220,7 +219,7 @@ describe('/api/subscriptions/check — per-item outcomes', () => {
       throw 'string failure';
     });
     const res = await POST(req({ items: [{ source: 'cms1', id: '1' }] }));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.results[0]).toEqual({
       source: 'cms1',
       id: '1',

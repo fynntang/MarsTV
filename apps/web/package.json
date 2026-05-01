@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && if [ -n \"$CF_PAGES\" ] || [ \"$OPEN_NEXT_DEV\" = \"1\" ]; then opennextjs-cloudflare build; fi",
+    "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -13,10 +13,11 @@
     "test:e2e": "playwright test && playwright test --config playwright.site-password.config.ts",
     "test:e2e:site-password": "playwright test --config playwright.site-password.config.ts",
     "test:e2e:ui": "playwright test --ui",
-    "build:cf": "next build && opennextjs-cloudflare build",
-    "preview:cf": "next build && opennextjs-cloudflare preview",
-    "deploy:cf": "next build && opennextjs-cloudflare deploy",
-    "build:docker": "docker build -f apps/web/Dockerfile -t marstv/web:local ../.."
+    "build:cf": "opennextjs-cloudflare build",
+    "preview:cf": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy:cf": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "build:docker": "docker build -f apps/web/Dockerfile -t marstv/web:local ../..",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
     "@marstv/config": "workspace:*",

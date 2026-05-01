@@ -5,11 +5,12 @@ const ORIGINAL = process.env.SITE_PASSWORD;
 
 beforeEach(() => {
   vi.resetModules();
-  delete process.env.SITE_PASSWORD;
+  delete (process.env as Record<string, string | undefined>).SITE_PASSWORD;
 });
 
 afterEach(() => {
-  if (ORIGINAL === undefined) delete process.env.SITE_PASSWORD;
+  if (ORIGINAL === undefined)
+    delete (process.env as Record<string, string | undefined>).SITE_PASSWORD;
   else process.env.SITE_PASSWORD = ORIGINAL;
 });
 

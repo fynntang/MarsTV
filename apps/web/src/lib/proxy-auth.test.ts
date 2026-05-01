@@ -9,7 +9,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (ORIGINAL_SECRET === undefined) {
-    delete process.env.PROXY_SECRET;
+    delete (process.env as Record<string, string | undefined>).PROXY_SECRET;
   } else {
     process.env.PROXY_SECRET = ORIGINAL_SECRET;
   }
@@ -111,13 +111,13 @@ describe('verifyProxyToken', () => {
 
 describe('PROXY_SECRET requirement', () => {
   it('throws if PROXY_SECRET is unset when signing', () => {
-    delete process.env.PROXY_SECRET;
+    delete (process.env as Record<string, string | undefined>).PROXY_SECRET;
     expect(() => signProxyUrl('https://a.example/x')).toThrow(/PROXY_SECRET/);
   });
 
   it('throws if PROXY_SECRET is unset when verifying', () => {
     // we still need a valid-looking token shape to reach the secret read
-    delete process.env.PROXY_SECRET;
+    delete (process.env as Record<string, string | undefined>).PROXY_SECRET;
     const future = Math.floor(Date.now() / 1000) + 300;
     expect(() => verifyProxyToken('https://a.example/x', future, 'abc')).toThrow(/PROXY_SECRET/);
   });
