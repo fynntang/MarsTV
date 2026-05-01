@@ -60,6 +60,41 @@ export async function fetchDoubanRankings(type: string, pageSize?: number) {
   }
 }
 
+export async function getDetail(source: string, id: string): Promise<Record<string, unknown> | null> {
+  try {
+    const res = await fetch(
+      `${_apiBase}/api/detail?source=${encodeURIComponent(source)}&id=${encodeURIComponent(id)}`,
+      { headers: await buildHeaders() },
+    );
+    if (!res.ok) return null;
+    return await res.json();
+  } catch { return null; }
+}
+
+export async function fetchFavorites(): Promise<Array<Record<string, unknown>>> {
+  try {
+    const res = await fetch(`${_apiBase}/api/storage/favorites`, { headers: await buildHeaders() });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
+export async function fetchHistory(): Promise<Array<Record<string, unknown>>> {
+  try {
+    const res = await fetch(`${_apiBase}/api/storage/history`, { headers: await buildHeaders() });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
+export async function fetchSubscriptions(): Promise<Array<Record<string, unknown>>> {
+  try {
+    const res = await fetch(`${_apiBase}/api/storage/subscriptions`, { headers: await buildHeaders() });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch { return []; }
+}
+
 export async function loginWithPassword(password: string): Promise<boolean> {
   try {
     const res = await fetch(`${_apiBase}/api/login`, {

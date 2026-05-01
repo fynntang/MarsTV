@@ -3,6 +3,10 @@ export {
   getApiBase,
   searchVideos,
   fetchDoubanRankings,
+  getDetail,
+  fetchFavorites,
+  fetchHistory,
+  fetchSubscriptions,
   loginWithPassword,
 } from './api-client';
 export type { SearchHit } from './api-client';
