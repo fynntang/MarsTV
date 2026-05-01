@@ -49,7 +49,9 @@ export function loadSourcesFromRequest(request: Request): CmsSource[] {
         if (clientSources.length > 0) return clientSources;
       }
     }
-  } catch { /* fall through to env sources */ }
+  } catch {
+    /* fall through to env sources */
+  }
   return loadSources();
 }
 

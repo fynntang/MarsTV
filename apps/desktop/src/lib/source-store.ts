@@ -1,6 +1,6 @@
-import { invoke } from '@tauri-apps/api/core';
 import type { CmsSource } from '@marstv/core';
 import type { SourceStore } from '@marstv/ui-shared';
+import { invoke } from '@tauri-apps/api/core';
 
 export const tauriSourceStore: SourceStore = {
   async load(): Promise<CmsSource[]> {

@@ -1,5 +1,5 @@
-import { getApiBase, setApiBase, getSources, addSource, removeSource } from '@marstv/ui-shared';
 import type { CmsSource } from '@marstv/core';
+import { addSource, getApiBase, getSources, removeSource, setApiBase } from '@marstv/ui-shared';
 import { useEffect, useState } from 'react';
 
 export function SettingsPage() {
@@ -10,7 +10,9 @@ export function SettingsPage() {
   const [newName, setNewName] = useState('');
   const [newApi, setNewApi] = useState('');
 
-  useEffect(() => { getSources().then(setSources); }, []);
+  useEffect(() => {
+    getSources().then(setSources);
+  }, []);
 
   const handleSaveApi = () => {
     setApiBase(apiUrl);
@@ -85,7 +87,8 @@ export function SettingsPage() {
       <section style={{ marginBottom: 32 }}>
         <h3 style={{ color: '#CCC', fontSize: 14, marginBottom: 8 }}>CMS Sources</h3>
         <p style={{ color: '#888', fontSize: 12, marginBottom: 12 }}>
-          Add CMS sources by key, name, and API URL. Sources are persisted to the app data directory.
+          Add CMS sources by key, name, and API URL. Sources are persisted to the app data
+          directory.
         </p>
 
         <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>

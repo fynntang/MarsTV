@@ -1,7 +1,7 @@
 import { colors, fontSize, radius } from '@marstv/config';
-import { Container, Spacer, TextView } from '@marstv/ui-native';
-import { getApiBase, setApiBase, getSources, addSource, removeSource } from '@marstv/ui-shared';
 import type { CmsSource } from '@marstv/core';
+import { Container, Spacer, TextView } from '@marstv/ui-native';
+import { addSource, getApiBase, getSources, removeSource, setApiBase } from '@marstv/ui-shared';
 import { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -87,7 +87,9 @@ export default function SettingsScreen() {
 
         {/* CMS Sources */}
         <Spacer size={24} />
-        <TextView variant="body" style={styles.sectionTitle}>CMS Sources</TextView>
+        <TextView variant="body" style={styles.sectionTitle}>
+          CMS Sources
+        </TextView>
         <Spacer size={8} />
         <TextView variant="caption" color={colors.textMuted}>
           Add CMS sources by key, name, and API URL. Sources are stored locally.
@@ -135,7 +137,9 @@ export default function SettingsScreen() {
             />
             <Spacer size={12} />
             <TouchableOpacity style={styles.button} onPress={handleAddSource} activeOpacity={0.7}>
-              <TextView variant="body" color="#FFFFFF">Add Source</TextView>
+              <TextView variant="body" color="#FFFFFF">
+                Add Source
+              </TextView>
             </TouchableOpacity>
 
             <Spacer size={16} />
@@ -153,7 +157,9 @@ export default function SettingsScreen() {
                     style={styles.removeButton}
                     activeOpacity={0.7}
                   >
-                    <TextView variant="caption" color="#FFFFFF">Remove</TextView>
+                    <TextView variant="caption" color="#FFFFFF">
+                      Remove
+                    </TextView>
                   </TouchableOpacity>
                 </View>
               ))

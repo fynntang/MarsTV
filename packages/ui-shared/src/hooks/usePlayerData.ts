@@ -40,7 +40,9 @@ export function usePlayerData(source: string, id: string): PlayerData {
     }
 
     if (source && id) load();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [source, id]);
 
   return { lines, videoDetail, loading, error };

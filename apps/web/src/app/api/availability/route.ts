@@ -11,7 +11,7 @@
 import { requireApiPassword } from '@/lib/site-password-guard';
 import { sourceHealthStore } from '@/lib/source-health-store';
 import { loadSourcesFromRequest } from '@/lib/sources';
-import { aggregateSearch, type CmsSource } from '@marstv/core';
+import { type CmsSource, aggregateSearch } from '@marstv/core';
 import type { NextRequest } from 'next/server';
 
 export const runtime = 'nodejs';

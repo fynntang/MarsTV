@@ -1,6 +1,6 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { FavoriteRecord, IStorage, PlayRecord, SubscriptionRecord } from '@marstv/core';
 import { makePlayRecordKey } from '@marstv/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NS_HISTORY = 'marstv:history';
 const NS_FAVORITES = 'marstv:favorites';
@@ -20,7 +20,9 @@ async function _readArray<T>(key: string): Promise<T[]> {
 async function _writeArray<T>(key: string, value: T[]): Promise<void> {
   try {
     await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch { /* quota / storage error */ }
+  } catch {
+    /* quota / storage error */
+  }
 }
 
 export class NativeStorageBackend implements IStorage {
@@ -50,7 +52,10 @@ export class NativeStorageBackend implements IStorage {
   async removePlayRecord(source: string, id: string): Promise<void> {
     const records = await _readArray<PlayRecord>(NS_HISTORY);
     const target = makePlayRecordKey(source, id);
-    await _writeArray(NS_HISTORY, records.filter((r) => makePlayRecordKey(r.source, r.id) !== target));
+    await _writeArray(
+      NS_HISTORY,
+      records.filter((r) => makePlayRecordKey(r.source, r.id) !== target),
+    );
   }
 
   async clearPlayRecords(): Promise<void> {
@@ -83,7 +88,10 @@ export class NativeStorageBackend implements IStorage {
   async removeFavorite(source: string, id: string): Promise<void> {
     const records = await _readArray<FavoriteRecord>(NS_FAVORITES);
     const target = makePlayRecordKey(source, id);
-    await _writeArray(NS_FAVORITES, records.filter((r) => makePlayRecordKey(r.source, r.id) !== target));
+    await _writeArray(
+      NS_FAVORITES,
+      records.filter((r) => makePlayRecordKey(r.source, r.id) !== target),
+    );
   }
 
   async clearFavorites(): Promise<void> {
@@ -127,7 +135,10 @@ export class NativeStorageBackend implements IStorage {
   async removeSubscription(source: string, id: string): Promise<void> {
     const records = await _readArray<SubscriptionRecord>(NS_SUBSCRIPTIONS);
     const target = makePlayRecordKey(source, id);
-    await _writeArray(NS_SUBSCRIPTIONS, records.filter((r) => makePlayRecordKey(r.source, r.id) !== target));
+    await _writeArray(
+      NS_SUBSCRIPTIONS,
+      records.filter((r) => makePlayRecordKey(r.source, r.id) !== target),
+    );
   }
 
   async updateSubscriptionChecks(

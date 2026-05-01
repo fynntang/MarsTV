@@ -27,8 +27,14 @@ export default function DoubanScreen() {
   useEffect(() => {
     setLoading(true);
     fetchDoubanRankings(tag)
-      .then(items => { setData(items); setLoading(false); })
-      .catch(() => { setData([]); setLoading(false); });
+      .then((items) => {
+        setData(items);
+        setLoading(false);
+      })
+      .catch(() => {
+        setData([]);
+        setLoading(false);
+      });
   }, [tag]);
 
   const onRefresh = useCallback(async () => {
@@ -92,7 +98,16 @@ export default function DoubanScreen() {
                 id: String(d.id ?? ''),
                 title: (d.title as string) ?? '',
                 poster: d.poster as string | undefined,
-                rating: typeof d.rate === 'number' ? d.rate : typeof d.score === 'number' ? d.score : (d.rate != null ? Number.parseFloat(String(d.rate)) : d.score != null ? Number.parseFloat(String(d.score)) : undefined),
+                rating:
+                  typeof d.rate === 'number'
+                    ? d.rate
+                    : typeof d.score === 'number'
+                      ? d.score
+                      : d.rate != null
+                        ? Number.parseFloat(String(d.rate))
+                        : d.score != null
+                          ? Number.parseFloat(String(d.score))
+                          : undefined,
               };
               return (
                 <VideoCard
@@ -101,7 +116,11 @@ export default function DoubanScreen() {
                   onPress={() =>
                     router.push({
                       pathname: '/player',
-                      params: { source: videoItem.source, id: videoItem.id, title: videoItem.title },
+                      params: {
+                        source: videoItem.source,
+                        id: videoItem.id,
+                        title: videoItem.title,
+                      },
                     })
                   }
                 />
