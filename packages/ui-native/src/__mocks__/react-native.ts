@@ -1,13 +1,11 @@
 import React from 'react';
 
-export const View = React.forwardRef(
-  (props: Record<string, unknown>, ref: React.Ref<unknown>) =>
-    React.createElement('View', { ...props, ref }),
+export const View = React.forwardRef((props: Record<string, unknown>, ref: React.Ref<unknown>) =>
+  React.createElement('View', { ...props, ref }),
 );
 
-export const Text = React.forwardRef(
-  (props: Record<string, unknown>, ref: React.Ref<unknown>) =>
-    React.createElement('Text', { ...props, ref }),
+export const Text = React.forwardRef((props: Record<string, unknown>, ref: React.Ref<unknown>) =>
+  React.createElement('Text', { ...props, ref }),
 );
 
 export const Platform = {

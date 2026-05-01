@@ -137,6 +137,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 - ✅ 源持久化:Rust command `load_sources` / `save_sources` 读写 `sources.json`(位于 `app_local_data_dir()`),启动时自动加载
 - ✅ Linux .deb 构建(CI)
 - ✅ Windows 构建检查(CI)
+- ✅ 桌面端测试:vitest(HomePage smoke test)
 - ⬜ 代码签名 + .dmg 背景
 
 **M5 已就绪** (移动/TV):
