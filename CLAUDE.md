@@ -135,7 +135,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 - ✅ Tauri 2 壳:`apps/desktop/src-tauri/` Rust crate + `tauri.conf.json`(1280x720, `com.marstv.app`)
 - ✅ 8 原生特性:updater(自动更新), shell(深度链接), global-shortcut(Ctrl+Shift+F), store(窗口持久化), tray(托盘+关闭隐藏), menu bar(File/Edit/View/Window/Help), get_app_version, open_external
 - ✅ `tauri build` 验证通过:MarsTV.app(15MB) + .dmg(5.9MB),cargo check 通过
-- ✅ 源持久化:Rust command `get_sources` / `save_sources` 读写 `sources.json`(位于 `app_local_data_dir()`),启动时自动加载
+- ✅ 源持久化:Rust command `load_sources` / `save_sources` 读写 `sources.json`(位于 `app_local_data_dir()`),启动时自动加载
 - ⬜ 代码签名 + .dmg 背景 + Windows/Linux 构建
 
 **M5 已就绪** (移动/TV):
