@@ -13,7 +13,13 @@
 | 变量 | 说明 |
 |---|---|
 | `PROXY_SECRET` | `/api/proxy/*` HMAC 签名密钥，未设置拒绝启动 |
-| `CMS_SOURCES_JSON` | 苹果 CMS V10 源列表，JSON 数组字符串 |
+| `CMS_SOURCES_JSON` | 苹果 CMS V10 源列表，JSON 数组字符串（**仅 Web 端必填**；桌面端/移动端在设置页内配置源并持久化到本地文件系统） |
+
+> **桌面端 & 移动端源配置**：桌面端和移动端无需 `CMS_SOURCES_JSON` 环境变量。用户在各端设置页面中添加 CMS 源（key / name / api URL），源数据持久化到：
+> - **桌面端**：Tauri `app_local_data_dir()/sources.json`
+> - **移动端**：expo-file-system `documentDirectory/sources.json`
+> 
+> 客户端通过 `X-Cms-Sources` 请求头将本地配置的源发送给 API 服务器，服务器自动合并（上限 20 个源）。Web 端不发送此头，回退到 `CMS_SOURCES_JSON` 环境变量。
 
 **可选环境变量：**
 

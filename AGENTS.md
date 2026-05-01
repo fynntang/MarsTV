@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-MarsTV is a pnpm workspace monorepo. `apps/web` contains the Next.js 16 + React 19 web app, App Router pages, API routes, public assets, Vitest tests, and Playwright E2E tests. `apps/desktop` and `apps/mobile` are roadmap placeholders for Tauri and Expo clients. Shared code lives in `packages/core` for platform-neutral types, downstream adapters, speed tests, storage, and source health logic; `packages/config` owns design tokens; `packages/ui-web` and `packages/ui-native` are component package placeholders. Deployment files live in `docker/`, with platform notes in `DEPLOY.md`.
+MarsTV is a pnpm workspace monorepo. `apps/web` contains the Next.js 16 + React 19 web app, App Router pages, API routes, public assets, Vitest tests, and Playwright E2E tests. `apps/desktop` is a Tauri 2 + Vite SPA with Rust native commands. `apps/mobile` is an Expo 52 + React Native 0.76 app with tvOS support. Shared code lives in `packages/core` for platform-neutral types, downstream adapters, speed tests, storage, and source health logic; `packages/ui-shared` for cross-framework hooks, API client, source storage, and router adapters; `packages/config` owns design tokens; `packages/ui-web` and `packages/ui-native` are component packages. Deployment files live in `docker/`, with platform notes in `DEPLOY.md`.
 
 ## Build, Test, and Development Commands
 

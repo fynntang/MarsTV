@@ -149,7 +149,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 ## next.config.ts 关键配置
 
 - `output: 'standalone'`(Docker/Vercel/CF/桌面均用 standalone)
-- `transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config']`(workspace 包需要 transpile)
+- `transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/ui-shared', '@marstv/config']`(workspace 包需要 transpile)
 - `initOpenNextCloudflareForDev()` 由 `OPEN_NEXT_DEV` env 门控,仅在 CF Pages 本地预览时启用
 
 ## 环境变量
