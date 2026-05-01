@@ -11,7 +11,7 @@ export default function SubscriptionsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const data = await fetchSubscriptions();
       setItems(data as unknown as SubscriptionRecord[]);
@@ -19,15 +19,17 @@ export default function SubscriptionsScreen() {
       setItems([]);
     }
     setLoading(false);
-  }
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await load();
     setRefreshing(false);
-  }, []);
+  }, [load]);
 
   if (loading) {
     return (

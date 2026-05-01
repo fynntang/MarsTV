@@ -21,7 +21,7 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     try {
       const [douban, history, subscriptions] = await Promise.all([
         fetchDoubanRankings('movie', undefined, 10),
@@ -35,15 +35,17 @@ export default function HomeScreen() {
       // Show empty state
     }
     setLoading(false);
-  }
+  }, []);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await loadData();
     setRefreshing(false);
-  }, []);
+  }, [loadData]);
 
   if (loading) {
     return (
@@ -56,7 +58,9 @@ export default function HomeScreen() {
   return (
     <Container style={styles.container}>
       <ScrollView
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
+        }
         contentContainerStyle={styles.listContent}
       >
         {/* Continue Watching */}
@@ -71,9 +75,24 @@ export default function HomeScreen() {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={{ marginRight: 12, width: 140 }}
-                  onPress={() => router.push({ pathname: '/player', params: { source: item.source, id: item.id } })}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/player',
+                      params: { source: item.source, id: item.id },
+                    })
+                  }
                 >
-                  <VideoCard item={{ source: item.source, id: item.id, title: item.title, poster: item.poster } as VideoItem} sourceName={item.sourceName ?? item.source} />
+                  <VideoCard
+                    item={
+                      {
+                        source: item.source,
+                        id: item.id,
+                        title: item.title,
+                        poster: item.poster,
+                      } as VideoItem
+                    }
+                    sourceName={item.sourceName ?? item.source}
+                  />
                 </TouchableOpacity>
               )}
               contentContainerStyle={{ paddingHorizontal: 16 }}
@@ -95,13 +114,27 @@ export default function HomeScreen() {
                 const d = item as Record<string, unknown>;
                 return (
                   <TouchableOpacity style={{ marginRight: 12, width: 140 }}>
-                    <VideoCard item={{
-                      source: (d.source as string) ?? 'douban',
-                      id: String(d.id ?? ''),
-                      title: (d.title as string) ?? '',
-                      poster: d.poster as string | undefined,
-                      rating: typeof d.rating === 'number' ? d.rating : typeof d.score === 'number' ? d.score : (d.rating != null ? Number.parseFloat(String(d.rating)) : d.score != null ? Number.parseFloat(String(d.score)) : undefined),
-                    } as VideoItem} sourceName={(d.source as string) ?? 'douban'} />
+                    <VideoCard
+                      item={
+                        {
+                          source: (d.source as string) ?? 'douban',
+                          id: String(d.id ?? ''),
+                          title: (d.title as string) ?? '',
+                          poster: d.poster as string | undefined,
+                          rating:
+                            typeof d.rating === 'number'
+                              ? d.rating
+                              : typeof d.score === 'number'
+                                ? d.score
+                                : d.rating != null
+                                  ? Number.parseFloat(String(d.rating))
+                                  : d.score != null
+                                    ? Number.parseFloat(String(d.score))
+                                    : undefined,
+                        } as VideoItem
+                      }
+                      sourceName={(d.source as string) ?? 'douban'}
+                    />
                   </TouchableOpacity>
                 );
               }}
@@ -123,9 +156,24 @@ export default function HomeScreen() {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={{ marginRight: 12, width: 140 }}
-                  onPress={() => router.push({ pathname: '/player', params: { source: item.source, id: item.id } })}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/player',
+                      params: { source: item.source, id: item.id },
+                    })
+                  }
                 >
-                  <VideoCard item={{ source: item.source, id: item.id, title: item.title, poster: item.poster } as VideoItem} sourceName={item.sourceName ?? item.source} />
+                  <VideoCard
+                    item={
+                      {
+                        source: item.source,
+                        id: item.id,
+                        title: item.title,
+                        poster: item.poster,
+                      } as VideoItem
+                    }
+                    sourceName={item.sourceName ?? item.source}
+                  />
                 </TouchableOpacity>
               )}
               contentContainerStyle={{ paddingHorizontal: 16 }}

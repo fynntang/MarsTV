@@ -12,24 +12,29 @@ export default function FavoritesScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(false);
 
-  async function load() {
+  const load = useCallback(async () => {
     try {
       const data = await fetchFavorites();
       setItems(data as unknown as FavoriteRecord[]);
       setError(false);
     } catch {
-      if (items.length === 0) setError(true);
+      setItems((prev) => {
+        if (prev.length === 0) setError(true);
+        return prev;
+      });
     }
     setLoading(false);
-  }
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await load();
     setRefreshing(false);
-  }, []);
+  }, [load]);
 
   if (loading) {
     return (

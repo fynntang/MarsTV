@@ -1,8 +1,8 @@
-import * as FileSystem from 'expo-file-system/legacy';
 import type { CmsSource } from '@marstv/core';
 import type { SourceStore } from '@marstv/ui-shared';
+import * as FileSystem from 'expo-file-system/legacy';
 
-const filePath = FileSystem.documentDirectory + 'sources.json';
+const filePath = `${FileSystem.documentDirectory}sources.json`;
 
 export const expoSourceStore: SourceStore = {
   async load(): Promise<CmsSource[]> {
@@ -19,6 +19,8 @@ export const expoSourceStore: SourceStore = {
   async save(sources: CmsSource[]): Promise<void> {
     try {
       await FileSystem.writeAsStringAsync(filePath, JSON.stringify(sources));
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   },
 };
