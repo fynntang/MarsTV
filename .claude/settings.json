@@ -5,5 +5,20 @@
     "skill-creator@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"process.stdin.on('data',d=>{const f=JSON.parse(d).tool_input.file_path;if(f)console.log(f)})\" | { read -r f; pnpm biome format --write \"$f\" 2>/dev/null || true; }",
+            "timeout": 15,
+            "statusMessage": "Formatting with Biome..."
+          }
+        ]
+      }
+    ]
   }
 }
