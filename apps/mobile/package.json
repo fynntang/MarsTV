@@ -13,12 +13,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@marstv/core": "workspace:*",
     "@marstv/config": "workspace:*",
-    "@marstv/ui-shared": "workspace:*",
+    "@marstv/core": "workspace:*",
     "@marstv/ui-native": "workspace:*",
+    "@marstv/ui-shared": "workspace:*",
     "expo": "~52.0.0",
     "expo-constants": "~17.0.0",
+    "expo-file-system": "^55.0.17",
     "expo-linking": "~7.0.0",
     "expo-router": "~4.0.0",
     "expo-status-bar": "~2.0.0",
