@@ -24,7 +24,7 @@ export default function HomeScreen() {
   async function loadData() {
     try {
       const [douban, history, subscriptions] = await Promise.all([
-        fetchDoubanRankings('movie', 10),
+        fetchDoubanRankings('movie', undefined, 10),
         fetchHistory(),
         fetchSubscriptions(),
       ]);
