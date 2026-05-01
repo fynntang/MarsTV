@@ -29,8 +29,8 @@ export default function HomeScreen() {
         fetchSubscriptions(),
       ]);
       setDoubanItems(douban);
-      setContinueItems(history as PlayRecord[]);
-      setSubscriptionItems(subscriptions as SubscriptionRecord[]);
+      setContinueItems(history as unknown as PlayRecord[]);
+      setSubscriptionItems(subscriptions as unknown as SubscriptionRecord[]);
     } catch {
       // Show empty state
     }
@@ -100,7 +100,7 @@ export default function HomeScreen() {
                       id: String(d.id ?? ''),
                       title: (d.title as string) ?? '',
                       poster: d.poster as string | undefined,
-                      rating: (d.rating as string) ?? (d.score != null ? String(d.score) : undefined),
+                      rating: typeof d.rating === 'number' ? d.rating : typeof d.score === 'number' ? d.score : (d.rating != null ? Number.parseFloat(String(d.rating)) : d.score != null ? Number.parseFloat(String(d.score)) : undefined),
                     } as VideoItem} sourceName={(d.source as string) ?? 'douban'} />
                   </TouchableOpacity>
                 );

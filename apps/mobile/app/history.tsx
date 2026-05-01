@@ -15,7 +15,7 @@ export default function HistoryScreen() {
   async function load() {
     try {
       const data = await fetchHistoryApi();
-      setItems(data as PlayRecord[]);
+      setItems(data as unknown as PlayRecord[]);
       setError(false);
     } catch {
       if (items.length === 0) setError(true);

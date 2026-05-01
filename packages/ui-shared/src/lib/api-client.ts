@@ -16,7 +16,7 @@ export function getApiBase(): string {
   return _apiBase;
 }
 
-async function buildHeaders(): Promise<HeadersInit> {
+async function buildHeaders(): Promise<Record<string, string>> {
   try {
     const sources = await getSources();
     if (sources.length === 0) return {};

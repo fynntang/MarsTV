@@ -15,7 +15,7 @@ export default function FavoritesScreen() {
   async function load() {
     try {
       const data = await fetchFavorites();
-      setItems(data as FavoriteRecord[]);
+      setItems(data as unknown as FavoriteRecord[]);
       setError(false);
     } catch {
       if (items.length === 0) setError(true);

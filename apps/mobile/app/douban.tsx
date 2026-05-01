@@ -92,7 +92,7 @@ export default function DoubanScreen() {
                 id: String(d.id ?? ''),
                 title: (d.title as string) ?? '',
                 poster: d.poster as string | undefined,
-                rating: (d.rate as string) ?? (d.score != null ? String(d.score) : undefined),
+                rating: typeof d.rate === 'number' ? d.rate : typeof d.score === 'number' ? d.score : (d.rate != null ? Number.parseFloat(String(d.rate)) : d.score != null ? Number.parseFloat(String(d.score)) : undefined),
               };
               return (
                 <VideoCard

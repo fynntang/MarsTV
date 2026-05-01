@@ -14,7 +14,7 @@ export default function SubscriptionsScreen() {
   async function load() {
     try {
       const data = await fetchSubscriptions();
-      setItems(data as SubscriptionRecord[]);
+      setItems(data as unknown as SubscriptionRecord[]);
     } catch {
       setItems([]);
     }
