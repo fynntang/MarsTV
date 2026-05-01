@@ -49,50 +49,6 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
 
-  build-desktop:
-    name: Build Desktop
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - name: Install Tauri system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            libwebkit2gtk-4.1-dev \
-            build-essential \
-            libssl-dev \
-            libgtk-3-dev \
-            libayatana-appindicator3-dev \
-            librsvg2-dev
-      - name: cargo check (Rust backend)
-        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
-      - name: Build desktop frontend (Vite)
-        run: pnpm --filter @marstv/desktop build
-
-  build-desktop-windows:
-    name: Build Desktop (Windows)
-    runs-on: windows-latest
-    timeout-minutes: 20
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - name: Build desktop frontend (Vite)
-        run: pnpm --filter @marstv/desktop build
-      - name: cargo check (desktop)
-        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
-
   build-desktop-linux:
     name: Build Desktop (Linux .deb)
     runs-on: ubuntu-latest
@@ -117,9 +73,45 @@ jobs:
             librsvg2-dev
       - name: Build desktop frontend (Vite)
         run: pnpm --filter @marstv/desktop build
+      - name: cargo check (Rust backend)
+        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
       - name: Tauri build (.deb)
         run: npx tauri build --bundles deb
         working-directory: apps/desktop
+
+  build-desktop-macos:
+    name: Build Desktop (macOS)
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Build desktop frontend (Vite)
+        run: pnpm --filter @marstv/desktop build
+      - name: cargo check (Rust backend)
+        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
+
+  build-desktop-windows:
+    name: Build Desktop (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Build desktop frontend (Vite)
+        run: pnpm --filter @marstv/desktop build
+      - name: cargo check (Rust backend)
+        run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
 
   build-mobile:
     name: Build Mobile

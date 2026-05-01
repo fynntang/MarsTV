@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   errorOverlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(10,10,15,0.9)',

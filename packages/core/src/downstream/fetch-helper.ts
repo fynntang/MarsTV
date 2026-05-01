@@ -56,7 +56,8 @@ export async function fetchJson<T>(url: string, options: FetchJsonOptions = {}):
         'user-agent': 'Mozilla/5.0 (compatible; MarsTV/0.1; +https://github.com/marstv)',
         ...headers,
       },
-      signal: timeoutController.signal,
+      // biome-ignore lint/suspicious/noExplicitAny: DOM/RN AbortSignal type mismatch
+      signal: timeoutController.signal as any,
     });
 
     if (!res.ok) {
