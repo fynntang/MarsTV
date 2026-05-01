@@ -7,7 +7,7 @@
 
 import { requireApiPassword } from '@/lib/site-password-guard';
 import { sourceHealthStore } from '@/lib/source-health-store';
-import { loadSources } from '@/lib/sources';
+import { loadSourcesFromRequest } from '@/lib/sources';
 import { aggregateSearch } from '@marstv/core';
 import type { NextRequest } from 'next/server';
 
@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
     return Response.json({ error: 'missing required query parameter: q' }, { status: 400 });
   }
 
-  const all = loadSources();
+  const all = loadSourcesFromRequest(request);
   if (all.length === 0) {
     return Response.json(
       {
