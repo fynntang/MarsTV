@@ -30,4 +30,4 @@ History uses Conventional Commit style with scopes, for example `feat(web): ...`
 
 ## Security & Configuration Tips
 
-Do not commit secrets. Required runtime env includes `PROXY_SECRET` and `CMS_SOURCES_JSON`; optional controls include `SITE_PASSWORD`, `ALLOWED_PROXY_HOSTS`, and Redis/Upstash variables. Preserve proxy safety: HMAC auth, SSRF blocking, and host allowlists must remain intact. For Next.js work, read `apps/web/AGENTS.md` and local Next 16 docs before relying on older conventions.
+Do not commit secrets. Required runtime env includes `PROXY_SECRET` and `CMS_SOURCES_JSON`; optional controls include `SITE_PASSWORD` and `ALLOWED_PROXY_HOSTS`. Preserve proxy safety: HMAC auth, SSRF blocking, and host allowlists must remain intact. For Next.js work, read `apps/web/AGENTS.md` and local Next 16 docs before relying on older conventions.

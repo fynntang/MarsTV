@@ -9,7 +9,7 @@ MarsTV 是一个**跨平台开源影视聚合平台**,参考 LibreTV / LunaTV / 
 **核心差异化**:
 1. 源测速择优(并发测速 + 评分 + 自动/手动切换线路)
 2. 边缘缓存代理(Cloudflare Pages Functions / Vercel Edge,短缓存 m3u8、长缓存 segment)
-3. 追剧订阅 + Web Push(无需 FCM/APNs)
+3. 追剧订阅(本地持久化,无需后端)
 4. 火星主题 Design System(深空背景 + 火星橙强调色)
 
 ## Monorepo 结构
@@ -44,7 +44,7 @@ marstv/
 - **移动/TV**:Expo 52 + React Native 0.76,TV 端用 `react-native-tvos` + EAS `production_tv` profile。本地存储: expo-file-system (源配置) + @react-native-async-storage/async-storage (收藏/历史/追剧)
 - **包管理**:pnpm 10,Node ≥20.11
 - **代码质量**:Biome 1.9(替代 ESLint+Prettier,速度快)
-- **存储**:`IStorage` 抽象。Web 侧 `apps/web/src/lib/storage.ts` 做 client/server 自动分发 —— 客户端走 `client-storage.ts`(localStorage),服务端走 `remote-storage.ts`(Upstash REST 或本地 Redis,由 env 决定)
+- **存储**:`IStorage` 抽象。Web 端使用 `localStorage`,桌面/移动端使用本地文件系统
 
 > ⚠️ **Next.js 16 注意**:
 > - `apps/web/AGENTS.md` 明确警告 Next 16 相对训练数据有破坏性变更。写任何 Next 相关代码前,**先查 `apps/web/node_modules/next/dist/docs/`** 的实际文档,不要凭记忆
@@ -104,16 +104,16 @@ pnpm clean                # 清理 node_modules / .next / dist
 
 ## 当前阶段
 
-**M1 已闭环** —— Web 端功能 + 工程质量全线打通。
-**M2 已闭环** —— 服务端存储与边缘部署就绪。
-**M4 已就绪** —— 桌面端 Tauri 2 壳 + 8 原生特性 + .app/.dmg 构建验证通过。
-**M5 已就绪** —— 移动端 Expo 52 + 10 屏 + 7 组件 + tvOS 适配,iOS/Android/tvOS 三平台。
+**M1 生产就绪** —— Web 端功能 + 工程质量全线打通。
+**M2 已就绪** —— 边缘部署与 CI/CD 就绪。
+**M4 已就绪** —— 桌面端 Tauri 2 壳 + 9 原生特性 + 源配置持久化 + .app/.dmg 构建验证通过。
+**M5 已就绪** —— 移动端 Expo 52 + 10 屏 + 7 组件 + tvOS 适配 + 源配置持久化,iOS/Android/tvOS 三平台。
 
-**M1 已就绪**:
+**M1 就绪项**:
 - `packages/core`:CMS V10 解析(`apple-cms` / `aggregate` / `fetch-helper`)、豆瓣(`douban`)、测速(`speedtest`)、源健康评分(`source-health`)、`IStorage` + localStorage 实现(history / favorites / subscriptions)
 - `apps/web` API:
   - `/api/{search,detail,availability,douban,speedtest,proxy/m3u8,subscriptions/check,health/cms}`
-  - `/api/storage/{favorites,history,subscriptions}` —— Redis/localStorage 服务端分发
+  - `/api/storage/{favorites,history,subscriptions}` —— localStorage 存储
   - `/api/image/{cms,douban}` —— 图片代理
   - `/api/login` —— 站点密码验证
 - 代理安全:HMAC 签名(5 分钟 bucket,URL 边缘可缓存) + SSRF 黑名单 + 分层 `CDN-Cache-Control`
@@ -122,13 +122,12 @@ pnpm clean                # 清理 node_modules / .next / dist
 - shadcn/ui 已初始化(button / card / input + components.json,new-york 风格)
 - 测试:vitest(`packages/core` + `apps/web`)+ Playwright E2E 覆盖 CMS 解析、SSRF、HMAC、API 路由、免责声明、导航、集合页三态
 
-**M2 已就绪**:
-- ✅ Upstash 存储后端:`packages/core` 提供 `createRedisSourceHealthStore(client)` + `IRedisLike` 接口;`apps/web` 实现 REST 客户端,通过 env 调度。`/api/health/cms` GET 响应里 `backend` 字段回显 `'redis' | 'memory'`
+**M2 就绪项**:
 - ✅ SITE_PASSWORD 站点密码门:页面级 `requirePagePassword()` + API 级 `requireApiPassword()` + `/login` 页 + `/api/login` 路由。未设置 `SITE_PASSWORD` 时守卫短路放行;设置后未登录页面重定向到 `/login`,未登录 API 返回 401 JSON。Cookie 值 = `HMAC(SITE_PASSWORD, v1-context)`,无服务端状态,改密码立即失效所有 session。白名单:`/login`、`/api/login`、`/api/health/*`
 - ✅ 多平台部署脚手架:`apps/web/Dockerfile` / `apps/web/open-next.config.ts` / `apps/web/wrangler.jsonc` / `docker/docker-compose.yml` 已就绪。四个部署目标(Vercel / CF Pages / Docker / 本地 dev)共享同一份 `next build` pipeline。详见根目录 `DEPLOY.md`
 - ✅ OpenNext Cloudflare 兼容:移除 proxy.ts 中间件,改为页面级 `requirePagePassword()` + API 级 `requireApiPassword()` 守卫,避免代理层与 Worker 构建不兼容
 - ✅ 边缘缓存:`_headers` 静态资产长缓存 + `/api/image/*` / `/api/douban` / `/api/availability` 等路由 `CDN-Cache-Control` 头。`build:cf` pipeline 验证通过
-- ✅ 共享 UI 包:`packages/ui-web` 已抽离 button / card / input + `cn()` 工具,4 个消费者已切换导入路径
+- ✅ 共享 UI 包:`packages/ui-web` 已抽离 3 个 base 组件 + 16 个 widgets,所有消费者已切换导入路径
 - ✅ CI/CD:`.github/workflows/ci.yml`(typecheck + test + lint + build-web),push/PR 到 main 自动触发
 
 **M4 进度** (桌面端):
@@ -165,10 +164,6 @@ pnpm clean                # 清理 node_modules / .next / dist
 - `ALLOWED_PROXY_HOSTS` —— 代理下游域名白名单,逗号分隔
 - `SITE_PASSWORD` —— 启用站点密码门。未设置时 `requirePagePassword()` / `requireApiPassword()` 短路放行;设置后 Cookie = `HMAC(SITE_PASSWORD, v1-context)`,**改值立即失效所有 session**
 - `HEALTH_PROBE_TOKEN` —— 启用 `POST /api/health/cms` 主动探测所需的 token
-
-**存储后端**(至多选一组,都未设置则回退到进程内 Map,重启丢失):
-- `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`(成对出现)—— Upstash REST
-- `REDIS_URL` —— 自托管 Redis
 
 **豆瓣代理**:
 - `DOUBAN_PROXY_MODE` —— `direct` | `tencent` | `aliyun` | `custom`

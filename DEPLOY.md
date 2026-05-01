@@ -28,8 +28,6 @@
 | `ALLOWED_PROXY_HOSTS` | 代理下游域名白名单，逗号分隔 |
 | `SITE_PASSWORD` | 站点访问密码（不设置则无密码门） |
 | `HEALTH_PROBE_TOKEN` | 主动健康探测 Bearer token |
-| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL（需与 token 成对） |
-| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token（需与 URL 成对） |
 
 ---
 
@@ -89,21 +87,18 @@ pnpm install
 
 ### 2. 配置环境变量（Secrets）
 
-非敏感变量写死在 `apps/web/wrangler.jsonc` 的 `vars` 块中，敏感变量使用 `wrangler secret`：
-
 ```bash
 cd apps/web
 
-# 必填 secrets
+# 必填
 npx wrangler secret put PROXY_SECRET
 
-# 可选 secrets
+# 可选
 npx wrangler secret put SITE_PASSWORD
-npx wrangler secret put UPSTASH_REDIS_REST_TOKEN
 npx wrangler secret put HEALTH_PROBE_TOKEN
 ```
 
-非 secret 变量（`CMS_SOURCES_JSON`、`ALLOWED_PROXY_HOSTS` 等）直接在 `wrangler.jsonc` 的 `vars` 中改为真实值，或同样用 `wrangler secret put` 覆盖。
+非 secret 变量（`CMS_SOURCES_JSON`、`ALLOWED_PROXY_HOSTS` 等）直接在 `wrangler.jsonc` 的 `vars` 中改为真实值。
 
 ### 3. 构建与部署
 
@@ -134,8 +129,6 @@ pnpm --filter @marstv/web preview:cf
 | `ALLOWED_PROXY_HOSTS` | `wrangler.jsonc` vars | 非敏感 |
 | `SITE_PASSWORD` | `wrangler secret put` | 可选 |
 | `HEALTH_PROBE_TOKEN` | `wrangler secret put` | 可选 |
-| `UPSTASH_REDIS_REST_URL` | `wrangler.jsonc` vars | 非敏感 URL |
-| `UPSTASH_REDIS_REST_TOKEN` | `wrangler secret put` | 敏感 token |
 
 验证：
 
