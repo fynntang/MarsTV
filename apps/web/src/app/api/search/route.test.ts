@@ -5,12 +5,12 @@ const ORIGINAL_ENV = process.env.CMS_SOURCES_JSON;
 
 beforeEach(() => {
   vi.resetModules();
-  delete process.env.CMS_SOURCES_JSON;
+  delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
 });
 
 afterEach(() => {
   if (ORIGINAL_ENV === undefined) {
-    delete process.env.CMS_SOURCES_JSON;
+    delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
   } else {
     process.env.CMS_SOURCES_JSON = ORIGINAL_ENV;
   }
@@ -26,7 +26,7 @@ describe('/api/search — parameter validation', () => {
     const { GET } = await import('./route');
     const res = await GET(req(''));
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/missing required query parameter: q/);
   });
 
@@ -42,7 +42,7 @@ describe('/api/search — no sources configured', () => {
     const { GET } = await import('./route');
     const res = await GET(req('q=hello'));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.items).toEqual([]);
     expect(body.sourceStats).toEqual([]);
     expect(body.warning).toMatch(/No CMS sources configured/);
@@ -57,7 +57,7 @@ describe('/api/search — source= filter', () => {
     const { GET } = await import('./route');
     const res = await GET(req('q=hello&source=ghost'));
     expect(res.status).toBe(404);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/source not found: ghost/);
   });
 });
@@ -95,7 +95,7 @@ describe('/api/search — happy path', () => {
     const { GET } = await import('./route');
     const res = await GET(req('q=hello'));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.items).toHaveLength(1);
     expect(body.items[0].title).toBe('Test Show');
     expect(body.sourceStats[0].source).toBe('cms1');
@@ -141,7 +141,7 @@ describe('/api/search — error propagation', () => {
     const { GET } = await import('./route');
     const res = await GET(req('q=hello'));
     expect(res.status).toBe(500);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toBe('upstream on fire');
   });
 });

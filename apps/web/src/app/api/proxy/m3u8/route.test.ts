@@ -11,7 +11,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (ORIGINAL_SECRET === undefined) {
-    delete process.env.PROXY_SECRET;
+    delete (process.env as Record<string, string | undefined>).PROXY_SECRET;
   } else {
     process.env.PROXY_SECRET = ORIGINAL_SECRET;
   }

@@ -18,7 +18,8 @@
       "**/next-env.d.ts",
       "**/tmp",
       "scripts/**",
-      "pnpm-lock.yaml"
+      "pnpm-lock.yaml",
+      "**/worker-configuration.d.ts"
     ]
   },
   "formatter": {
@@ -42,7 +43,12 @@
       "recommended": true,
       "suspicious": {
         "noExplicitAny": "warn",
-        "noConsole": { "level": "warn", "options": { "allow": ["warn", "error", "info"] } }
+        "noConsole": {
+          "level": "warn",
+          "options": {
+            "allow": ["warn", "error", "info"]
+          }
+        }
       },
       "style": {
         "useImportType": "error",
@@ -65,6 +71,9 @@
         "rules": {
           "performance": {
             "noDelete": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off"
           }
         }
       }

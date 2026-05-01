@@ -12,7 +12,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (ORIGINAL_ENV === undefined) {
-    delete process.env.CMS_SOURCES_JSON;
+    delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
   } else {
     process.env.CMS_SOURCES_JSON = ORIGINAL_ENV;
   }
@@ -23,7 +23,6 @@ function req(search: string) {
   return new NextRequest(`http://app.local/api/detail?${search}`);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: test stub bridges untyped vi.doMock factory
 type GetDetailImpl = (...args: any[]) => any;
 
 async function loadRoute(
@@ -44,7 +43,7 @@ describe('/api/detail — param validation', () => {
     const GET = await loadRoute();
     const res = await GET(req('id=42'));
     expect(res.status).toBe(400);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/source.*id/);
   });
 
@@ -66,7 +65,7 @@ describe('/api/detail — source lookup', () => {
     const GET = await loadRoute();
     const res = await GET(req('source=ghost&id=42'));
     expect(res.status).toBe(404);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toMatch(/source not found: ghost/);
   });
 });
@@ -76,7 +75,7 @@ describe('/api/detail — upstream results', () => {
     const GET = await loadRoute(async () => null);
     const res = await GET(req('source=cms1&id=missing'));
     expect(res.status).toBe(404);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toBe('video not found');
   });
 
@@ -102,7 +101,7 @@ describe('/api/detail — upstream results', () => {
     const GET = await loadRoute(async () => detail);
     const res = await GET(req('source=cms1&id=42'));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.title).toBe('The Matrix');
     expect(res.headers.get('cache-control')).toContain('stale-while-revalidate');
   });
@@ -125,7 +124,7 @@ describe('/api/detail — upstream results', () => {
     });
     const res = await GET(req('source=cms1&id=42'));
     expect(res.status).toBe(500);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toBe('upstream dead');
   });
 });

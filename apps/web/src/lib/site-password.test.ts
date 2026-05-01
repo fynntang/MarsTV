@@ -10,10 +10,11 @@ import {
 describe('site-password', () => {
   const saved = process.env.SITE_PASSWORD;
   beforeEach(() => {
-    delete process.env.SITE_PASSWORD;
+    delete (process.env as Record<string, string | undefined>).SITE_PASSWORD;
   });
   afterEach(() => {
-    if (saved === undefined) delete process.env.SITE_PASSWORD;
+    if (saved === undefined)
+      delete (process.env as Record<string, string | undefined>).SITE_PASSWORD;
     else process.env.SITE_PASSWORD = saved;
   });
 

@@ -15,7 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (ORIGINAL_ENV === undefined) {
-    delete process.env.CMS_SOURCES_JSON;
+    delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
   } else {
     process.env.CMS_SOURCES_JSON = ORIGINAL_ENV;
   }
@@ -26,7 +26,6 @@ function req(search: string) {
   return new NextRequest(`http://app.local/api/availability?${search}`);
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: test stub bridges untyped vi.doMock factory
 type SearchImpl = (...args: any[]) => any;
 
 async function loadRoute(impl?: SearchImpl): Promise<{
@@ -70,7 +69,7 @@ describe('/api/availability — no sources configured', () => {
     const { GET, callCount } = await loadRoute(async () => ({ items: [], sourceStats: [] }));
     const res = await GET(req('q=foo'));
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body).toEqual({ count: 0, sourceCount: 0 });
     // aggregateSearch is never called when there are no sources.
     expect(callCount()).toBe(0);
@@ -93,7 +92,7 @@ describe('/api/availability — title filtering', () => {
     }));
     const res = await GET(req('q=%E5%87%A1%E4%BA%BA%E4%BF%AE%E4%BB%99%E4%BC%A0')); // 凡人修仙传
     expect(res.status).toBe(200);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     // only the two "凡人修仙传*" rows match the full keyword
     expect(body.count).toBe(2);
     // both sources returned items → sourceCount is 2
@@ -106,7 +105,7 @@ describe('/api/availability — title filtering', () => {
       sourceStats: [{ source: 'cms1', ok: true, tookMs: 10, itemCount: 1 }],
     }));
     const res = await GET(req('q=abc'));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.count).toBe(1);
   });
 
@@ -119,7 +118,7 @@ describe('/api/availability — title filtering', () => {
       ],
     }));
     const res = await GET(req('q=foo'));
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.sourceCount).toBe(1); // cms2 was failed → dropped
   });
 });
@@ -174,7 +173,7 @@ describe('/api/availability — error handling', () => {
     });
     const res = await GET(req('q=anything'));
     expect(res.status).toBe(502);
-    const body = await res.json();
+    const body = (await res.json()) as any;
     expect(body.error).toBe('all sources down');
   });
 });

@@ -10,7 +10,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (ORIGINAL_ENV === undefined) {
-    delete process.env.CMS_SOURCES_JSON;
+    delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
   } else {
     process.env.CMS_SOURCES_JSON = ORIGINAL_ENV;
   }
@@ -18,7 +18,7 @@ afterEach(() => {
 
 describe('loadSources', () => {
   it('returns empty array when env is unset', async () => {
-    delete process.env.CMS_SOURCES_JSON;
+    delete (process.env as Record<string, string | undefined>).CMS_SOURCES_JSON;
     const { loadSources } = await import('./sources');
     expect(loadSources()).toEqual([]);
   });
