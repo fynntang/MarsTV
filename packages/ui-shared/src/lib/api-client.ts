@@ -1,4 +1,5 @@
 import type { CmsSource, VideoItem } from '@marstv/core';
+import { getSources } from './source-storage';
 
 export interface SearchHit {
   source: CmsSource;
@@ -15,9 +16,19 @@ export function getApiBase(): string {
   return _apiBase;
 }
 
+async function buildHeaders(): Promise<HeadersInit> {
+  try {
+    const sources = await getSources();
+    if (sources.length === 0) return {};
+    return { 'X-Cms-Sources': JSON.stringify(sources) };
+  } catch {
+    return {};
+  }
+}
+
 export async function searchVideos(query: string): Promise<SearchHit[]> {
   try {
-    const res = await fetch(`${_apiBase}/api/search?q=${encodeURIComponent(query)}`);
+    const res = await fetch(`${_apiBase}/api/search?q=${encodeURIComponent(query)}`, { headers: await buildHeaders() });
     if (!res.ok) return [];
     const data: unknown = await res.json();
     if (!Array.isArray(data)) return [];
@@ -40,7 +51,7 @@ export async function searchVideos(query: string): Promise<SearchHit[]> {
 export async function fetchDoubanRankings(type: string, pageSize?: number) {
   try {
     const params = new URLSearchParams({ type, pageSize: String(pageSize ?? 20) });
-    const res = await fetch(`${_apiBase}/api/douban?${params}`);
+    const res = await fetch(`${_apiBase}/api/douban?${params}`, { headers: await buildHeaders() });
     if (!res.ok) return [];
     const data = await res.json();
     return Array.isArray(data) ? data : [];
