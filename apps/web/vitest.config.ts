@@ -13,5 +13,11 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     restoreMocks: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.test.*', 'src/**/index.ts'],
+    },
   },
 });

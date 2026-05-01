@@ -33,6 +33,19 @@ export default function RootLayout({
   const cloudStorage = isCloudStorageEnabled();
   return (
     <html lang="zh-CN" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#FF6B35" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="MarsTV" />
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: inline SW registration
+          dangerouslySetInnerHTML={{
+            __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`,
+          }}
+        />
+      </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         {cloudStorage && (
           // Flag read by `getClientStorage()` to route reads/writes through
