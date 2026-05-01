@@ -74,6 +74,21 @@ jobs:
       - name: cargo check (desktop)
         run: cargo check --manifest-path apps/desktop/src-tauri/Cargo.toml
 
+  check-mobile:
+    name: Check Mobile
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @marstv/mobile typecheck
+      - run: pnpm --filter @marstv/mobile test
+
   build-web:
     name: Build Web
     runs-on: ubuntu-latest
