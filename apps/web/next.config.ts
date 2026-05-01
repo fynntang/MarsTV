@@ -2,7 +2,7 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/config'],
+  transpilePackages: ['@marstv/core', '@marstv/ui-web', '@marstv/ui-shared', '@marstv/config'],
   output: 'standalone',
 };
 

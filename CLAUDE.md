@@ -26,12 +26,14 @@ marstv/
 │   ├── core/        # 共享:types / downstream / storage(平台中立)
 │   ├── ui-web/      # Web 组件(当前为空占位,shadcn/ui 组件实际在 apps/web/src/components/ui/)
 │   ├── ui-native/   # RN 组件(.mobile/.tablet/.tv.tsx 三变体,当前为空占位)
+│   ├── ui-shared/   # 共享 hooks + API client + source storage + router adapter
 │   └── config/      # design tokens + 共享配置
 └── docker/          # Dockerfile + compose
 ```
 
 **关键原则**:
 - `packages/core` 必须保持**平台中立**(不依赖 `next/*`、`react-native/*`、`fs`、`node:*`),以便 Web / Desktop / Mobile / TV 四端复用
+- `packages/ui-shared` 提供跨框架共享的 hooks (`useCmsSearch`, `usePlayerData`)、API client (`searchVideos`, `getDetail`, `fetchDoubanRankings`, `fetchFavorites`, `fetchHistory`, `fetchSubscriptions`, `loginWithPassword`)、源存储 (`source-storage.ts`, 可插拔 `SourceStore` 接口) 和路由适配器
 - `packages/config/tokens.ts` 是设计 token 的**唯一事实源**,Web(Tailwind theme extend)和 RN(StyleSheet)都从这里读
 - 绝大多数包 `"type": "module"`,ESM only(`packages/config` 当前例外)
 
@@ -39,7 +41,7 @@ marstv/
 
 - **Web**:**Next.js 16** + React 19 + TypeScript 5 + Tailwind CSS 4 + shadcn/ui + ArtPlayer + HLS.js
 - **桌面**:Tauri 2(Rust 壳)
-- **移动/TV**:Expo 52 + React Native 0.76,TV 端用 `react-native-tvos` + EAS `production_tv` profile
+- **移动/TV**:Expo 52 + React Native 0.76,TV 端用 `react-native-tvos` + EAS `production_tv` profile。本地存储: expo-file-system (源配置) + @react-native-async-storage/async-storage (收藏/历史/追剧)
 - **包管理**:pnpm 10,Node ≥20.11
 - **代码质量**:Biome 1.9(替代 ESLint+Prettier,速度快)
 - **存储**:`IStorage` 抽象。Web 侧 `apps/web/src/lib/storage.ts` 做 client/server 自动分发 —— 客户端走 `client-storage.ts`(localStorage),服务端走 `remote-storage.ts`(Upstash REST 或本地 Redis,由 env 决定)
@@ -133,6 +135,7 @@ pnpm clean                # 清理 node_modules / .next / dist
 - ✅ Tauri 2 壳:`apps/desktop/src-tauri/` Rust crate + `tauri.conf.json`(1280x720, `com.marstv.app`)
 - ✅ 8 原生特性:updater(自动更新), shell(深度链接), global-shortcut(Ctrl+Shift+F), store(窗口持久化), tray(托盘+关闭隐藏), menu bar(File/Edit/View/Window/Help), get_app_version, open_external
 - ✅ `tauri build` 验证通过:MarsTV.app(15MB) + .dmg(5.9MB),cargo check 通过
+- ✅ 源持久化:Rust command `load_sources` / `save_sources` 读写 `sources.json`(位于 `app_local_data_dir()`),启动时自动加载
 - ⬜ 代码签名 + .dmg 背景 + Windows/Linux 构建
 
 **M5 已就绪** (移动/TV):

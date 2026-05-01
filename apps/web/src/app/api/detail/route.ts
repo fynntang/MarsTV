@@ -4,7 +4,7 @@
 // ============================================================================
 
 import { requireApiPassword } from '@/lib/site-password-guard';
-import { findSource } from '@/lib/sources';
+import { loadSourcesFromRequest } from '@/lib/sources';
 import { getDetail } from '@marstv/core';
 import type { NextRequest } from 'next/server';
 
@@ -26,7 +26,8 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const source = findSource(sourceKey);
+  const sources = loadSourcesFromRequest(request);
+  const source = sources.find((s) => s.key === sourceKey);
   if (!source) {
     return Response.json({ error: `source not found: ${sourceKey}` }, { status: 404 });
   }

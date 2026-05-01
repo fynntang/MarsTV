@@ -39,6 +39,22 @@ function isValidSource(value: unknown): value is CmsSource {
   return typeof s.key === 'string' && typeof s.name === 'string' && typeof s.api === 'string';
 }
 
+export function loadSourcesFromRequest(request: Request): CmsSource[] {
+  try {
+    const header = request.headers.get('X-Cms-Sources');
+    if (header) {
+      const parsed = JSON.parse(header);
+      if (Array.isArray(parsed)) {
+        const clientSources = parsed.filter(isValidSource).slice(0, 20);
+        if (clientSources.length > 0) return clientSources;
+      }
+    }
+  } catch {
+    /* fall through to env sources */
+  }
+  return loadSources();
+}
+
 export function findSource(key: string): CmsSource | undefined {
   return loadSources().find((s) => s.key === key);
 }

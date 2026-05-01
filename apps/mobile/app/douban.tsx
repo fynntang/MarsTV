@@ -1,15 +1,18 @@
 import { colors, radius } from '@marstv/config';
-import { Container, Spacer, TextView } from '@marstv/ui-native';
-import { useState } from 'react';
+import type { VideoItem } from '@marstv/core';
+import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { fetchDoubanRankings } from '@marstv/ui-shared';
+import { router } from 'expo-router';
+import { useCallback, useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  FlatList,
   RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 
-// Categories match the web douban page
 const CATEGORIES = [
   { key: 'movie', label: 'Movies' },
   { key: 'tv', label: 'TV Shows' },
@@ -17,13 +20,33 @@ const CATEGORIES = [
 
 export default function DoubanScreen() {
   const [tag, setTag] = useState('movie');
-  const [loading, _setLoading] = useState(false);
+  const [data, setData] = useState<Array<Record<string, unknown>>>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  useEffect(() => {
+    setLoading(true);
+    fetchDoubanRankings(tag)
+      .then((items) => {
+        setData(items);
+        setLoading(false);
+      })
+      .catch(() => {
+        setData([]);
+        setLoading(false);
+      });
+  }, [tag]);
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 800);
-  };
+    try {
+      const items = await fetchDoubanRankings(tag);
+      setData(items);
+    } catch {
+      setData([]);
+    }
+    setRefreshing(false);
+  }, [tag]);
 
   return (
     <Container>
@@ -31,7 +54,7 @@ export default function DoubanScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={onRefresh}
             colors={[colors.primary]}
             tintColor={colors.primary}
           />
@@ -45,7 +68,6 @@ export default function DoubanScreen() {
         </TextView>
         <Spacer size={16} />
 
-        {/* Category tabs */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.tabs}>
           {CATEGORIES.map((cat) => (
             <TouchableOpacity
@@ -65,13 +87,47 @@ export default function DoubanScreen() {
         {loading ? (
           <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
         ) : (
-          <TextView
-            variant="caption"
-            color={colors.textMuted}
-            style={{ textAlign: 'center', marginTop: 40 }}
-          >
-            Connect to Douban API to load rankings
-          </TextView>
+          <FlatList
+            data={data}
+            scrollEnabled={false}
+            keyExtractor={(_, i) => `douban-${i}`}
+            renderItem={({ item }) => {
+              const d = item as Record<string, unknown>;
+              const videoItem: VideoItem = {
+                source: (d.source as string) ?? 'douban',
+                id: String(d.id ?? ''),
+                title: (d.title as string) ?? '',
+                poster: d.poster as string | undefined,
+                rating:
+                  typeof d.rate === 'number'
+                    ? d.rate
+                    : typeof d.score === 'number'
+                      ? d.score
+                      : d.rate != null
+                        ? Number.parseFloat(String(d.rate))
+                        : d.score != null
+                          ? Number.parseFloat(String(d.score))
+                          : undefined,
+              };
+              return (
+                <VideoCard
+                  item={videoItem}
+                  sourceName={(d.sourceName as string) ?? 'douban'}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/player',
+                      params: {
+                        source: videoItem.source,
+                        id: videoItem.id,
+                        title: videoItem.title,
+                      },
+                    })
+                  }
+                />
+              );
+            }}
+            contentContainerStyle={{ gap: 12 }}
+          />
         )}
       </ScrollView>
     </Container>

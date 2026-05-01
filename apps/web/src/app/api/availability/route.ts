@@ -10,8 +10,8 @@
 
 import { requireApiPassword } from '@/lib/site-password-guard';
 import { sourceHealthStore } from '@/lib/source-health-store';
-import { loadSources } from '@/lib/sources';
-import { aggregateSearch } from '@marstv/core';
+import { loadSourcesFromRequest } from '@/lib/sources';
+import { type CmsSource, aggregateSearch } from '@marstv/core';
 import type { NextRequest } from 'next/server';
 
 export const runtime = 'nodejs';
@@ -38,8 +38,7 @@ function isExpired(entry: CacheEntry): boolean {
   return entry.expiresAt < Date.now();
 }
 
-async function compute(keyword: string): Promise<CacheEntry> {
-  const sources = loadSources();
+async function compute(keyword: string, sources: CmsSource[]): Promise<CacheEntry> {
   if (sources.length === 0) {
     return { count: 0, sourceCount: 0, expiresAt: Date.now() + CACHE_TTL_MS };
   }
@@ -65,7 +64,7 @@ async function compute(keyword: string): Promise<CacheEntry> {
   };
 }
 
-async function getEntry(keyword: string): Promise<CacheEntry> {
+async function getEntry(keyword: string, sources: CmsSource[]): Promise<CacheEntry> {
   const key = normalize(keyword);
   const cached = cache.get(key);
   if (cached && !isExpired(cached)) return cached;
@@ -73,7 +72,7 @@ async function getEntry(keyword: string): Promise<CacheEntry> {
   const existing = inflight.get(key);
   if (existing) return existing;
 
-  const promise = compute(keyword).then((entry) => {
+  const promise = compute(keyword, sources).then((entry) => {
     cache.set(key, entry);
     inflight.delete(key);
     return entry;
@@ -92,7 +91,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const entry = await getEntry(keyword);
+    const sources = loadSourcesFromRequest(request);
+    const entry = await getEntry(keyword, sources);
     return Response.json(
       { count: entry.count, sourceCount: entry.sourceCount },
       {

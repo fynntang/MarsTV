@@ -1,24 +1,43 @@
 import { colors } from '@marstv/config';
 import type { SubscriptionRecord } from '@marstv/core';
 import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { fetchSubscriptions } from '@marstv/ui-shared';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { FlatList, RefreshControl, StyleSheet } from 'react-native';
-
-const MOCK_SUBSCRIPTIONS: SubscriptionRecord[] = [];
+import { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, RefreshControl, StyleSheet } from 'react-native';
 
 export default function SubscriptionsScreen() {
-  const [items, setItems] = useState(MOCK_SUBSCRIPTIONS);
+  const [items, setItems] = useState<SubscriptionRecord[]>([]);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  const load = useCallback(async () => {
+    try {
+      const data = await fetchSubscriptions();
+      setItems(data as unknown as SubscriptionRecord[]);
+    } catch {
+      setItems([]);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      // In production, re-fetch from storage API
-      setItems([...MOCK_SUBSCRIPTIONS]);
-      setRefreshing(false);
-    }, 800);
-  };
+    await load();
+    setRefreshing(false);
+  }, [load]);
+
+  if (loading) {
+    return (
+      <Container style={styles.container}>
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
+      </Container>
+    );
+  }
 
   if (items.length === 0) {
     return (
@@ -61,7 +80,7 @@ export default function SubscriptionsScreen() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={onRefresh}
             colors={[colors.primary]}
             tintColor={colors.primary}
           />

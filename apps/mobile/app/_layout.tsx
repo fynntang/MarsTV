@@ -1,8 +1,12 @@
 import { colors } from '@marstv/config';
+import { setSourceStore } from '@marstv/ui-shared';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { isAuthenticated } from '../src/lib/auth';
+import { expoSourceStore } from '../src/lib/source-store';
+
+setSourceStore(expoSourceStore);
 
 function useAuthGate() {
   const segments = useSegments();

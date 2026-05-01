@@ -1,70 +1,56 @@
 import { colors, radius } from '@marstv/config';
-import type { VideoItem } from '@marstv/core';
-import { Container, PosterSkeleton, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import type { PlayRecord, SubscriptionRecord, VideoItem } from '@marstv/core';
+import { Container, Spacer, TextView, VideoCard } from '@marstv/ui-native';
+import { fetchDoubanRankings, fetchHistory, fetchSubscriptions } from '@marstv/ui-shared';
 import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
-  Platform,
+  ActivityIndicator,
+  FlatList,
   RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
   View,
-  useWindowDimensions,
 } from 'react-native';
 
-const mockItems: { item: VideoItem; sourceName: string }[] = [
-  {
-    item: {
-      source: 'demo',
-      id: '1',
-      title: '火星救援 The Martian',
-      year: '2015',
-      category: '科幻',
-      poster: undefined,
-    },
-    sourceName: '演示源',
-  },
-  {
-    item: {
-      source: 'demo',
-      id: '2',
-      title: '星际穿越 Interstellar',
-      year: '2014',
-      category: '科幻',
-      poster: undefined,
-    },
-    sourceName: '演示源',
-  },
-];
-
 export default function HomeScreen() {
+  const [doubanItems, setDoubanItems] = useState<Array<Record<string, unknown>>>([]);
+  const [continueItems, setContinueItems] = useState<PlayRecord[]>([]);
+  const [subscriptionItems, setSubscriptionItems] = useState<SubscriptionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const { width } = useWindowDimensions();
-  const tv = (Platform.OS as string) === 'tvos';
-  const numColumns = tv ? Math.floor(width / 300) : 1;
 
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
+  const loadData = useCallback(async () => {
+    try {
+      const [douban, history, subscriptions] = await Promise.all([
+        fetchDoubanRankings('movie', undefined, 10),
+        fetchHistory(),
+        fetchSubscriptions(),
+      ]);
+      setDoubanItems(douban);
+      setContinueItems(history as unknown as PlayRecord[]);
+      setSubscriptionItems(subscriptions as unknown as SubscriptionRecord[]);
+    } catch {
+      // Show empty state
+    }
+    setLoading(false);
   }, []);
 
-  const handleRefresh = () => {
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 800);
-  };
+    await loadData();
+    setRefreshing(false);
+  }, [loadData]);
 
   if (loading) {
     return (
       <Container style={styles.container}>
-        <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent}>
-          <PosterSkeleton />
-          <PosterSkeleton />
-          <PosterSkeleton />
-        </ScrollView>
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 40 }} />
       </Container>
     );
   }
@@ -72,51 +58,131 @@ export default function HomeScreen() {
   return (
     <Container style={styles.container}>
       <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={[colors.primary]}
-            tintColor={colors.primary}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.primary]} />
         }
+        contentContainerStyle={styles.listContent}
       >
-        {tv ? (
-          <View style={styles.tvGrid}>
-            {mockItems.map(({ item, sourceName }, index) => (
-              <View key={item.id} style={{ width: `${100 / numColumns}%` }}>
-                <VideoCard
-                  item={item}
-                  sourceName={sourceName}
-                  hasTVPreferredFocus={index === 0}
+        {/* Continue Watching */}
+        {continueItems.length > 0 && (
+          <>
+            <TextView variant="heading">Continue Watching</TextView>
+            <FlatList
+              horizontal
+              data={continueItems.slice(0, 10)}
+              keyExtractor={(item) => `${item.source}:${item.id}`}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={{ marginRight: 12, width: 140 }}
                   onPress={() =>
                     router.push({
                       pathname: '/player',
-                      params: { source: item.source, id: item.id, title: item.title },
+                      params: { source: item.source, id: item.id },
                     })
                   }
-                />
-              </View>
-            ))}
-          </View>
-        ) : (
-          mockItems.map(({ item, sourceName }) => (
-            <View key={item.id} style={styles.cardWrapper}>
-              <VideoCard
-                item={item}
-                sourceName={sourceName}
-                onPress={() =>
-                  router.push({
-                    pathname: '/player',
-                    params: { source: item.source, id: item.id, title: item.title },
-                  })
-                }
-              />
-            </View>
-          ))
+                >
+                  <VideoCard
+                    item={
+                      {
+                        source: item.source,
+                        id: item.id,
+                        title: item.title,
+                        poster: item.poster,
+                      } as VideoItem
+                    }
+                    sourceName={item.sourceName ?? item.source}
+                  />
+                </TouchableOpacity>
+              )}
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+            />
+            <Spacer size={24} />
+          </>
         )}
+
+        {/* Douban Rankings */}
+        {doubanItems.length > 0 && (
+          <>
+            <TextView variant="heading">Douban Rankings</TextView>
+            <FlatList
+              horizontal
+              data={doubanItems.slice(0, 10)}
+              keyExtractor={(_, i) => `douban-${i}`}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => {
+                const d = item as Record<string, unknown>;
+                return (
+                  <TouchableOpacity style={{ marginRight: 12, width: 140 }}>
+                    <VideoCard
+                      item={
+                        {
+                          source: (d.source as string) ?? 'douban',
+                          id: String(d.id ?? ''),
+                          title: (d.title as string) ?? '',
+                          poster: d.poster as string | undefined,
+                          rating:
+                            typeof d.rating === 'number'
+                              ? d.rating
+                              : typeof d.score === 'number'
+                                ? d.score
+                                : d.rating != null
+                                  ? Number.parseFloat(String(d.rating))
+                                  : d.score != null
+                                    ? Number.parseFloat(String(d.score))
+                                    : undefined,
+                        } as VideoItem
+                      }
+                      sourceName={(d.source as string) ?? 'douban'}
+                    />
+                  </TouchableOpacity>
+                );
+              }}
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+            />
+            <Spacer size={24} />
+          </>
+        )}
+
+        {/* Subscriptions */}
+        {subscriptionItems.length > 0 && (
+          <>
+            <TextView variant="heading">My Subscriptions</TextView>
+            <FlatList
+              horizontal
+              data={subscriptionItems.slice(0, 10)}
+              keyExtractor={(item) => `${item.source}:${item.id}`}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={{ marginRight: 12, width: 140 }}
+                  onPress={() =>
+                    router.push({
+                      pathname: '/player',
+                      params: { source: item.source, id: item.id },
+                    })
+                  }
+                >
+                  <VideoCard
+                    item={
+                      {
+                        source: item.source,
+                        id: item.id,
+                        title: item.title,
+                        poster: item.poster,
+                      } as VideoItem
+                    }
+                    sourceName={item.sourceName ?? item.source}
+                  />
+                </TouchableOpacity>
+              )}
+              contentContainerStyle={{ paddingHorizontal: 16 }}
+            />
+          </>
+        )}
+
+        {/* Nav row */}
+        <Spacer size={24} />
         <View style={styles.navRow}>
           <TouchableOpacity
             style={styles.navButton}
@@ -175,22 +241,13 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.background,
   },
-  scroll: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-  },
-  tvGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-  },
-  cardWrapper: {
-    marginBottom: 8,
+  listContent: {
+    paddingVertical: 16,
   },
   navRow: {
     flexDirection: 'row',
     gap: 12,
+    paddingHorizontal: 16,
   },
   navButton: {
     flex: 1,
