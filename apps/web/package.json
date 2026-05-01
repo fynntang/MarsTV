@@ -8,6 +8,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
     "test:e2e": "playwright test && playwright test --config playwright.site-password.config.ts",
     "test:e2e:site-password": "playwright test --config playwright.site-password.config.ts",
