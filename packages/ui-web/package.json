@@ -27,6 +27,8 @@
     "@types/react": "catalog:",
     "happy-dom": "catalog:",
     "jsdom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

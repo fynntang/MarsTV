@@ -76,7 +76,7 @@ export async function getDetail(
       { headers: await buildHeaders() },
     );
     if (!res.ok) return null;
-    return await res.json();
+    return (await res.json()) as Record<string, unknown> | null;
   } catch {
     return null;
   }
@@ -86,7 +86,7 @@ export async function fetchFavorites(): Promise<Array<Record<string, unknown>>> 
   try {
     const res = await fetch(`${_apiBase}/api/storage/favorites`, { headers: await buildHeaders() });
     if (!res.ok) return [];
-    return await res.json();
+    return (await res.json()) as Array<Record<string, unknown>>;
   } catch {
     return [];
   }
@@ -96,7 +96,7 @@ export async function fetchHistory(): Promise<Array<Record<string, unknown>>> {
   try {
     const res = await fetch(`${_apiBase}/api/storage/history`, { headers: await buildHeaders() });
     if (!res.ok) return [];
-    return await res.json();
+    return (await res.json()) as Array<Record<string, unknown>>;
   } catch {
     return [];
   }
@@ -108,7 +108,7 @@ export async function fetchSubscriptions(): Promise<Array<Record<string, unknown
       headers: await buildHeaders(),
     });
     if (!res.ok) return [];
-    return await res.json();
+    return (await res.json()) as Array<Record<string, unknown>>;
   } catch {
     return [];
   }

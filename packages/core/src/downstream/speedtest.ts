@@ -100,7 +100,8 @@ export async function testLine(
   try {
     const res = await fetch(input.url, {
       method: 'GET',
-      signal: ctrl.signal,
+      // biome-ignore lint/suspicious/noExplicitAny: DOM/RN AbortSignal type mismatch
+      signal: ctrl.signal as any,
       headers: {
         accept: 'application/vnd.apple.mpegurl, application/x-mpegurl, */*',
         'user-agent': 'Mozilla/5.0 (compatible; MarsTV/0.1 SpeedTest)',

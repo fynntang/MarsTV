@@ -23,16 +23,16 @@ catalog:
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
   "@vitest/coverage-v8": ^4.1.5
-  artplayer: ^5.2.4
+  artplayer: ^5.4.0
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
-  expo: ~52.0.0
+  expo: ~55.0.0
   expo-av: ^16.0.8
-  expo-constants: ~55.0.15
-  expo-file-system: ^55.0.17
-  expo-linking: ~55.0.14
-  expo-router: ~55.0.13
-  expo-status-bar: ~2.0.0
+  expo-constants: ~55.0.12
+  expo-file-system: ~55.0.16
+  expo-linking: ~55.0.8
+  expo-router: ~55.0.7
+  expo-status-bar: ~55.0.0
   happy-dom: ^20.9.0
   hls.js: ^1.6.15
   jsdom: ^29.1.1
