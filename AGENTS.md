@@ -2,7 +2,7 @@
 
 ## Project Structure & Module Organization
 
-MarsTV is a pnpm workspace monorepo. `apps/web` contains the Next.js 16 + React 19 web app, App Router pages, API routes, public assets, Vitest tests, and Playwright E2E tests. `apps/desktop` and `apps/mobile` are roadmap placeholders for Tauri and Expo clients. Shared code lives in `packages/core` for platform-neutral types, downstream adapters, speed tests, storage, and source health logic; `packages/config` owns design tokens; `packages/ui-web` and `packages/ui-native` are component package placeholders. Deployment files live in `docker/`, with platform notes in `DEPLOY.md`.
+MarsTV is a pnpm workspace monorepo. `apps/web` contains the Next.js 16 + React 19 web app, App Router pages, API routes, public assets, Vitest tests, and Playwright E2E tests. `apps/desktop` is a Tauri 2 + Vite SPA with Rust native commands. `apps/mobile` is an Expo 52 + React Native 0.76 app with tvOS support. Shared code lives in `packages/core` for platform-neutral types, downstream adapters, speed tests, storage, and source health logic; `packages/ui-shared` for cross-framework hooks, API client, source storage, and router adapters; `packages/config` owns design tokens; `packages/ui-web` and `packages/ui-native` are component packages. Deployment files live in `docker/`, with platform notes in `DEPLOY.md`.
 
 ## Build, Test, and Development Commands
 
@@ -30,4 +30,4 @@ History uses Conventional Commit style with scopes, for example `feat(web): ...`
 
 ## Security & Configuration Tips
 
-Do not commit secrets. Required runtime env includes `PROXY_SECRET` and `CMS_SOURCES_JSON`; optional controls include `SITE_PASSWORD`, `ALLOWED_PROXY_HOSTS`, and Redis/Upstash variables. Preserve proxy safety: HMAC auth, SSRF blocking, and host allowlists must remain intact. For Next.js work, read `apps/web/AGENTS.md` and local Next 16 docs before relying on older conventions.
+Do not commit secrets. Required runtime env includes `PROXY_SECRET` and `CMS_SOURCES_JSON`; optional controls include `SITE_PASSWORD` and `ALLOWED_PROXY_HOSTS`. Preserve proxy safety: HMAC auth, SSRF blocking, and host allowlists must remain intact. For Next.js work, read `apps/web/AGENTS.md` and local Next 16 docs before relying on older conventions.

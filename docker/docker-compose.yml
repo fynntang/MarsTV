@@ -1,15 +1,9 @@
-# ============================================================================
 # MarsTV Docker Compose — 单容器 Web 部署
 #
 # 用法:
 #   1. 复制 .env.example 为 .env 并填入真实值
 #   2. docker compose up -d
 #   3. curl http://localhost:3000/api/health/cms
-#
-# 可选扩展 (M3+):
-#   - Upstash 本地模拟 (Kvrocks) ← 注释桩,待后续启用
-#   - Redis 缓存层
-# ============================================================================
 
 services:
   web:
@@ -28,16 +22,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
-
-  # ---- 可选: 本地 Redis 模拟 (M3+ 启用) ----------------------------------
-  # kvrocks:
-  #   image: apache/kvrocks:latest
-  #   container_name: marstv-kvrocks
-  #   ports:
-  #     - '6666:6666'
-  #   volumes:
-  #     - kvrocks-data:/var/lib/kvrocks
-  #   restart: unless-stopped
-  #
-  # volumes:
-  #   kvrocks-data:
