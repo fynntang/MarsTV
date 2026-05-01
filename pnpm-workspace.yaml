@@ -22,7 +22,7 @@ catalog:
   "@types/node": ^20.19.39
   "@types/react": ^19.2.14
   "@types/react-dom": ^19.2.3
-  "@vitest/coverage-v8": ^4.1.5
+  "@vitest/coverage-v8": ^2.1.9
   artplayer: ^5.2.4
   class-variance-authority: ^0.7.1
   clsx: ^2.1.1
