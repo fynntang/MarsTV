@@ -48,9 +48,13 @@ export async function searchVideos(query: string): Promise<SearchHit[]> {
   }
 }
 
-export async function fetchDoubanRankings(type: string, pageSize?: number) {
+export async function fetchDoubanRankings(type: string, tag?: string, pageSize?: number) {
   try {
-    const params = new URLSearchParams({ type, pageSize: String(pageSize ?? 20) });
+    const params = new URLSearchParams({
+      type,
+      tag: tag ?? '热门',
+      pageSize: String(pageSize ?? 20),
+    });
     const res = await fetch(`${_apiBase}/api/douban?${params}`, { headers: await buildHeaders() });
     if (!res.ok) return [];
     const data = await res.json();
