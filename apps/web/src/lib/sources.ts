@@ -45,7 +45,7 @@ export function loadSourcesFromRequest(request: Request): CmsSource[] {
     if (header) {
       const parsed = JSON.parse(header);
       if (Array.isArray(parsed)) {
-        const clientSources = parsed.filter(isValidSource);
+        const clientSources = parsed.filter(isValidSource).slice(0, 20);
         if (clientSources.length > 0) return clientSources;
       }
     }
