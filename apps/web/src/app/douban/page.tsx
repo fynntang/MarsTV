@@ -78,14 +78,14 @@ export default async function DoubanPage(props: { searchParams: SearchParams }) 
   const page = parsePage(asString(sp.page));
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+    <div className="page-enter mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 lg:px-12">
       <div className="mb-6 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">豆瓣片单</h1>
         <span className="text-xs text-dim-foreground">点击任意片名将搜索所有已配置的源</span>
       </div>
 
       {/* Type toggle */}
-      <div className="mb-4 inline-flex rounded-full border border-border/70 bg-surface/60 p-1">
+      <div className="mb-4 inline-flex glass rounded-full p-1">
         {(['tv', 'movie'] as const).map((t) => (
           <Link
             key={t}
@@ -114,7 +114,7 @@ export default async function DoubanPage(props: { searchParams: SearchParams }) 
                 'inline-flex items-center rounded-full border px-3 py-1 text-xs transition-colors',
                 active
                   ? 'border-primary bg-primary/15 text-primary'
-                  : 'border-border/60 bg-surface/60 text-muted-foreground hover:border-border-strong hover:text-foreground',
+                  : 'glass text-muted-foreground hover:text-foreground',
               )}
             >
               {t}
@@ -156,7 +156,7 @@ async function Grid({ type, tag, page }: { type: DoubanMediaType; tag: string; p
 
   if (items.length === 0) {
     return (
-      <div className="rounded-lg border border-border/60 bg-surface/40 px-4 py-8 text-center text-sm text-muted-foreground">
+      <div className="rounded-lg border glass-card rounded-xl px-4 py-10 text-center text-sm text-muted-foreground">
         此标签下暂无更多内容
       </div>
     );
@@ -180,12 +180,12 @@ async function Grid({ type, tag, page }: { type: DoubanMediaType; tag: string; p
         {hasPrev ? (
           <Link
             href={`/douban?type=${type}&tag=${encodeURIComponent(tag)}&page=${page - 1}`}
-            className="inline-flex items-center rounded-full border border-border/70 bg-surface/60 px-4 py-1.5 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+            className="glass-card inline-flex items-center rounded-full px-4 py-1.5 text-sm text-foreground transition-all hover:border-primary/30 hover:text-primary"
           >
             上一页
           </Link>
         ) : (
-          <span className="inline-flex items-center rounded-full border border-border/40 bg-surface/30 px-4 py-1.5 text-sm text-dim-foreground">
+          <span className="glass inline-flex items-center rounded-full px-4 py-1.5 text-sm text-dim-foreground">
             上一页
           </span>
         )}
@@ -193,12 +193,12 @@ async function Grid({ type, tag, page }: { type: DoubanMediaType; tag: string; p
         {hasNext ? (
           <Link
             href={`/douban?type=${type}&tag=${encodeURIComponent(tag)}&page=${page + 1}`}
-            className="inline-flex items-center rounded-full border border-border/70 bg-surface/60 px-4 py-1.5 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+            className="glass-card inline-flex items-center rounded-full px-4 py-1.5 text-sm text-foreground transition-all hover:border-primary/30 hover:text-primary"
           >
             下一页
           </Link>
         ) : (
-          <span className="inline-flex items-center rounded-full border border-border/40 bg-surface/30 px-4 py-1.5 text-sm text-dim-foreground">
+          <span className="glass inline-flex items-center rounded-full px-4 py-1.5 text-sm text-dim-foreground">
             下一页
           </span>
         )}
@@ -216,7 +216,7 @@ function DoubanCard({ item }: { item: DoubanItem }) {
   return (
     <Link
       href={`/search?${searchParams.toString()}`}
-      className="group relative flex flex-col overflow-hidden rounded-md border border-border/60 bg-surface/60 transition-colors hover:border-primary/60"
+      className="group glass-card relative flex flex-col overflow-hidden rounded-xl"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden bg-black">
         <img
@@ -250,13 +250,10 @@ function GridSkeleton() {
   return (
     <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
       {SKELETON_KEYS.map((k) => (
-        <div
-          key={k}
-          className="animate-pulse overflow-hidden rounded-md border border-border/40 bg-surface/40"
-        >
-          <div className="aspect-[2/3] w-full bg-surface/60" />
+        <div key={k} className="glass-card animate-pulse overflow-hidden rounded-xl">
+          <div className="aspect-[2/3] w-full bg-white/5" />
           <div className="h-7 px-2 py-1.5">
-            <div className="h-3 w-3/4 rounded bg-surface/60" />
+            <div className="h-3 w-3/4 rounded bg-white/5" />
           </div>
         </div>
       ))}

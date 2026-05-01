@@ -9,10 +9,7 @@ export function PosterGridSkeleton({ count = 10 }: { count?: number }) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
       {keys.map((k) => (
-        <div
-          key={k}
-          className="animate-pulse overflow-hidden rounded-lg border border-border/40 bg-surface/40"
-        >
+        <div key={k} className="glass-card animate-pulse overflow-hidden rounded-xl">
           <div className="aspect-[2/3] w-full bg-surface/60" />
           <div className="h-7 px-2 py-1.5">
             <div className="h-3 w-3/4 rounded bg-surface/60" />
@@ -31,7 +28,7 @@ export function CollectionEmptyState({
   description: string;
 }) {
   return (
-    <div className="rounded-lg border border-border/60 bg-surface/40 p-8 text-center text-sm text-muted-foreground">
+    <div className="glass-card rounded-xl p-10 text-center text-sm text-muted-foreground">
       {description}
     </div>
   );
@@ -45,7 +42,7 @@ export function CollectionErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div className="rounded-lg border border-danger/40 bg-danger/5 px-4 py-8 text-center text-sm text-danger">
+    <div className="glass-card rounded-xl px-4 py-10 text-center text-sm text-danger">
       <p>{description}</p>
       {onRetry ? (
         <button

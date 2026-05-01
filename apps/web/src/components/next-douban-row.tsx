@@ -43,18 +43,20 @@ const SKELETON_KEYS = Array.from({ length: 24 }, () => Math.random().toString(36
 function RowSkeleton({ count }: { count: number }) {
   return (
     <section className="mt-12">
-      <div className="-mx-4 flex gap-3 overflow-hidden px-4 pb-2">
-        {SKELETON_KEYS.slice(0, count).map((k) => (
-          <div
-            key={k}
-            className="w-[140px] shrink-0 animate-pulse overflow-hidden rounded-md border border-border/40 bg-surface/40"
-          >
-            <div className="aspect-[2/3] w-full bg-surface/60" />
-            <div className="h-7 px-2 py-1.5">
-              <div className="h-3 w-3/4 rounded bg-surface/60" />
+      <div className="overflow-hidden pb-2">
+        <div className="flex w-max gap-3 sm:gap-4">
+          {SKELETON_KEYS.slice(0, count).map((k) => (
+            <div
+              key={k}
+              className="glass-card w-[140px] sm:w-[160px] lg:w-[180px] shrink-0 animate-pulse overflow-hidden rounded-xl"
+            >
+              <div className="aspect-[2/3] w-full bg-surface/60" />
+              <div className="h-7 px-2 py-1.5">
+                <div className="h-3 w-3/4 rounded bg-surface/60" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </section>
   );

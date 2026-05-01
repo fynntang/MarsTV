@@ -86,7 +86,7 @@ export default async function PlayPage(props: { params: Params; searchParams: Se
   const lines = detail.lines;
   if (lines.length === 0) {
     return (
-      <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+      <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 lg:px-12">
         <h1 className="mb-2 text-xl font-semibold">{detail.title}</h1>
         <p className="text-sm text-muted-foreground">该视频暂无可用播放线路</p>
       </div>
@@ -146,7 +146,7 @@ export default async function PlayPage(props: { params: Params; searchParams: Se
   const maxEpisodeCount = lines.reduce((m, l) => Math.max(m, l.episodes.length), 0);
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-8">
+    <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 md:px-8">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground">{detail.title}</h1>
         <div className="flex items-center gap-3">

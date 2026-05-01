@@ -36,10 +36,7 @@ export function VideoCard({
   return (
     <LinkComponent
       href={href}
-      className={cn(
-        'group relative flex flex-col overflow-hidden rounded-lg border border-border bg-surface transition-all',
-        'hover:border-primary hover:shadow-lg hover:shadow-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-      )}
+      className={cn('glass-card group relative flex flex-col overflow-hidden rounded-xl')}
     >
       <div className="relative aspect-[2/3] w-full bg-background">
         {proxiedPoster ? (

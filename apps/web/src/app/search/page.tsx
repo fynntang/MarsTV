@@ -55,7 +55,7 @@ export default async function SearchPage(props: { searchParams: SearchParams }) 
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+    <div className="page-enter mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 lg:px-12">
       <div className="mb-6">
         <NextSearchBox defaultValue={keyword} autoFocus={!keyword} />
       </div>
@@ -93,7 +93,7 @@ function DoubanContextCard({
 }) {
   const proxiedCover = ctx.cover ? `/api/image/douban?u=${encodeURIComponent(ctx.cover)}` : null;
   return (
-    <div className="mb-6 flex items-center gap-4 rounded-lg border border-border/60 bg-surface/40 p-3">
+    <div className="glass-card mb-6 flex items-center gap-4 rounded-xl p-4">
       {proxiedCover ? (
         <div className="h-24 w-16 shrink-0 overflow-hidden rounded bg-black">
           <img
@@ -156,7 +156,7 @@ function StreamingResults({ keyword, targets }: { keyword: string; targets: CmsS
 
       {/* Secondary view: per-source breakdown, collapsed by default. Each
           section still streams in independently when expanded. */}
-      <details className="mt-10 rounded-lg border border-border/50 bg-surface/30 open:bg-surface/40">
+      <details className="glass-card mt-10 rounded-xl open:bg-white/[0.06]">
         <summary className="cursor-pointer px-4 py-3 text-sm text-muted-foreground transition-colors hover:text-foreground">
           按源分组查看完整结果
         </summary>
@@ -191,7 +191,7 @@ async function AggregatedResults({
   );
   if (hits.length === 0) {
     return (
-      <div className="rounded-lg border border-border/60 bg-surface/40 p-8 text-center text-sm text-muted-foreground">
+      <div className="glass-card rounded-xl p-10 text-center text-sm text-muted-foreground">
         所有源都没有命中 &quot;{keyword}&quot;。试试去掉副标题或换关键字。
       </div>
     );
@@ -226,7 +226,7 @@ function AggregatedSkeleton() {
         {Array.from({ length: 10 }, (_, i) => i).map((i) => (
           <div
             key={i}
-            className="flex animate-pulse flex-col overflow-hidden rounded-lg border border-border/40 bg-surface/40"
+            className="glass-card flex animate-pulse flex-col overflow-hidden rounded-xl"
           >
             <div className="aspect-[2/3] w-full bg-surface/60" />
             <div className="flex flex-col gap-2 p-3">
@@ -327,8 +327,8 @@ function EmptyState({
   return (
     <div
       className={cn(
-        'mx-auto mt-12 max-w-md rounded-lg border p-8 text-center',
-        tone === 'danger' ? 'border-danger/40 bg-danger/5' : 'border-border/70 bg-surface/60',
+        'glass-card mx-auto mt-12 max-w-md rounded-xl p-10 text-center',
+        tone === 'danger' ? 'border-danger/40' : '',
       )}
     >
       <h2 className="text-base font-medium text-foreground">{title}</h2>
