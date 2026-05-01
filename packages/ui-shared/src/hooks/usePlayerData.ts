@@ -1,14 +1,17 @@
-import type { PlayLine } from '@marstv/core';
+import type { PlayLine, VideoDetail } from '@marstv/core';
 import { useEffect, useState } from 'react';
+import { getDetail } from '../lib/api-client';
 
 export interface PlayerData {
   lines: PlayLine[];
+  videoDetail: VideoDetail | null;
   loading: boolean;
   error: string | null;
 }
 
 export function usePlayerData(source: string, id: string): PlayerData {
   const [lines, setLines] = useState<PlayLine[]>([]);
+  const [videoDetail, setVideoDetail] = useState<VideoDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,8 +22,16 @@ export function usePlayerData(source: string, id: string): PlayerData {
       setLoading(true);
       setError(null);
       try {
-        await new Promise((r) => setTimeout(r, 800));
-        if (!cancelled) setLines([]);
+        const data = await getDetail(source, id);
+        if (cancelled) return;
+        if (data) {
+          const detail = data as unknown as VideoDetail;
+          setVideoDetail(detail);
+          setLines(detail.lines ?? []);
+        } else {
+          setLines([]);
+          setError('Failed to load video detail');
+        }
       } catch (err) {
         if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load');
       } finally {
@@ -29,10 +40,8 @@ export function usePlayerData(source: string, id: string): PlayerData {
     }
 
     if (source && id) load();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [source, id]);
 
-  return { lines, loading, error };
+  return { lines, videoDetail, loading, error };
 }
