@@ -47,7 +47,7 @@ export default function HistoryPage() {
     invalidateCardMarkers();
   }
 
-  const wrapper = 'mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8';
+  const wrapper = 'mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 lg:px-12';
 
   if (items === null && !error) {
     return (
@@ -99,7 +99,7 @@ export default function HistoryPage() {
           return (
             <div
               key={`${it.source}:${it.id}`}
-              className="group relative overflow-hidden rounded-lg border border-border/60 bg-surface/40"
+              className="group relative overflow-hidden rounded-lg glass-card rounded-xl"
             >
               <Link href={href} className="block">
                 <div className="aspect-[2/3] w-full bg-surface">

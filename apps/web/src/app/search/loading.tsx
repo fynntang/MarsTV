@@ -1,6 +1,6 @@
 export default function SearchLoading() {
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8">
+    <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 lg:px-12">
       <div className="mb-6 flex w-full items-center gap-2">
         <div className="h-10 flex-1 animate-pulse rounded-md border border-border bg-surface" />
         <div className="h-10 w-20 animate-pulse rounded-md bg-primary/40" />

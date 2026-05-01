@@ -79,7 +79,7 @@ export default function SubscriptionsPage() {
     invalidateCardMarkers();
   }
 
-  const wrapper = 'mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8';
+  const wrapper = 'mx-auto w-full max-w-7xl flex-1 px-4 py-8 md:px-8 lg:px-12';
 
   if (items === null && !error) {
     return (
@@ -120,7 +120,7 @@ export default function SubscriptionsPage() {
             type="button"
             onClick={checkNow}
             disabled={refreshing}
-            className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-surface/60 px-3 py-1 text-muted-foreground transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+            className="glass-card inline-flex items-center gap-1 rounded-full px-3 py-1 text-muted-foreground transition-all hover:border-primary/30 hover:text-primary disabled:opacity-50"
           >
             {refreshing ? '检查中…' : '立即检查更新'}
           </button>
@@ -141,7 +141,7 @@ export default function SubscriptionsPage() {
           return (
             <div
               key={`${it.source}:${it.id}`}
-              className="group relative overflow-hidden rounded-lg border border-border/60 bg-surface/40"
+              className="group glass-card relative overflow-hidden rounded-xl"
             >
               <Link href={href} className="block">
                 <div className="relative aspect-[2/3] w-full bg-surface">

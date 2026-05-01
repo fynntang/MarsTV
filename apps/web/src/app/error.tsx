@@ -44,7 +44,7 @@ export default function RootError({ error, reset }: Props) {
         </button>
         <Link
           href="/"
-          className="inline-flex items-center rounded-full border border-border/70 bg-surface/60 px-5 py-2 text-sm text-foreground transition-colors hover:border-primary hover:text-primary"
+          className="inline-flex items-center glass-card rounded-full px-5 py-2 text-sm text-foreground transition-all hover:border-primary/30 hover:text-primary"
         >
           返回首页
         </Link>

@@ -1,6 +1,6 @@
 export default function PlayLoading() {
   return (
-    <div className="mx-auto w-full max-w-6xl flex-1 px-4 py-6 md:px-8">
+    <div className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 md:px-8">
       <div className="mb-4 flex flex-wrap items-baseline justify-between gap-3">
         <div className="h-7 w-48 animate-pulse rounded bg-surface" />
         <div className="h-5 w-32 animate-pulse rounded bg-surface/60" />

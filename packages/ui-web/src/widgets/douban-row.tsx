@@ -27,12 +27,14 @@ export function DoubanRow({
   const moreHref = `/douban?type=${type}&tag=${encodeURIComponent(tag)}`;
 
   return (
-    <section className="mt-12">
-      <div className="mb-3 flex items-baseline justify-between">
-        <h2 className="text-lg font-semibold tracking-tight text-foreground">{title}</h2>
+    <section className="mt-14">
+      <div className="mb-4 flex items-baseline justify-between">
+        <h2 className="section-title text-lg font-semibold tracking-tight text-foreground">
+          {title}
+        </h2>
         <LinkComponent
           href={moreHref}
-          className="text-xs text-dim-foreground transition-colors hover:text-primary"
+          className="text-[11px] text-dim-foreground transition-colors hover:text-primary"
         >
           豆瓣 · {tag} →
         </LinkComponent>
@@ -42,10 +44,12 @@ export function DoubanRow({
       ) : items.length === 0 ? (
         <RowError />
       ) : (
-        <div className="scrollbar-thin -mx-4 flex gap-3 overflow-x-auto px-4 pb-2">
-          {items.map((item) => (
-            <DoubanCard key={item.id} item={item} LinkComponent={LinkComponent} />
-          ))}
+        <div className="scrollbar-thin scroll-fade scroll-x pb-2">
+          <div className="flex w-max gap-3 sm:gap-4">
+            {items.map((item) => (
+              <DoubanCard key={item.id} item={item} LinkComponent={LinkComponent} />
+            ))}
+          </div>
         </div>
       )}
     </section>
@@ -69,7 +73,7 @@ function DoubanCard({
   return (
     <LinkComponent
       href={`/search?${searchParams.toString()}`}
-      className="group relative flex w-[140px] shrink-0 flex-col overflow-hidden rounded-md border border-border/60 bg-surface/60 transition-colors hover:border-primary/60"
+      className="group glass-card relative flex w-[140px] sm:w-[160px] lg:w-[180px] shrink-0 flex-col overflow-hidden rounded-xl"
     >
       <div className="relative aspect-[2/3] w-full overflow-hidden bg-black">
         {/* eslint-disable-next-line @next/next/no-img-element — poster comes from douban via our proxy */}
@@ -103,25 +107,27 @@ const SKELETON_KEYS = Array.from({ length: 24 }, () => Math.random().toString(36
 
 function RowSkeleton({ count }: { count: number }) {
   return (
-    <div className="-mx-4 flex gap-3 overflow-hidden px-4 pb-2">
-      {SKELETON_KEYS.slice(0, count).map((k) => (
-        <div
-          key={k}
-          className="w-[140px] shrink-0 animate-pulse overflow-hidden rounded-md border border-border/40 bg-surface/40"
-        >
-          <div className="aspect-[2/3] w-full bg-surface/60" />
-          <div className="h-7 px-2 py-1.5">
-            <div className="h-3 w-3/4 rounded bg-surface/60" />
+    <div className="overflow-hidden pb-2">
+      <div className="flex w-max gap-3 sm:gap-4">
+        {SKELETON_KEYS.slice(0, count).map((k) => (
+          <div
+            key={k}
+            className="glass-card w-[140px] sm:w-[160px] lg:w-[180px] shrink-0 animate-pulse overflow-hidden rounded-xl"
+          >
+            <div className="aspect-[2/3] w-full bg-surface/60" />
+            <div className="h-7 px-2 py-1.5">
+              <div className="h-3 w-3/4 rounded bg-surface/60" />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
 
 function RowError() {
   return (
-    <div className="rounded-md border border-border/40 bg-surface/30 px-4 py-6 text-center text-xs text-dim-foreground">
+    <div className="glass-card rounded-xl px-4 py-8 text-center text-xs text-dim-foreground">
       豆瓣暂不可用
     </div>
   );

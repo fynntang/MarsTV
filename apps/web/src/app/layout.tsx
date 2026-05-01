@@ -46,10 +46,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="marstv-space-bg flex min-h-full flex-col text-foreground">
         {cloudStorage && (
-          // Flag read by `getClientStorage()` to route reads/writes through
-          // /api/storage/* instead of browser localStorage.
           <script
             // biome-ignore lint/security/noDangerouslySetInnerHtml: server-rendered constant
             dangerouslySetInnerHTML={{ __html: 'window.__MARSTV_CLOUD_STORAGE__=true;' }}
@@ -58,42 +56,59 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <ClientNavProgress />
         </Suspense>
-        <header className="sticky top-0 z-30 border-b border-border/60 bg-background/80 backdrop-blur">
-          <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 md:px-8">
-            <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
+        <header className="glass-header sticky top-0 z-30">
+          <div className="mx-auto flex h-14 w-full max-w-7xl items-center justify-between px-4 md:px-8 lg:px-12">
+            <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
               <span
                 aria-hidden="true"
-                className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-background"
+                className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-primary/80 text-xs font-bold text-white shadow-[0_0_12px_rgba(255,107,53,0.3)]"
               >
                 M
               </span>
-              <span>MarsTV</span>
+              <span className="text-foreground/90">MarsTV</span>
             </Link>
-            <nav className="flex items-center gap-4 text-sm text-muted-foreground">
-              <Link href="/" className="hover:text-foreground">
-                首页
-              </Link>
-              <Link href="/search" className="hover:text-foreground">
-                搜索
-              </Link>
-              <Link href="/douban" className="hover:text-foreground">
-                豆瓣
-              </Link>
-              <Link href="/subscriptions" className="hover:text-foreground">
-                追剧
-              </Link>
-              <Link href="/history" className="hover:text-foreground">
-                历史
-              </Link>
-              <Link href="/favorites" className="hover:text-foreground">
-                收藏
-              </Link>
+            <nav className="hidden items-center gap-1 text-sm sm:flex">
+              {[
+                ['/', '首页'],
+                ['/search', '搜索'],
+                ['/douban', '豆瓣'],
+                ['/subscriptions', '追剧'],
+                ['/history', '历史'],
+                ['/favorites', '收藏'],
+              ].map(([href, label]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="rounded-lg px-3 py-1.5 text-muted-foreground transition-all hover:bg-white/5 hover:text-foreground"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+            {/* Mobile nav — icon-only compact row */}
+            <nav className="flex items-center gap-0.5 sm:hidden">
+              {[
+                ['/', '家'],
+                ['/search', '搜'],
+                ['/douban', '瓣'],
+                ['/subscriptions', '追'],
+                ['/history', '史'],
+                ['/favorites', '藏'],
+              ].map(([href, label]) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="rounded-md px-2 py-1 text-[11px] text-muted-foreground transition-all hover:bg-white/5 hover:text-foreground"
+                >
+                  {label}
+                </Link>
+              ))}
             </nav>
           </div>
         </header>
-        <main className="flex flex-1 flex-col">{children}</main>
-        <footer className="border-t border-border/60 py-6">
-          <div className="mx-auto w-full max-w-6xl px-4 text-center text-xs text-dim-foreground md:px-8">
+        <main className="relative z-[1] flex flex-1 flex-col">{children}</main>
+        <footer className="glass-footer relative z-[1] py-5">
+          <div className="mx-auto w-full max-w-7xl px-4 text-center text-[11px] text-dim-foreground md:px-8 lg:px-12">
             MarsTV · 仅限个人学习研究 · 不提供、不存储、不分发任何视频内容
           </div>
         </footer>
