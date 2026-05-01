@@ -9,27 +9,31 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "typecheck": "tsc --noEmit",
-    "test": "echo \"No tests yet\""
+    "test": "vitest run"
   },
   "dependencies": {
-    "@marstv/core": "workspace:*",
-    "@marstv/ui-web": "workspace:*",
-    "@marstv/ui-shared": "workspace:*",
     "@marstv/config": "workspace:*",
+    "@marstv/core": "workspace:*",
+    "@marstv/ui-shared": "workspace:*",
+    "@marstv/ui-web": "workspace:*",
     "@tauri-apps/api": "^2.10.1",
+    "@tauri-apps/plugin-global-shortcut": "^2",
+    "@tauri-apps/plugin-shell": "^2",
     "@tauri-apps/plugin-store": "^2",
     "@tauri-apps/plugin-updater": "^2",
-    "@tauri-apps/plugin-shell": "^2",
-    "@tauri-apps/plugin-global-shortcut": "^2",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "@tauri-apps/cli": "^2",
-    "@vitejs/plugin-react": "^4",
+    "@vitejs/plugin-react": "^4.7.0",
+    "happy-dom": "^20.9.0",
     "typescript": "catalog:",
-    "vite": "^6"
+    "vite": "^6",
+    "vitest": "catalog:"
   }
 }
