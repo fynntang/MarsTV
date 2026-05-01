@@ -24,6 +24,10 @@
     "experiments": {
       "typedRoutes": true
     },
-    "platforms": ["ios", "android", "tvos"]
+    "platforms": ["ios", "android", "tvos"],
+    "tvos": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.marstv.app.tvos"
+    }
   }
 }
