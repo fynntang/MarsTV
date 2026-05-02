@@ -1,6 +1,6 @@
 {
   "name": "@marstv/ui-shared",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "description": "Framework-agnostic utilities shared across web, desktop and mobile.",
   "license": "MIT",

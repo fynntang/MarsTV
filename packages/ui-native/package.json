@@ -1,6 +1,6 @@
 {
   "name": "@marstv/ui-native",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "description": "React Native component library for MarsTV mobile/TV with tri-platform variants.",
   "license": "MIT",

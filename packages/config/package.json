@@ -1,6 +1,6 @@
 {
   "name": "@marstv/config",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "description": "Shared design tokens, tsconfig/biome/tailwind presets for MarsTV.",
   "license": "MIT",

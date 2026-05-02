@@ -1,6 +1,6 @@
 {
   "name": "@marstv/mobile",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "main": "expo-router/entry",
   "scripts": {

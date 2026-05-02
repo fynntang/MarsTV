@@ -1,0 +1,87 @@
+---
+name: release
+description: Version release for MarsTV monorepo — bumps all package versions to {YYMMDD[a-z]} format, commits, tags, and pushes. Use when the user asks to "release", "publish a version", "cut a release", "bump version", or "打版本/发布版本".
+---
+
+# Release
+
+MarsTV monorepo 版本发布流程。统一更新所有 workspace 包的版本号，自动递增后缀，commit + tag + push。
+
+## Workspace 包列表
+
+版本发布涉及以下全部 `package.json`，缺一不可：
+
+```
+package.json                     # root
+apps/desktop/package.json        # @marstv/desktop
+apps/mobile/package.json         # @marstv/mobile
+apps/web/package.json            # @marstv/web
+packages/config/package.json     # @marstv/config
+packages/core/package.json       # @marstv/core
+packages/ui-native/package.json  # @marstv/ui-native
+packages/ui-shared/package.json  # @marstv/ui-shared
+packages/ui-web/package.json     # @marstv/ui-web
+```
+
+## 流程
+
+### 1. 确定版本号
+
+- 取今天日期，格式 `YYMMDD`（如 2026/05/02 → `260502`）
+- 查看现有 git tag 中是否有以 `v{YYMMDD}` 开头的
+- 取下一个可用后缀字母：`a` → `b` → `c` ... → `z`
+- 如果当天还没有任何 release tag，后缀从 `a` 开始
+- 组装为 `{YYMMDD}{suffix}`（如 `260502a`）
+
+```bash
+# 查看今天的已有 tag
+git tag | grep "^v$(date +%y%m%d)"
+```
+
+**后缀递增规则**：
+- 无匹配 → `a`
+- 已有 `v260502a` → `b`
+- 已有 `v260502a`, `v260502b` → `c`
+- 以此类推
+
+### 2. 更新版本号
+
+对每个 workspace 包的 `package.json`，将 `"version"` 字段替换为新版本号。
+
+版本号格式固定 `"version": "<version>"`，可以直接用精确匹配替换。注意 `apps/desktop/package.json` 当前是 `"version": "0.1.0"`，其他包是 `"version": "0.0.0"`——用 Edit 工具逐个替换即可。
+
+**必须全部 9 个包都更新，不允许遗漏。**
+
+### 3. 提交
+
+```bash
+git add package.json apps/*/package.json packages/*/package.json
+git commit -m "chore: release v<version>"
+```
+
+commit message 格式：`chore: release v{version}``
+
+### 4. 打 tag
+
+```bash
+git tag -a v<version> -m "v<version>"
+```
+
+tag 格式：`v{version}`（如 `v260502a`），使用 annotated tag。
+
+### 5. 推送
+
+```bash
+git push origin HEAD
+git push origin v<version>
+```
+
+先推送分支，再推送 tag。推送前确认用户是否同意推送。
+
+### 6. 报告
+
+推送完成后，报告：
+- 新版本号
+- commit hash
+- tag name
+- 受影响包数量

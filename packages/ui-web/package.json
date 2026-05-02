@@ -1,6 +1,6 @@
 {
   "name": "@marstv/ui-web",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "description": "Web (React 19) component library for MarsTV, built on shadcn/ui + Tailwind.",
   "license": "MIT",
