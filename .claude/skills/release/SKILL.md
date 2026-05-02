@@ -23,9 +23,30 @@ packages/ui-shared/package.json  # @marstv/ui-shared
 packages/ui-web/package.json     # @marstv/ui-web
 ```
 
+## 前置条件
+
+**Release 只允许在 `main` 分支执行。** 开始流程前，先检查当前分支：
+
+```bash
+git branch --show-current
+```
+
+- 如果当前分支**不是** `main`，立即停止，告诉用户："必须先合并到 `main` 分支才能 release。当前分支：`xxx`。"
+- 如果当前分支是 `main`，继续。
+
+### 1. 同步 main
+
+确保 `main` 是最新的：
+
+```bash
+git fetch origin && git pull origin main
+```
+
+如果有未拉取的更新，先拉取。如果有冲突，停止并让用户处理。
+
 ## 流程
 
-### 1. 确定版本号
+### 2. 确定版本号
 
 - 取今天日期，格式 `YYMMDD`（如 2026/05/02 → `260502`）
 - 查看现有 git tag 中是否有以 `v{YYMMDD}` 开头的
@@ -44,7 +65,7 @@ git tag | grep "^v$(date +%y%m%d)"
 - 已有 `v260502a`, `v260502b` → `c`
 - 以此类推
 
-### 2. 更新版本号
+### 3. 更新版本号
 
 对每个 workspace 包的 `package.json`，将 `"version"` 字段替换为新版本号。
 
@@ -52,7 +73,7 @@ git tag | grep "^v$(date +%y%m%d)"
 
 **必须全部 9 个包都更新，不允许遗漏。**
 
-### 3. 提交
+### 4. 提交
 
 ```bash
 git add package.json apps/*/package.json packages/*/package.json
@@ -61,7 +82,7 @@ git commit -m "chore: release v<version>"
 
 commit message 格式：`chore: release v{version}``
 
-### 4. 打 tag
+### 5. 打 tag
 
 ```bash
 git tag -a v<version> -m "v<version>"
@@ -69,7 +90,7 @@ git tag -a v<version> -m "v<version>"
 
 tag 格式：`v{version}`（如 `v260502a`），使用 annotated tag。
 
-### 5. 推送
+### 6. 推送
 
 ```bash
 git push origin HEAD
@@ -78,7 +99,7 @@ git push origin v<version>
 
 先推送分支，再推送 tag。推送前确认用户是否同意推送。
 
-### 6. 报告
+### 7. 报告
 
 推送完成后，报告：
 - 新版本号
