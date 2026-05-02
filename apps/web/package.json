@@ -1,6 +1,6 @@
 {
   "name": "@marstv/web",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "scripts": {
     "dev": "next dev",

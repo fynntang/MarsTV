@@ -1,6 +1,6 @@
 {
   "name": "@marstv/core",
-  "version": "0.0.0",
+  "version": "260502a",
   "private": true,
   "description": "Shared types, CMS downstream adapters and storage for MarsTV.",
   "license": "MIT",
