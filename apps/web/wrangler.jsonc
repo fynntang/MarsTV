@@ -4,14 +4,51 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-05-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  // Public stub values — secrets MUST be set via `wrangler secret put`,
-  // never committed to a file. The JSON array / empty string below keep
-  // wrangler deploy happy when no secret polyfill is available.
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
   "observability": {
     "enabled": true
+  },
+  // Self-reference for OpenNext caching
+  // https://opennext.js.org/cloudflare/caching
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "marstv-web"
+    }
+  ],
+  // R2 incremental cache
+  // https://opennext.js.org/cloudflare/caching
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "marstv-web-opennext-cache"
+    }
+  ],
+  // Image optimization
+  // https://opennext.js.org/cloudflare/howtos/image
+  "images": {
+    "binding": "IMAGES"
+  },
+  // ============================================================
+  //  Non-secret runtime environment variables.
+  //
+  //  MUST declare ALL vars here — wrangler deploy uses this file
+  //  as the authoritative source and will REMOVE any Dashboard
+  //  variables that are not listed below.
+  //
+  //  For secrets (PROXY_SECRET, SITE_PASSWORD, etc.), use:
+  //    npx wrangler secret put PROXY_SECRET
+  //  Secrets are encrypted at rest and NEVER committed to this file.
+  // ============================================================
+  "vars": {
+    "CMS_SOURCES_JSON": "[]",
+    "ALLOWED_PROXY_HOSTS": "",
+    "UPSTASH_REDIS_REST_URL": "",
+    "REDIS_URL": "",
+    "DOUBAN_PROXY_MODE": "",
+    "DOUBAN_CUSTOM_PROXY": ""
   }
 }
