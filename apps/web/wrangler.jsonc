@@ -31,24 +31,22 @@
   // https://opennext.js.org/cloudflare/howtos/image
   "images": {
     "binding": "IMAGES"
-  },
-  // ============================================================
-  //  Non-secret runtime environment variables.
-  //
-  //  MUST declare ALL vars here — wrangler deploy uses this file
-  //  as the authoritative source and will REMOVE any Dashboard
-  //  variables that are not listed below.
-  //
-  //  For secrets (PROXY_SECRET, SITE_PASSWORD, etc.), use:
-  //    npx wrangler secret put PROXY_SECRET
-  //  Secrets are encrypted at rest and NEVER committed to this file.
-  // ============================================================
-  "vars": {
-    "CMS_SOURCES_JSON": "[]",
-    "ALLOWED_PROXY_HOSTS": "",
-    "UPSTASH_REDIS_REST_URL": "",
-    "REDIS_URL": "",
-    "DOUBAN_PROXY_MODE": "",
-    "DOUBAN_CUSTOM_PROXY": ""
   }
+  // ============================================================
+  //  All runtime variables MUST be set via `wrangler secret put`.
+  //  Secrets are encrypted at rest and survive wrangler deploy.
+  //
+  //  Do NOT declare "vars" here — wrangler deploy treats them as
+  //  authoritative and will OVERWRITE any Dashboard-configured
+  //  values with the placeholder/empty strings in this file.
+  //
+  //  On first deploy (or after secret rotation), run:
+  //    cd apps/web
+  //    npx wrangler secret put CMS_SOURCES_JSON
+  //    npx wrangler secret put PROXY_SECRET
+  //    npx wrangler secret put SITE_PASSWORD
+  //    npx wrangler secret put ALLOWED_PROXY_HOSTS
+  //    npx wrangler secret put DOUBAN_PROXY_MODE
+  //    ... (repeat for each variable)
+  // ============================================================
 }
